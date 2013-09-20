@@ -8,7 +8,7 @@ import android.widget.TextView;
 /**
  * 
  * @author xhanto
- *
+ * team AppHero
  * Frame used to display our text
  *
  */
