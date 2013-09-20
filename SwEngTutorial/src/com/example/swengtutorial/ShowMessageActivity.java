@@ -5,7 +5,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.widget.TextView;
-
+/**
+ * 
+ * @author xhanto
+ *
+ * Frame used to display our text
+ *
+ */
 public class ShowMessageActivity extends Activity {
 
 	@Override
