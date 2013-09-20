@@ -12,13 +12,14 @@ public class ShowMessageActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show_message);
-		
+	
 		Intent startingIntent = getIntent();
 		
 		String userText = startingIntent.getStringExtra(MainActivity.class.getName());
-		
+	
 		TextView textView = (TextView) findViewById(R.id.displayed_text);
-		textView.setText(userText);
+	    textView.setText(userText);
+	
 	}
 
 	@Override
@@ -27,6 +28,5 @@ public class ShowMessageActivity extends Activity {
 		getMenuInflater().inflate(R.menu.show_message, menu);
 		return true;
 	}
-	
 
 }
