@@ -1,0 +1,49 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Fishing game: welcome!</title>
+	<script src="/fishermen/resources/js/jquery-1.9.0.min.js;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2"></script>
+	<script src="/fishermen/resources/js/jquery-ui-1.9.2.custom.min.js;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2"></script>
+	<script src="/fishermen/resources/js/bootstrap.min.js;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2"></script>
+	<script	src="/fishermen/resources/js/jquery.dataTables.min.js;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2"></script>
+	<link href="/fishermen/resources/css/bootstrap.min.css;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2" rel="stylesheet" />
+	<link href="/fishermen/resources/css/bootstrap-responsive.min.css;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2" rel="stylesheet" />
+	<link href="/fishermen/resources/css/smoothness/jquery-ui-1.9.2.custom.min.css;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2" rel="stylesheet" />
+	<link href="/fishermen/resources/css/custom.css;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" media="all" href="/fishermen/resources/css/whhg.css;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2" />
+	<!--[if lte IE 7]><script src="/fishermen/resources/js/lte-ie7.js;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2"></script><![endif]-->
+</head>
+<body data-spy="scroll" data-target=".sidenav"  data-offset-top="50">
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<p class="brand" style="margin-top: 10px; font-size: 31.5px"><strong><i class="icon-fish" style="vertical-align:middle;"></i> Fishing Game</strong></p>
+				<h2 id="countdown" class="text-error pull-right"></h2>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+	
+<script>
+	$("body").css('background-color', '#000000');
+</script>
+<div class="row-fluid" style="margin-top:60px;">
+	<div class="span12 centertext">
+		<img src="/fishermen/resources/img/story.jpg;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2" alt="story!" />
+	</div>
+</div>
+<div class="row-fluid">
+	<div class="span12 centertext">
+		<a class="btn btn-large btn-primary" href="/fishermen/player/21;jsessionid=45929B4FF4157CB0D82AF4D4348EA0B2">next</a>
+	</div>
+</div>
+	</div>
+</body>
+</html>
