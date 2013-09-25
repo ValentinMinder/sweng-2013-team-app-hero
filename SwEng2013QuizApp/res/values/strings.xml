@@ -7,6 +7,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="show_random_question">Show a random question</string>
     <string name="submit_quiz_question">Submit a quiz question</string>
-    
+    <string name="title_activity_show_question">ShowQuestionActivity</string>
+    <string name="hello">Hello bitch!\n</string>
+    <string name="uploading">Uploading virus 0%</string>
 
 </resources>

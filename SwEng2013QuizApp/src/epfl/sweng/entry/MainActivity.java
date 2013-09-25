@@ -1,11 +1,23 @@
 package epfl.sweng.entry;
 
+
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+
 import epfl.sweng.R;
+import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.showquestions.ShowQuestionActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 
 public class MainActivity extends Activity {
 
@@ -25,14 +37,28 @@ public class MainActivity extends Activity {
 	}
 	
 	
-	public void showQuestion() {
-		
-		
+	public void showQuestion(View view) {
+	//	fetchQuestion();
+		Intent showQuestionIntent = new Intent(this, ShowQuestionActivity.class);
+		startActivity(showQuestionIntent);
 	}
 	
-	public void submitQuestion() {
-		
-		
+	public void submitQuestion(View view) {
+			
 	}
-
+	
+	public void fetchQuestion() {
+		HttpGet firstRandom = new HttpGet("https://sweng-quiz.appspot.com/quizquestions/random");
+		ResponseHandler<String> firstHandler = new BasicResponseHandler();
+		try {
+			String firstQuestion = SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
 }
+	
+
