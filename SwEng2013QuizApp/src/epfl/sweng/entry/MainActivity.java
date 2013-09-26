@@ -2,25 +2,46 @@ package epfl.sweng.entry;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import epfl.sweng.R;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 
 public class MainActivity extends Activity {
 
+	private QuizQuestion question = null;
+	
+	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException{
+		ArrayList<String> arrayReturn = new ArrayList<String>();
+		if (jsonArray != null){
+			for (int i = 0; i < jsonArray.length(); i++){
+				arrayReturn.add(jsonArray.get(i).toString());
+			}
+		}
+		
+		return arrayReturn;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,8 +59,16 @@ public class MainActivity extends Activity {
 	
 	
 	public void showQuestion(View view) {
-	//	fetchQuestion();
+		fetchQuestion();
 		Intent showQuestionIntent = new Intent(this, ShowQuestionActivity.class);
+		
+		if (question != null) {
+			showQuestionIntent.putExtra(this.getClass().getName(), question.question);
+		}
+		else {
+			showQuestionIntent.putExtra(this.getClass().getName(), "bug powa");
+		}
+		
 		startActivity(showQuestionIntent);
 	}
 	
@@ -48,15 +77,49 @@ public class MainActivity extends Activity {
 	}
 	
 	public void fetchQuestion() {
-		HttpGet firstRandom = new HttpGet("https://sweng-quiz.appspot.com/quizquestions/random");
-		ResponseHandler<String> firstHandler = new BasicResponseHandler();
-		try {
-			String firstQuestion = SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
+		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        
+        // Test network connection
+        if (networkInfo != null && networkInfo.isConnected()) {
+        	new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random");
+        	
+        } else {
+            // No network connection available
+        }
+	}
+	
+	private class GetQuestionTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... urls) {
+			HttpGet firstRandom = new HttpGet(urls[0]);
+			ResponseHandler<String> firstHandler = new BasicResponseHandler();
+			try {
+				return SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		
+		protected void onPostExecute(String result) {					
+			try {
+				JSONObject jsonQuestion = new JSONObject(result);
+				question = new QuizQuestion(
+						jsonQuestion.getInt("id"), 
+						jsonQuestion.getString("question"),
+						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+						jsonQuestion.getInt("solutionIndex"),
+						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 }
