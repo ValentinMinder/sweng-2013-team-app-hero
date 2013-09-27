@@ -62,13 +62,12 @@ public class MainActivity extends Activity {
 	
 	
 	public void showQuestion(View view) {
-		//fetchQuestion();
+		fetchQuestion();
 		
-		String jsonResponse = "{\n \"tags\": [\n  \"capitals\", \n  \"geography\", \n  \"countries\"\n ], \n \"solutionIndex\": 3, \n \"question\": \"What is the capital of Slovenia?\", \n \"answers\": [\n  \"Vatican City\", \n  \"Bogot\\u00e1\", \n  \"Kiev\", \n  \"Ljubljana\"\n ], \n \"owner\": \"sehaag\", \n \"id\": 5295935194136576\n}";
-		jsonResponse = jsonResponse.replace("\n", "");
-		JSONObject jsonQuestion;
+		/*String jsonResponse = "{\n \"tags\": [\n  \"capitals\", \n  \"geography\", \n  \"countries\"\n ], \n \"solutionIndex\": 3, \n \"question\": \"What is the capital of Slovenia?\", \n \"answers\": [\n  \"Vatican City\", \n  \"Bogot\\u00e1\", \n  \"Kiev\", \n  \"Ljubljana\"\n ], \n \"owner\": \"sehaag\", \n \"id\": 5295935194136576\n}";
+		
 		try {
-			jsonQuestion = new JSONObject(jsonResponse);
+			JSONObject jsonQuestion = new JSONObject(jsonResponse);
 			question = new QuizQuestion(
 					jsonQuestion.getInt("id"), 
 					jsonQuestion.getString("question"),
@@ -78,15 +77,17 @@ public class MainActivity extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
+		catch (Throwable e) {
+			e.printStackTrace();
+		}*/
 		
 		Intent showQuestionIntent = new Intent(this, ShowQuestionActivity.class);
 		
 		if (question != null) {
-			showQuestionIntent.putExtra(this.getClass().getName(), question.question);
+			showQuestionIntent.putExtra("test", question.question);
 		}
 		else {
-			showQuestionIntent.putExtra(this.getClass().getName(), "bug powa");
+			showQuestionIntent.putExtra("test", "bug powa");
 		}
 		
 		startActivity(showQuestionIntent);
@@ -135,15 +136,13 @@ public class MainActivity extends Activity {
 		
 		protected void onPostExecute(String result) {					
 			try {
-				JSONObject jsonQuestion = new JSONObject(result.replace("\n", ""));
+				JSONObject jsonQuestion = new JSONObject(result);
 				question = new QuizQuestion(
 						jsonQuestion.getInt("id"), 
 						jsonQuestion.getString("question"),
 						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
 						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
-				
-				String libelle = question.question;
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
