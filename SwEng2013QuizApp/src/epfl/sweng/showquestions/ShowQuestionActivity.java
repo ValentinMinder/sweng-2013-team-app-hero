@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -31,13 +32,21 @@ public class ShowQuestionActivity extends Activity {
 		String questionText = startingIntent.getStringExtra(epfl.sweng.entry.MainActivity.class.getName());
 		
 		
-		TextView questionTitle = (TextView) new TextView(this);
+		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
 		questionTitle.setText(mockQuestion.getQuestion());
+	
 		
 		//RadioGroup answerGroup
+		RadioGroup possibleAnswers = (RadioGroup) findViewById(R.id.multiple_choices);
+		
 		for (int i = 0; i<mockQuestion.getAnswer().size();i++){
+			RadioButton button = new RadioButton(this);
+			button.setText(answer.get(i));
+			possibleAnswers.addView(button);
 			
 		}
+		
+		
 	}
 
 	@Override
