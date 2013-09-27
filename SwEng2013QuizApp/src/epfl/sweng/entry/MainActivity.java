@@ -3,6 +3,9 @@ package epfl.sweng.entry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -59,7 +62,24 @@ public class MainActivity extends Activity {
 	
 	
 	public void showQuestion(View view) {
-		fetchQuestion();
+		//fetchQuestion();
+		
+		String jsonResponse = "{\n \"tags\": [\n  \"capitals\", \n  \"geography\", \n  \"countries\"\n ], \n \"solutionIndex\": 3, \n \"question\": \"What is the capital of Slovenia?\", \n \"answers\": [\n  \"Vatican City\", \n  \"Bogot\\u00e1\", \n  \"Kiev\", \n  \"Ljubljana\"\n ], \n \"owner\": \"sehaag\", \n \"id\": 5295935194136576\n}";
+		jsonResponse = jsonResponse.replace("\n", "");
+		JSONObject jsonQuestion;
+		try {
+			jsonQuestion = new JSONObject(jsonResponse);
+			question = new QuizQuestion(
+					jsonQuestion.getInt("id"), 
+					jsonQuestion.getString("question"),
+					convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+					jsonQuestion.getInt("solutionIndex"),
+					convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		
 		Intent showQuestionIntent = new Intent(this, ShowQuestionActivity.class);
 		
 		if (question != null) {
@@ -82,10 +102,17 @@ public class MainActivity extends Activity {
         
         // Test network connection
         if (networkInfo != null && networkInfo.isConnected()) {
-        	new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random");
-        	
+			try {
+				new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } else {
-            // No network connection available
+            // TODO No network connection available
         }
 	}
 	
@@ -108,13 +135,15 @@ public class MainActivity extends Activity {
 		
 		protected void onPostExecute(String result) {					
 			try {
-				JSONObject jsonQuestion = new JSONObject(result);
+				JSONObject jsonQuestion = new JSONObject(result.replace("\n", ""));
 				question = new QuizQuestion(
 						jsonQuestion.getInt("id"), 
 						jsonQuestion.getString("question"),
 						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
 						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+				
+				String libelle = question.question;
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
