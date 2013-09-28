@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import epfl.sweng.R;
+import epfl.sweng.editquestion.EditQuestionActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionActivity;
 import epfl.sweng.testing.TestingTransactions;
@@ -94,7 +95,10 @@ public class MainActivity extends Activity {
 	}
 	
 	public void submitQuestion(View view) {
-			
+		
+		Intent editQuestionIntent = new Intent(this, EditQuestionActivity.class);
+
+		startActivity(editQuestionIntent);
 	}
 	
 	public void fetchQuestion() {

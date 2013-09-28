@@ -29,6 +29,10 @@
             android:name="epfl.sweng.showquestions.ShowQuestionActivity"
             android:label="@string/title_activity_show_question" >
         </activity>
+        <activity
+            android:name="epfl.sweng.editquestion.EditQuestionActivity"
+            android:label="@string/title_activity_edit_question" >
+        </activity>
     </application>
 
 </manifest>
