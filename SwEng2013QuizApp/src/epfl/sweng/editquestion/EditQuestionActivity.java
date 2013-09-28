@@ -3,14 +3,21 @@ package epfl.sweng.editquestion;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.EditText;
 import epfl.sweng.R;
-
+/**
+ * 
+ * @author xhanto
+ *
+ */
 public class EditQuestionActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
+        EditText editText = (EditText) findViewById(R.id.edit_text);
+
 	}
 
 	@Override

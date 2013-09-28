@@ -8,16 +8,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-      <Button
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="137dp"
+        android:layout_height="70dp"
+        android:onClick="submitQuestion"
+        android:text="@string/submit_quiz_question" />
+
+    <Button
+        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/submit_quiz_question" 
-        android:onClick="submitQuestion" />
-      
-      <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/show_random_question" 
-        android:onClick="showQuestion" />
+        android:onClick="showQuestion"
+        android:text="@string/show_random_question" />
 
 </LinearLayout>
