@@ -11,7 +11,7 @@
     <string name="hello">Hello bitch!\n</string>
     <string name="uploading">Uploading virus 0%</string>
     <string name="title_activity_edit_question">EditQuestionActivity</string>
-    <string name="type_question">Type in the question's text body</string>
+    <string name="type_question">"Type in the question's text body"</string>
     <string name="coming">Coming Soon</string>
 
 </resources>

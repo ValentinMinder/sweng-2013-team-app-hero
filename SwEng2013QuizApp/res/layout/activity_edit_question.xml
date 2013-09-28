@@ -13,15 +13,24 @@
         android:layout_height="wrap_content"
         android:text="@string/coming" />
 
-        <EditText
+    <EditText
+        android:id="@+id/type_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:ems="10" 
-        android:hint="@string/type_question">
-
+        android:ems="10"
+        android:hint="@string/type_question" >
         <requestFocus />
     </EditText>
-    
-    
+  
+    <EditText
+        android:id="@+id/type_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/type_question" >
+        <requestFocus />
+    </EditText>
+  
 </LinearLayout>
