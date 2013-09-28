@@ -12,6 +12,7 @@
     <string name="uploading">Uploading virus 0%</string>
     <string name="title_activity_edit_question">EditQuestionActivity</string>
     <string name="type_question">"Type in the question's text body"</string>
-    <string name="coming">Coming Soon</string>
+    <string name="type_answer">"Type in a possible answer"</string>
+    <string name="cross">2718 HEAVY BALLOT X</string>
 
 </resources>
