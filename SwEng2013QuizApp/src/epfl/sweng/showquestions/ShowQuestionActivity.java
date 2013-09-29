@@ -2,18 +2,16 @@ package epfl.sweng.showquestions;
 
 import java.util.ArrayList;
 
-import epfl.sweng.R;
-import epfl.sweng.entry.QuizQuestion;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
+import epfl.sweng.R;
+import epfl.sweng.entry.QuizQuestion;
 
 public class ShowQuestionActivity extends Activity {
 
@@ -26,27 +24,22 @@ public class ShowQuestionActivity extends Activity {
 		answer.add("21");
 		ArrayList<String> tags = new ArrayList<String>();
 		tags.add("life");
-		QuizQuestion mockQuestion = new QuizQuestion(1111, "what is the answer", answer, 1, tags);
+		QuizQuestion mockQuestion = new QuizQuestion(1111, new String(
+				"what is the answer"), answer, 1, tags);
+
 		Intent startingIntent = getIntent();
-		
-		String questionText = startingIntent.getStringExtra(epfl.sweng.entry.MainActivity.class.getName());
-		
-		
+
 		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
-		questionTitle.setText(mockQuestion.getQuestion());
-	
-		
-		//RadioGroup answerGroup
-		RadioGroup possibleAnswers = (RadioGroup) findViewById(R.id.multiple_choices);
-		
-		for (int i = 0; i<mockQuestion.getAnswer().size();i++){
-			RadioButton button = new RadioButton(this);
-			button.setText(answer.get(i));
-			possibleAnswers.addView(button);
-			
-		}
-		
-		
+		// questionTitle.setText(mockQuestion.getQuestion());
+
+		ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
+		if (possibleAnswers != null) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_1, answer);
+
+			possibleAnswers.setAdapter(adapter);
+		} 
+
 	}
 
 	@Override

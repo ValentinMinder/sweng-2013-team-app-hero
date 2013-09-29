@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/displayed_text" />
     
-    <RadioGroup
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/multiple_choices" />
