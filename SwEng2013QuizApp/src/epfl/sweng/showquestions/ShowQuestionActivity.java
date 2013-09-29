@@ -1,9 +1,22 @@
 package epfl.sweng.showquestions;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -15,44 +28,82 @@ import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.entry.QuizQuestion;
+import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 public class ShowQuestionActivity extends Activity {
+	
+	private QuizQuestion question = null;
+	
+	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException{
+		ArrayList<String> arrayReturn = new ArrayList<String>();
+		if (jsonArray != null){
+			for (int i = 0; i < jsonArray.length(); i++){
+				arrayReturn.add(jsonArray.get(i).toString());
+			}
+		}
+		
+		return arrayReturn;
+	}
+	
+	private void fetchQuestion() {
+		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        
+        // Test network connection
+        if (networkInfo != null && networkInfo.isConnected()) {
+			try {
+				new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+        } else {
+            // TODO No network connection available
+        	Toast.makeText(getBaseContext(), "No network connection available", Toast.LENGTH_LONG).show();
+        }
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show_question);
-		ArrayList<String> answer = new ArrayList<String>();
-		answer.add("42");
-		answer.add("21");
-		ArrayList<String> tags = new ArrayList<String>();
-		tags.add("life");
-		QuizQuestion mockQuestion = new QuizQuestion(1111, new String(
-				"what is the answer"), answer, 1, tags);
+		
+		fetchQuestion();
+		
+		if (question == null)
+		{
+			ArrayList<String> answer = new ArrayList<String>();
+			answer.add("42");
+			answer.add("21");
+			ArrayList<String> tags = new ArrayList<String>();
+			tags.add("life");
+			question = new QuizQuestion(1111, new String(
+					"what is the answer"), answer, 1, tags);
+		}
 
-		Intent startingIntent = getIntent();
-
-		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
-		// questionTitle.setText(mockQuestion.getQuestion());
-
-		ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
-		if (possibleAnswers != null) {
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_1, answer);
-
-			possibleAnswers.setAdapter(adapter);
-			
-			possibleAnswers.setOnItemClickListener(new OnItemClickListener()
-			{
-			     @Override
-			     public void onItemClick(AdapterView<?> a, View v, int position, long id) 
-			     {
-			          Toast.makeText(getBaseContext(), "Click on an answer", Toast.LENGTH_LONG).show();
-			      }
-			});
-			
-		} 
-
+		if (question != null)
+		{
+			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
+			questionTitle.setText(question.getQuestion());
+	
+			ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
+			if (possibleAnswers != null) {
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_list_item_1, question.getAnswer());
+	
+				possibleAnswers.setAdapter(adapter);
+				
+				possibleAnswers.setOnItemClickListener(new OnItemClickListener()
+				{
+				     @Override
+				     public void onItemClick(AdapterView<?> a, View v, int position, long id) 
+				     {
+				          Toast.makeText(getBaseContext(), "Click on an answer", Toast.LENGTH_LONG).show();
+				      }
+				});		
+			} 
+		}
 	}
 
 	@Override
@@ -61,5 +112,37 @@ public class ShowQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.show_question, menu);
 		return true;
 	}
+	
+	private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
+		@Override
+		protected String doInBackground(String... urls) {
+			HttpGet firstRandom = new HttpGet(urls[0]);
+			ResponseHandler<String> firstHandler = new BasicResponseHandler();
+			try {
+				return SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		
+		protected void onPostExecute(String result) {					
+			try {
+				JSONObject jsonQuestion = new JSONObject(result);
+				question = new QuizQuestion(
+						jsonQuestion.getInt("id"), 
+						jsonQuestion.getString("question"),
+						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+						jsonQuestion.getInt("solutionIndex"),
+						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
 }
