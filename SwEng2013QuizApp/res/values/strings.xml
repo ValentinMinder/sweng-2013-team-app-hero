@@ -17,5 +17,8 @@
     <string name="next_question">Next question</string>
     <string name="right_answer">\u2714</string>
     <string name="wrong_answer">\u2718</string>
+    <string name="question_tags">"Type in the question's tags"</string>
+    <string name="plus">\u002B</string>
+    <string name="submit_question">Submit</string>
 
 </resources>

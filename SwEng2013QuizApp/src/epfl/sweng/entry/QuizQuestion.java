@@ -10,7 +10,6 @@ import java.util.ArrayList;
  *
  */
 public class QuizQuestion {
-
 	/**
 	 * Question identifier
 	 */
@@ -60,5 +59,12 @@ public class QuizQuestion {
 		return tags;
 	}
 
+	@Override
+	public String toString() {
+		return "QuizQuestion [id=" + id + ", question=" + question
+				+ ", answer=" + answer + ", solutionIndex=" + solutionIndex
+				+ ", tags=" + tags + "]";
+	}
+	
 
 }
