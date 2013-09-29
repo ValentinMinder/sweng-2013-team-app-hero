@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -23,8 +24,11 @@ public class EditQuestionActivity extends Activity {
 	private Button correct, remove, add;
 	private ArrayList<Button> correctButtons;
 	private ArrayList<EditText> answers;
-	private int correctIndex;
-	private int buttonIndex;
+	private int correctAnswer;
+	private int correctIndex=0;
+	private int removeIndex=500;
+	private int answerIndex=1000;
+	private int gridIndex=1500;
 	private LinearLayout container;
 
 	@Override
@@ -33,17 +37,34 @@ public class EditQuestionActivity extends Activity {
 		setContentView(R.layout.activity_edit_question);
 		container = (LinearLayout) findViewById(R.id.container);
 		editQuestion = (EditText) findViewById(R.id.type_question);
-		editAnswer = (EditText) findViewById(R.id.type_answer);
-		correct = (Button) findViewById(R.id.correct);
-		remove = (Button) findViewById(R.id.remove);
+
 		add = (Button) findViewById(R.id.add);
+		GridLayout grid = new GridLayout(this);
+		EditText answer = new EditText(this);
+		Button correct = new Button(this);
+		Button remove = new Button(this); 
 
+		grid.setId(gridIndex);
+		answer.setId(answerIndex);
+		answer.setHint("Type in an answer");
 
-		//answers.add(editAnswer);
-		//correctButtons.add(correct);
+		correct.setText("\u2718");
+		correct.setId(correctIndex);
+		//	nextCorrect.setOnClickListener(setAnswer());
 
-		buttonIndex=0;
+		remove.setText("\u002D");
+		remove.setId(removeIndex);
+		remove.setOnClickListener(removeHandler);
 
+		container.addView(answer);
+		container.addView(grid);
+		grid.addView(correct);
+		grid.addView(remove);
+
+		correctIndex++;
+		removeIndex++;
+		answerIndex++;
+		gridIndex++;
 
 	}
 
@@ -54,34 +75,64 @@ public class EditQuestionActivity extends Activity {
 		return true;
 	}
 
-	public void setAnswer(View view) {
-		correct.setText("\u2714");
-		// correctIndex=
-	}
+	View.OnClickListener answerHandler = new View.OnClickListener() {
 
-	public void removeAnswer(View view) {
-		Toast.makeText(this, "You clicked \u002D!", Toast.LENGTH_SHORT).show();
-	}
+		@Override
+		public void onClick(View view) {
+			correct.setText("\u2714");
+			// correctIndex=
+		}
+	};
+
+	View.OnClickListener removeHandler = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View view) {
+			int essai = view.getId();
+			GridLayout delGrid = (GridLayout) findViewById((essai+1000));
+			EditText delAnswer = (EditText) findViewById((essai+500));
+			delGrid.removeAllViews();
+			container.removeView(delGrid);
+			container.removeView(delAnswer);
+			gridIndex--;
+			answerIndex--;
+			removeIndex--;
+			correctIndex--;
+		}
+	};
+
+
+
 	public void addAnswer(View view) {
 		GridLayout nextGrid = new GridLayout(this);
 		EditText nextAnswer = new EditText(this);
 		Button nextCorrect = new Button(this);
 		Button nextRemove = new Button(this); 
 
+		nextGrid.setId(gridIndex);
+		nextAnswer.setId(answerIndex);
+		nextAnswer.setHint("Type in an answer");
+
+
 		nextCorrect.setText("\u2718");
-		//	nextCorrect.setOnClickListener(setAnswer());
+		nextCorrect.setId(correctIndex);
+		nextCorrect.setOnClickListener(answerHandler);
 
 		nextRemove.setText("\u002D");
-		//	nextRemove.setOnClickListener(removeAnswer());
+		nextRemove.setId(removeIndex);
+		nextRemove.setOnClickListener(removeHandler);
 
-
+		answerIndex++;
+		correctIndex++;
+		removeIndex++;
+		gridIndex++;
 
 		container.addView(nextAnswer);
 		container.addView(nextGrid);
 		nextGrid.addView(nextCorrect);
 		nextGrid.addView(nextRemove);
-		
 
 	}
+
 
 }

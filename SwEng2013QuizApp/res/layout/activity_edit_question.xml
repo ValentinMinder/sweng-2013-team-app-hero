@@ -16,13 +16,13 @@
         android:ems="10"
         android:hint="@string/type_question" />
 
-    <LinearLayout
+  	   <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
-        <EditText
+	
+     	<!--   <EditText
             android:id="@+id/type_answer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                 android:layout_row="0"
                 android:onClick="removeAnswer"
                 android:text="\u002D" />
-        </GridLayout>
+        </GridLayout> -->
     </LinearLayout>
 
     <Button
@@ -57,5 +57,11 @@
         android:layout_height="wrap_content"
         android:onClick="addAnswer"
         android:text="\u002B" />
+
+    <Button
+        android:id="@+id/submit_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit question" />
 
 </LinearLayout>
