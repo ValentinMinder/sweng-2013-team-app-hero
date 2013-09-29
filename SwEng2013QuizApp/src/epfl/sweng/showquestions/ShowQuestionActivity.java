@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,78 +33,100 @@ import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 public class ShowQuestionActivity extends Activity {
-	
+
 	private QuizQuestion question = null;
-	
-	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException{
+
+	private ArrayList<String> convertJSONArrayToArrayListString(
+			JSONArray jsonArray) throws JSONException {
 		ArrayList<String> arrayReturn = new ArrayList<String>();
-		if (jsonArray != null){
-			for (int i = 0; i < jsonArray.length(); i++){
+		if (jsonArray != null) {
+			for (int i = 0; i < jsonArray.length(); i++) {
 				arrayReturn.add(jsonArray.get(i).toString());
 			}
 		}
-		
+
 		return arrayReturn;
 	}
-	
+
 	private void fetchQuestion() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        
-        // Test network connection
-        if (networkInfo != null && networkInfo.isConnected()) {
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+		// Test network connection
+		if (networkInfo != null && networkInfo.isConnected()) {
 			try {
-				new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+				new GetQuestionTask().execute(
+						"https://sweng-quiz.appspot.com/quizquestions/random")
+						.get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
-        } else {
-            // TODO No network connection available
-        	Toast.makeText(getBaseContext(), "No network connection available", Toast.LENGTH_LONG).show();
-        }
+		} else {
+			// TODO No network connection available
+			Toast.makeText(getBaseContext(), "No network connection available",
+					Toast.LENGTH_LONG).show();
+		}
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show_question);
-		
+
 		fetchQuestion();
-		
-		if (question == null)
-		{
+
+		if (question == null) {
 			ArrayList<String> answer = new ArrayList<String>();
 			answer.add("42");
 			answer.add("21");
 			ArrayList<String> tags = new ArrayList<String>();
 			tags.add("life");
-			question = new QuizQuestion(1111, new String(
-					"what is the answer"), answer, 1, tags);
-		}
+			question = new QuizQuestion(1111, new String("what is the answer"),
+					answer, 1, tags);
 
-		if (question != null)
-		{
+			Intent startingIntent = getIntent();
+
 			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
 			questionTitle.setText(question.getQuestion());
-	
+
 			ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
+
 			if (possibleAnswers != null) {
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-						android.R.layout.simple_list_item_1, question.getAnswer());
-	
+						android.R.layout.simple_list_item_1, answer);
+
 				possibleAnswers.setAdapter(adapter);
-				
-				possibleAnswers.setOnItemClickListener(new OnItemClickListener()
-				{
-				     @Override
-				     public void onItemClick(AdapterView<?> a, View v, int position, long id) 
-				     {
-				          Toast.makeText(getBaseContext(), "Click on an answer", Toast.LENGTH_LONG).show();
-				      }
-				});		
-			} 
+
+				possibleAnswers
+						.setOnItemClickListener(new OnItemClickListener() {
+							@Override
+							public void onItemClick(AdapterView<?> a, View v,
+									int position, long id) {
+								TextView correctness = (TextView) findViewById(R.id.correctness);
+								Button nextQuestion = (Button) findViewById(R.id.next_question_button);
+
+								if (!nextQuestion.isEnabled()) {
+									// The right solution has not already been
+									// found, thus we can react to user input
+									if (id == question.getSolutionIndex() - 1) {
+										// The right answer has been found
+										correctness
+												.setText(R.string.right_answer);
+										((Button) findViewById(R.id.next_question_button))
+												.setEnabled(true);
+									} else {
+										correctness
+												.setText(R.string.wrong_answer);
+									}
+								}
+
+							}
+						});
+
+			}
+
 		}
 	}
 
@@ -112,7 +136,7 @@ public class ShowQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.show_question, menu);
 		return true;
 	}
-	
+
 	private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -120,29 +144,31 @@ public class ShowQuestionActivity extends Activity {
 			HttpGet firstRandom = new HttpGet(urls[0]);
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
+				return SwengHttpClientFactory.getInstance().execute(
+						firstRandom, firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
-		
-		protected void onPostExecute(String result) {					
+
+		protected void onPostExecute(String result) {
 			try {
 				JSONObject jsonQuestion = new JSONObject(result);
-				question = new QuizQuestion(
-						jsonQuestion.getInt("id"), 
+				question = new QuizQuestion(jsonQuestion.getInt("id"),
 						jsonQuestion.getString("question"),
-						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+						convertJSONArrayToArrayListString(jsonQuestion
+								.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
-						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+						convertJSONArrayToArrayListString(jsonQuestion
+								.getJSONArray("tags")));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 }
