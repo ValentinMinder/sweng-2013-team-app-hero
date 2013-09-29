@@ -31,13 +31,14 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.testing.TestingTransactions;
+import epfl.sweng.testing.TestingTransactions.TTChecks;
 
 public class ShowQuestionActivity extends Activity {
 
 	private QuizQuestion question = null;
-
-	private ArrayList<String> convertJSONArrayToArrayListString(
-			JSONArray jsonArray) throws JSONException {
+	//TODO look if there is an available method that can be used to check if the AsyncTask has ended
+	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException {
 		ArrayList<String> arrayReturn = new ArrayList<String>();
 		if (jsonArray != null) {
 			for (int i = 0; i < jsonArray.length(); i++) {
@@ -75,55 +76,70 @@ public class ShowQuestionActivity extends Activity {
 		setContentView(R.layout.activity_show_question);
 
 		fetchQuestion();
+	}
+	
+	public void fetchAndDisplay(View v) {
+		//disable the button nextQuestion and empty the TextView that indicate correctness of an answer
+		Button nextQuestion = (Button)findViewById(R.id.next_question_button);
+		nextQuestion.setEnabled(false);
+		TextView correctness = (TextView) findViewById(R.id.correctness);
+		correctness.setText("");
+		fetchQuestion();
+	}
 
-		if (question == null) {
-			ArrayList<String> answer = new ArrayList<String>();
+	public void displayQuestion() {
+		//fetchQuestion();
+		Button nextQuestion = (Button)findViewById(R.id.next_question_button);
+		nextQuestion.setEnabled(false);
+		
+		if (question != null) {
+			/*ArrayList<String> answer = new ArrayList<String>();
 			answer.add("42");
 			answer.add("21");
 			ArrayList<String> tags = new ArrayList<String>();
 			tags.add("life");
 			question = new QuizQuestion(1111, new String("what is the answer"),
-					answer, 1, tags);
+					answer, 1, tags);*/
 
 			Intent startingIntent = getIntent();
+			
+		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
+		questionTitle.setText(question.getQuestion());
 
-			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
-			questionTitle.setText(question.getQuestion());
+		ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
 
-			ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
+		if (possibleAnswers != null) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_1, question.getAnswer());
 
-			if (possibleAnswers != null) {
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-						android.R.layout.simple_list_item_1, answer);
-
-				possibleAnswers.setAdapter(adapter);
-
-				possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
-							@Override
-							public void onItemClick(AdapterView<?> a, View v,
-									int position, long id) {
-								TextView correctness = (TextView) findViewById(R.id.correctness);
-								Button nextQuestion = (Button) findViewById(R.id.next_question_button);
-
-								if (!nextQuestion.isEnabled()) {
-									// The right solution has not already been
-									// found, thus we can react to user input
-									if (id == question.getSolutionIndex() - 1) {
-										// The right answer has been found
-										correctness.setText(R.string.right_answer);
-										((Button) findViewById(R.id.next_question_button)).setEnabled(true);
-									} else {
-										correctness.setText(R.string.wrong_answer);
-									}
+			possibleAnswers.setAdapter(adapter);
+			TestingTransactions.check(TTChecks.QUESTION_SHOWN);
+			
+			possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> a, View v,
+								int position, long id) {
+							TextView correctness = (TextView) findViewById(R.id.correctness);
+							Button nextQuestion = (Button) findViewById(R.id.next_question_button);
+							if (!nextQuestion.isEnabled()) {
+								// The right solution has not already been
+								// found, thus we can react to user input
+								if (id == question.getSolutionIndex()) {
+									// The right answer has been found
+									correctness.setText(R.string.right_answer);
+									((Button) findViewById(R.id.next_question_button)).setEnabled(true);
+								} else {
+									correctness.setText(R.string.wrong_answer);
 								}
-
+								TestingTransactions.check(TTChecks.ANSWER_SELECTED);
 							}
-						});
-			}
 
+						}
+					});
 		}
 	}
-
+}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -156,6 +172,7 @@ public class ShowQuestionActivity extends Activity {
 							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
 							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+				displayQuestion();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
