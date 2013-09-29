@@ -24,22 +24,25 @@ public class EditQuestionActivity extends Activity {
 	private ArrayList<Button> correctButtons;
 	private ArrayList<EditText> answers;
 	private int correctIndex;
+	private int buttonIndex;
 	private LinearLayout container;
-	private GridLayout grid;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
 		container = (LinearLayout) findViewById(R.id.container);
-		grid = (GridLayout) findViewById(R.id.grid);
 		editQuestion = (EditText) findViewById(R.id.type_question);
 		editAnswer = (EditText) findViewById(R.id.type_answer);
 		correct = (Button) findViewById(R.id.correct);
 		remove = (Button) findViewById(R.id.remove);
 		add = (Button) findViewById(R.id.add);
-		answers.add(editAnswer);
-		correctButtons.add(correct);
+
+
+		//answers.add(editAnswer);
+		//correctButtons.add(correct);
+
+		buttonIndex=0;
 
 
 	}
@@ -52,7 +55,7 @@ public class EditQuestionActivity extends Activity {
 	}
 
 	public void setAnswer(View view) {
-		//correct.setText("\u2714");
+		correct.setText("\u2714");
 		// correctIndex=
 	}
 
@@ -60,11 +63,24 @@ public class EditQuestionActivity extends Activity {
 		Toast.makeText(this, "You clicked \u002D!", Toast.LENGTH_SHORT).show();
 	}
 	public void addAnswer(View view) {
-		Button test = new Button(this);
-		test.setId(1);
-		test.setText("essai");
-		grid.addView(test);
-		Toast.makeText(this, "You clicked \u002B!", Toast.LENGTH_SHORT).show();
+		GridLayout nextGrid = new GridLayout(this);
+		EditText nextAnswer = new EditText(this);
+		Button nextCorrect = new Button(this);
+		Button nextRemove = new Button(this); 
+
+		nextCorrect.setText("\u2718");
+		//	nextCorrect.setOnClickListener(setAnswer());
+
+		nextRemove.setText("\u002D");
+		//	nextRemove.setOnClickListener(removeAnswer());
+
+
+
+		container.addView(nextAnswer);
+		container.addView(nextGrid);
+		nextGrid.addView(nextCorrect);
+		nextGrid.addView(nextRemove);
+		
 
 	}
 
