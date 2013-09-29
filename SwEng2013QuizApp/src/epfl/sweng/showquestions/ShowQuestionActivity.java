@@ -2,6 +2,7 @@ package epfl.sweng.showquestions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.ClientProtocolException;
@@ -14,7 +15,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -100,22 +100,20 @@ public class ShowQuestionActivity extends Activity {
 			tags.add("life");
 			question = new QuizQuestion(1111, new String("what is the answer"),
 					answer, 1, tags);*/
-
-			Intent startingIntent = getIntent();
 			
-		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
-		questionTitle.setText(question.getQuestion());
-
-		ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
-
-		if (possibleAnswers != null) {
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_list_item_1, question.getAnswer());
-
-			possibleAnswers.setAdapter(adapter);
-			TestingTransactions.check(TTChecks.QUESTION_SHOWN);
-			
-			possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
+			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
+			questionTitle.setText(question.getQuestion());
+	
+			ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
+	
+			if (possibleAnswers != null) {
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_list_item_1, question.getAnswer());
+	
+				possibleAnswers.setAdapter(adapter);
+				TestingTransactions.check(TTChecks.QUESTION_SHOWN);
+				
+				possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> a, View v,
 								int position, long id) {
@@ -136,7 +134,24 @@ public class ShowQuestionActivity extends Activity {
 
 						}
 					});
-		}
+			}
+			
+			TextView tags = (TextView) findViewById(R.id.tags);
+			if (tags != null) {
+				String stringTags = "Tags : ";
+				Iterator<String> itTag = question.getTags().iterator();
+				while (itTag.hasNext()) {
+					String tag = itTag.next();
+					if (itTag.hasNext()) {
+						stringTags += tag + ", ";
+					}
+					else {
+						stringTags += tag;
+					}
+				}
+				
+				tags.setText(stringTags);
+			}
 	}
 }
 	
