@@ -56,8 +56,7 @@ public class ShowQuestionActivity extends Activity {
 		if (networkInfo != null && networkInfo.isConnected()) {
 			try {
 				new GetQuestionTask().execute(
-						"https://sweng-quiz.appspot.com/quizquestions/random")
-						.get();
+						"https://sweng-quiz.appspot.com/quizquestions/random").get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -99,8 +98,7 @@ public class ShowQuestionActivity extends Activity {
 
 				possibleAnswers.setAdapter(adapter);
 
-				possibleAnswers
-						.setOnItemClickListener(new OnItemClickListener() {
+				possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
 							@Override
 							public void onItemClick(AdapterView<?> a, View v,
 									int position, long id) {
@@ -112,19 +110,15 @@ public class ShowQuestionActivity extends Activity {
 									// found, thus we can react to user input
 									if (id == question.getSolutionIndex() - 1) {
 										// The right answer has been found
-										correctness
-												.setText(R.string.right_answer);
-										((Button) findViewById(R.id.next_question_button))
-												.setEnabled(true);
+										correctness.setText(R.string.right_answer);
+										((Button) findViewById(R.id.next_question_button)).setEnabled(true);
 									} else {
-										correctness
-												.setText(R.string.wrong_answer);
+										correctness.setText(R.string.wrong_answer);
 									}
 								}
 
 							}
 						});
-
 			}
 
 		}
@@ -144,8 +138,7 @@ public class ShowQuestionActivity extends Activity {
 			HttpGet firstRandom = new HttpGet(urls[0]);
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return SwengHttpClientFactory.getInstance().execute(
-						firstRandom, firstHandler);
+				return SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -160,11 +153,9 @@ public class ShowQuestionActivity extends Activity {
 				JSONObject jsonQuestion = new JSONObject(result);
 				question = new QuizQuestion(jsonQuestion.getInt("id"),
 						jsonQuestion.getString("question"),
-						convertJSONArrayToArrayListString(jsonQuestion
-								.getJSONArray("answers")),
+							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
-						convertJSONArrayToArrayListString(jsonQuestion
-								.getJSONArray("tags")));
+							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
