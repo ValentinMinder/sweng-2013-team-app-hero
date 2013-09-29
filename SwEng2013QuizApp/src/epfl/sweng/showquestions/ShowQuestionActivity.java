@@ -6,10 +6,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.entry.QuizQuestion;
 
@@ -38,6 +41,16 @@ public class ShowQuestionActivity extends Activity {
 					android.R.layout.simple_list_item_1, answer);
 
 			possibleAnswers.setAdapter(adapter);
+			
+			possibleAnswers.setOnItemClickListener(new OnItemClickListener()
+			{
+			     @Override
+			     public void onItemClick(AdapterView<?> a, View v, int position, long id) 
+			     {
+			          Toast.makeText(getBaseContext(), "Click on an answer", Toast.LENGTH_LONG).show();
+			      }
+			});
+			
 		} 
 
 	}
