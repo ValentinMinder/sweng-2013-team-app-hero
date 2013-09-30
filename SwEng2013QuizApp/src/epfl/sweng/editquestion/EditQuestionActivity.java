@@ -23,7 +23,6 @@ import epfl.sweng.entry.QuizQuestion;
  */
 public class EditQuestionActivity extends Activity {
 
-	private Button add;
 	private int correctAnswer;
 	private int correctIndex=0;
 	private int removeIndex=1000;
@@ -37,15 +36,16 @@ public class EditQuestionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
+
 		container = (LinearLayout) findViewById(R.id.container);
 
-		add = (Button) findViewById(R.id.add);
 		GridLayout grid = new GridLayout(this);
 		EditText answer = new EditText(this);
 		Button correct = new Button(this);
 		Button remove = new Button(this); 
-		
+
 		grid.setId(gridIndex);
+
 		answer.setId(answerIndex);
 		answer.setHint("Type in an answer");
 
@@ -59,9 +59,12 @@ public class EditQuestionActivity extends Activity {
 
 		container.addView(answer);
 		container.addView(grid);
+
 		grid.addView(correct);
 		grid.addView(remove);
+
 		idList.add(idIndex);
+
 		correctIndex++;
 		removeIndex++;
 		answerIndex++;
@@ -81,10 +84,12 @@ public class EditQuestionActivity extends Activity {
 
 		@Override
 		public void onClick(View view) {
+
 			for(int i=0;i<idList.size(); i++) {
 				Button allFalse = (Button) findViewById((idList.get(i)));
 				allFalse.setText("\u2718");
 			}
+
 			((Button)findViewById(view.getId())).setText("\u2714");
 		}
 	};
@@ -93,6 +98,7 @@ public class EditQuestionActivity extends Activity {
 
 		@Override
 		public void onClick(View view) {
+
 			int idToRemove = view.getId();
 			GridLayout delGrid = (GridLayout) findViewById((idToRemove+2000));
 			EditText delAnswer = (EditText) findViewById((idToRemove+1000));
@@ -100,7 +106,7 @@ public class EditQuestionActivity extends Activity {
 			container.removeView(delGrid);
 			container.removeView(delAnswer);
 			idList.remove((Integer)(idToRemove-1000));
-			
+
 		}
 	};
 
@@ -138,8 +144,12 @@ public class EditQuestionActivity extends Activity {
 		nextGrid.addView(nextRemove);
 
 	}
-	
+
 	public void submitQuestion(View view) {
+		if(checkSubmit()){
+		Toast.makeText(this, "true", Toast.LENGTH_SHORT).show();
+
+		}
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagsText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
@@ -147,23 +157,51 @@ public class EditQuestionActivity extends Activity {
 		int solutionIndex=-1;
 		String questionBody = editQuestion.getText().toString();
 		String tagString = tagsText.getText().toString();
-		
+
 		ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagString.split("[^A-Za-z0-9]")));
-		
+
 		for(int i = 0; i<idList.size(); i++) {
 			EditText ans = (EditText) findViewById((idList.get(i)+2000));
 			String ansString = ans.getText().toString();
 			answers.add(ansString);
-			
+
 			Button correct = (Button) findViewById((idList.get(i)));
 			if(correct.getText().equals("\u2714")) {
 				solutionIndex=i;
 			}	
 		}
-		
-		
+
+
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
-        Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show();
+
+	}
+
+	public boolean checkSubmit() {
+		int check=0;
+		boolean oneTrue = false;
+		EditText editQuestion = (EditText) findViewById(R.id.type_question);
+		String question = editQuestion.getText().toString();
+		if(idList.size()<2 || question.isEmpty() || question.equals(" ") ) {
+			check++;
+		}
+
+		for(int i=0;i<idList.size(); i++) {
+			Button isCorrect = (Button) findViewById((idList.get(i)));
+			if(isCorrect.getText().equals("\u2714")) {
+				oneTrue=true;
+			}
+			EditText isFull = (EditText) findViewById((idList.get(i)+2000));
+			if(isFull.getText().toString().equals(" ") || isFull.getText().toString().isEmpty()){
+				check++;
+			}
+		}
+
+		if(check==0 && oneTrue){
+			return true; 
+		}
+		
+		return false;
 
 	}
 
