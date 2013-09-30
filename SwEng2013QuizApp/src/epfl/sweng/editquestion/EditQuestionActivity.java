@@ -147,9 +147,6 @@ public class EditQuestionActivity extends Activity {
 
 	public void submitQuestion(View view) {
 		if(checkSubmit()){
-		Toast.makeText(this, "true", Toast.LENGTH_SHORT).show();
-
-		}
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagsText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
@@ -174,6 +171,11 @@ public class EditQuestionActivity extends Activity {
 
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
 		Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(this, "Errors in question format", Toast.LENGTH_SHORT).show();
+
+		}
+		
 
 	}
 
