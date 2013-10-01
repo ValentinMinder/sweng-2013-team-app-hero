@@ -6,6 +6,8 @@ import java.util.LinkedList;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -23,21 +25,39 @@ import epfl.sweng.entry.QuizQuestion;
  */
 public class EditQuestionActivity extends Activity {
 
-	private int correctIndex=0;
-	private int removeIndex=1000;
-	private int answerIndex=2000;
-	private int gridIndex=3000;
+
+	private final int correctCst=0;
+	private final int removeCst=1000;
+	private final int answerCst=2000;
+	private final int gridCst=3000;
+	
+	private int correctIndex;
+	private int removeIndex;
+	private int answerIndex;
+	private int gridIndex;
 	private LinearLayout container;
+	private EditText questionField;
 	private int idIndex=0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
+	private Button submit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
 
+		correctIndex=correctCst;
+		removeIndex=removeCst;
+		answerIndex=answerCst;
+		gridIndex=gridCst;
+		
 		container = (LinearLayout) findViewById(R.id.container);
-
+		submit = (Button) findViewById(R.id.submit_question);
+		questionField = (EditText) findViewById(R.id.type_question);
+		questionField.addTextChangedListener(textListener);
+		
+		submit.setEnabled(false);
+		
 		GridLayout grid = new GridLayout(this);
 		EditText answer = new EditText(this);
 		Button correct = new Button(this);
@@ -71,6 +91,13 @@ public class EditQuestionActivity extends Activity {
 		idIndex++;
 
 	}
+	private void submitControler(Button sub) {
+		if (audit()==0) {
+			sub.setEnabled(true);
+		} else {
+			sub.setEnabled(false);
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,34 +106,58 @@ public class EditQuestionActivity extends Activity {
 		return true;
 	}
 
-	View.OnClickListener answerHandler = new View.OnClickListener() {
+	private View.OnClickListener answerHandler = new View.OnClickListener() {
 
 		@Override
 		public void onClick(View view) {
 
-			for(int i=0;i<idList.size(); i++) {
-				Button allFalse = (Button) findViewById((idList.get(i)));
+			for (int i=0; i<idList.size(); i++) {
+				Button allFalse = (Button) findViewById(idList.get(i));
 				allFalse.setText("\u2718");
 			}
 
-			((Button)findViewById(view.getId())).setText("\u2714");
+			((Button) findViewById(view.getId())).setText("\u2714");
+			submitControler(submit);
+
 		}
 	};
 
-	View.OnClickListener removeHandler = new View.OnClickListener() {
+	private View.OnClickListener removeHandler = new View.OnClickListener() {
 
 		@Override
 		public void onClick(View view) {
 
 			int idToRemove = view.getId();
-			GridLayout delGrid = (GridLayout) findViewById((idToRemove+2000));
-			EditText delAnswer = (EditText) findViewById((idToRemove+1000));
+			GridLayout delGrid = (GridLayout) findViewById(idToRemove+answerCst);
+			EditText delAnswer = (EditText) findViewById(idToRemove+removeCst);
 			delGrid.removeAllViews();
 			container.removeView(delGrid);
 			container.removeView(delAnswer);
-			idList.remove((Integer)(idToRemove-1000));
+			idList.remove((Integer) (idToRemove-removeCst));
+			submitControler(submit);
 
 		}
+	};
+	
+	private TextWatcher textListener = new TextWatcher() {
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			submitControler(submit);
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			
+		}
+		
 	};
 
 
@@ -120,7 +171,7 @@ public class EditQuestionActivity extends Activity {
 		nextGrid.setId(gridIndex);
 		nextAnswer.setId(answerIndex);
 		nextAnswer.setHint("Type in an answer");
-
+		nextAnswer.addTextChangedListener(textListener);
 
 		nextCorrect.setText("\u2718");
 		nextCorrect.setId(correctIndex);
@@ -141,11 +192,13 @@ public class EditQuestionActivity extends Activity {
 		container.addView(nextGrid);
 		nextGrid.addView(nextCorrect);
 		nextGrid.addView(nextRemove);
+		
+		submitControler(submit);
+
 
 	}
 
 	public void submitQuestion(View view) {
-		if(audit()==0){
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagsText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
@@ -154,51 +207,48 @@ public class EditQuestionActivity extends Activity {
 		String questionBody = editQuestion.getText().toString();
 		String tagString = tagsText.getText().toString();
 
-		ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagString.split("[^A-Za-z0-9]")));
+		ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagString.split("\\W+")));
 
-		for(int i = 0; i<idList.size(); i++) {
-			EditText ans = (EditText) findViewById((idList.get(i)+2000));
+		for (int i = 0; i<idList.size(); i++) {
+			EditText ans = (EditText) findViewById(idList.get(i)+answerCst);
 			String ansString = ans.getText().toString();
 			answers.add(ansString);
 
-			Button correct = (Button) findViewById((idList.get(i)));
-			if(correct.getText().equals("\u2714")) {
+			Button correct = (Button) findViewById(idList.get(i));
+			if (correct.getText().equals("\u2714")) {
 				solutionIndex=i;
 			}	
 		}
 
-
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
-		Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(this, "Errors in question format", Toast.LENGTH_SHORT).show();
-
-		}
+		Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show(); // TO REMOVE BEFORE DEADLINE
 		
 
 	}
-
+	
 	public int audit() {
 		int checkErrors=0;
 		boolean oneTrue = false;
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		String question = editQuestion.getText().toString();
-		if(idList.size()<2 || question.isEmpty() || question.equals(" ") ) {
+		if (idList.size()<2 || question.trim().length()==0) {
 			checkErrors++;
 		}
 
-		for(int i=0;i<idList.size(); i++) {
-			Button isCorrect = (Button) findViewById((idList.get(i)));
-			if(isCorrect.getText().equals("\u2714")) {
+		for (int i=0; i<idList.size(); i++) {
+			Button isCorrect = (Button) findViewById(idList.get(i));
+			if (isCorrect.getText().equals("\u2714")) {
 				oneTrue=true;
 			}
-			if(!oneTrue) {
+			
+			EditText isFull = (EditText) findViewById(idList.get(i)+answerCst);
+			if (isFull.getText().toString().trim().length()==0) {
 				checkErrors++;
 			}
-			EditText isFull = (EditText) findViewById((idList.get(i)+2000));
-			if(isFull.getText().toString().equals(" ") || isFull.getText().toString().isEmpty()){
-				checkErrors++;
-			}
+		}
+		
+		if (!oneTrue) {
+			checkErrors++;
 		}
 		
 		return checkErrors;

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,42 +9,49 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".EditQuestionActivity" >
 
-    <EditText
-        android:id="@+id/type_question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/type_question" />
-
     <LinearLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/mainLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/type_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/type_question" />
+
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="addAnswer"
+            android:text="@string/plus" />
+
+        <EditText
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/question_tags" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/submit_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="submitQuestion"
+            android:text="@string/submit_question" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="addAnswer"
-        android:text="@string/plus" />
-
-    <EditText
-        android:id="@+id/tags"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/question_tags" >
-
-        <requestFocus />
-    </EditText>
-
-    <Button
-        android:id="@+id/submit_question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="submitQuestion"
-        android:text="@string/submit_question" />
-
-</LinearLayout>
+</ScrollView>
