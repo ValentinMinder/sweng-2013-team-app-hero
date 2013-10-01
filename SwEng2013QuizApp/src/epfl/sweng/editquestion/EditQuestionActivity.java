@@ -23,7 +23,6 @@ import epfl.sweng.entry.QuizQuestion;
  */
 public class EditQuestionActivity extends Activity {
 
-	private int correctAnswer;
 	private int correctIndex=0;
 	private int removeIndex=1000;
 	private int answerIndex=2000;
@@ -146,7 +145,7 @@ public class EditQuestionActivity extends Activity {
 	}
 
 	public void submitQuestion(View view) {
-		if(checkSubmit()){
+		if(audit()==0){
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagsText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
@@ -179,13 +178,13 @@ public class EditQuestionActivity extends Activity {
 
 	}
 
-	public boolean checkSubmit() {
-		int check=0;
+	public int audit() {
+		int checkErrors=0;
 		boolean oneTrue = false;
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		String question = editQuestion.getText().toString();
 		if(idList.size()<2 || question.isEmpty() || question.equals(" ") ) {
-			check++;
+			checkErrors++;
 		}
 
 		for(int i=0;i<idList.size(); i++) {
@@ -193,17 +192,16 @@ public class EditQuestionActivity extends Activity {
 			if(isCorrect.getText().equals("\u2714")) {
 				oneTrue=true;
 			}
+			if(!oneTrue) {
+				checkErrors++;
+			}
 			EditText isFull = (EditText) findViewById((idList.get(i)+2000));
 			if(isFull.getText().toString().equals(" ") || isFull.getText().toString().isEmpty()){
-				check++;
+				checkErrors++;
 			}
 		}
-
-		if(check==0 && oneTrue){
-			return true; 
-		}
 		
-		return false;
+		return checkErrors;
 
 	}
 
