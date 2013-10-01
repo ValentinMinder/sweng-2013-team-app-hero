@@ -80,7 +80,7 @@ public class ShowQuestionActivity extends Activity {
 	
 	public void fetchAndDisplay(View v) {
 		//disable the button nextQuestion and empty the TextView that indicate correctness of an answer
-		Button nextQuestion = (Button)findViewById(R.id.next_question_button);
+		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
 		nextQuestion.setEnabled(false);
 		TextView correctness = (TextView) findViewById(R.id.correctness);
 		correctness.setText("");
@@ -88,19 +88,10 @@ public class ShowQuestionActivity extends Activity {
 	}
 
 	public void displayQuestion() {
-		//fetchQuestion();
-		Button nextQuestion = (Button)findViewById(R.id.next_question_button);
+		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
 		nextQuestion.setEnabled(false);
 		
 		if (question != null) {
-			/*ArrayList<String> answer = new ArrayList<String>();
-			answer.add("42");
-			answer.add("21");
-			ArrayList<String> tags = new ArrayList<String>();
-			tags.add("life");
-			question = new QuizQuestion(1111, new String("what is the answer"),
-					answer, 1, tags);*/
-			
 			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
 			questionTitle.setText(question.getQuestion());
 	
@@ -152,8 +143,8 @@ public class ShowQuestionActivity extends Activity {
 				
 				tags.setText(stringTags);
 			}
+		}
 	}
-}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

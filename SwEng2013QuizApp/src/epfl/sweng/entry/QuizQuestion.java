@@ -13,23 +13,27 @@ public class QuizQuestion {
 	/**
 	 * Question identifier
 	 */
-	long id;
+	private long id;
+	
 	/**
 	 * Question field
 	 */
-	String question;
+	private String question;
+	
 	/**
 	 * List of answers
 	 */
-	ArrayList<String> answer;
+	private ArrayList<String> answer;
+	
 	/**
 	 * Index of the solution in the list of answers 
 	 */
-	int solutionIndex;
+	private int solutionIndex;
+	
 	/**
 	 * Question tags
 	 */
-	ArrayList<String> tags;
+	private ArrayList<String> tags;
 
 	public QuizQuestion(long id, String question, ArrayList<String> answer, int solutionIndex, ArrayList<String> tags) {
 		this.id=id;
