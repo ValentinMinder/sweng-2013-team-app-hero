@@ -20,7 +20,7 @@ import epfl.sweng.entry.QuizQuestion;
 
 /**
  * 
- * @author Xhanto
+ * @author xhanto
  * This class is used to submit a new question to the server.
  *
  */
@@ -31,7 +31,7 @@ public class EditQuestionActivity extends Activity {
 	private final int removeCst=1000;
 	private final int answerCst=2000;
 	private final int gridCst=3000;
-	
+
 	private int correctIndex;
 	private int removeIndex;
 	private int answerIndex;
@@ -51,14 +51,14 @@ public class EditQuestionActivity extends Activity {
 		removeIndex=removeCst;
 		answerIndex=answerCst;
 		gridIndex=gridCst;
-		
+
 		container = (LinearLayout) findViewById(R.id.container);
 		submit = (Button) findViewById(R.id.submit_question);
 		questionField = (EditText) findViewById(R.id.type_question);
 		questionField.addTextChangedListener(textListener);
-		
+
 		submit.setEnabled(false);
-		
+
 		GridLayout grid = new GridLayout(this);
 		EditText answer = new EditText(this);
 		Button correct = new Button(this);
@@ -94,7 +94,7 @@ public class EditQuestionActivity extends Activity {
 	}
 	/**
 	 * Method to set enable a button who is put in parameter.
-	 * @param sub the button who will be set enable if the variable audit = 0.
+	 * @param sub the button who will be set enable if the function audit returns 0.
 	 */
 	private void submitControler(Button sub) {
 		if (audit()==0) {
@@ -110,8 +110,10 @@ public class EditQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.edit_question, menu);
 		return true;
 	}
-	
-	 
+
+	/**
+	 * Listener that handle a click on the button to set a question correct.
+	 */
 	private View.OnClickListener answerHandler = new View.OnClickListener() {
 
 		@Override
@@ -127,7 +129,9 @@ public class EditQuestionActivity extends Activity {
 
 		}
 	};
-
+	/**
+	 * Listener that handle a click on the remove button
+	 */
 	private View.OnClickListener removeHandler = new View.OnClickListener() {
 
 		@Override
@@ -144,7 +148,9 @@ public class EditQuestionActivity extends Activity {
 
 		}
 	};
-	
+	/**
+	 * Listener that react and check if the question is correctly constructed when a text is written on an answer field.
+	 */
 	private TextWatcher textListener = new TextWatcher() {
 
 		@Override
@@ -155,20 +161,20 @@ public class EditQuestionActivity extends Activity {
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
 				int after) {
-			
+
 		}
 
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before,
 				int count) {
-			
+
 		}
-		
+
 	};
 
 
 	/**
-	 * Method to add an answer of a new question
+	 * Method to add an answer field, a button to set it correct and a button to remove it.
 	 * @param view 
 	 */
 	//View a faire
@@ -202,13 +208,13 @@ public class EditQuestionActivity extends Activity {
 		container.addView(nextGrid);
 		nextGrid.addView(nextCorrect);
 		nextGrid.addView(nextRemove);
-		
+
 		submitControler(submit);
 
 
 	}
 	/**
-	 * Method to submit the Question 
+	 * Method to create and submit a question.
 	 * @param view
 	 */
 	//View a faire
@@ -236,7 +242,7 @@ public class EditQuestionActivity extends Activity {
 
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
 		Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show(); // TO REMOVE BEFORE DEADLINE
-		
+
 
 	}
 	/**
@@ -257,17 +263,17 @@ public class EditQuestionActivity extends Activity {
 			if (isCorrect.getText().equals("\u2714")) {
 				oneTrue=true;
 			}
-			
+
 			EditText isFull = (EditText) findViewById(idList.get(i)+answerCst);
 			if (isFull.getText().toString().trim().length()==0) {
 				checkErrors++;
 			}
 		}
-		
+
 		if (!oneTrue) {
 			checkErrors++;
 		}
-		
+
 		return checkErrors;
 
 	}
