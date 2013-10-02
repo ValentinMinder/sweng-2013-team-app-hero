@@ -191,7 +191,8 @@ public class ShowQuestionActivity extends Activity {
 		}
 
 		/**
-		 * 
+		 * Method who is gonna take the result of an URL request and parse it in a 
+		 * QuizQuestion Object. and after display it.
 		 */
 		protected void onPostExecute(String result) {
 			try {
