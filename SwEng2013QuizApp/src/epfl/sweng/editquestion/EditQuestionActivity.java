@@ -20,7 +20,8 @@ import epfl.sweng.entry.QuizQuestion;
 
 /**
  * 
- * @author xhanto
+ * @author Xhanto
+ * This class is used to submit a new question to the server.
  *
  */
 public class EditQuestionActivity extends Activity {
@@ -91,6 +92,10 @@ public class EditQuestionActivity extends Activity {
 		idIndex++;
 
 	}
+	/**
+	 * Method to set enable a button who is put in parameter.
+	 * @param sub the button who will be set enable if the variable audit = 0.
+	 */
 	private void submitControler(Button sub) {
 		if (audit()==0) {
 			sub.setEnabled(true);
@@ -105,7 +110,8 @@ public class EditQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.edit_question, menu);
 		return true;
 	}
-
+	
+	 
 	private View.OnClickListener answerHandler = new View.OnClickListener() {
 
 		@Override
@@ -161,7 +167,11 @@ public class EditQuestionActivity extends Activity {
 	};
 
 
-
+	/**
+	 * Method to add an answer of a new question
+	 * @param view 
+	 */
+	//View a faire
 	public void addAnswer(View view) {
 		GridLayout nextGrid = new GridLayout(this);
 		EditText nextAnswer = new EditText(this);
@@ -197,7 +207,11 @@ public class EditQuestionActivity extends Activity {
 
 
 	}
-
+	/**
+	 * Method to submit the Question 
+	 * @param view
+	 */
+	//View a faire
 	public void submitQuestion(View view) {
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagsText = (EditText) findViewById(R.id.tags);
@@ -225,7 +239,10 @@ public class EditQuestionActivity extends Activity {
 		
 
 	}
-	
+	/**
+	 * Method audit to count the number of errors in the question
+	 * @return
+	 */
 	public int audit() {
 		int checkErrors=0;
 		boolean oneTrue = false;

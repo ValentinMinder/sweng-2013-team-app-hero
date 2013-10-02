@@ -33,7 +33,11 @@ import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
-
+/**
+ * Class to show random question from the server.
+ * @author juniors
+ *
+ */
 public class ShowQuestionActivity extends Activity {
 
 	private QuizQuestion question = null;
