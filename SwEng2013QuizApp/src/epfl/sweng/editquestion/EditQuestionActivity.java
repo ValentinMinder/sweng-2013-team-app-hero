@@ -246,7 +246,7 @@ public class EditQuestionActivity extends Activity {
 
 	}
 	/**
-	 * Method audit to count the number of errors in the question
+	 * Method audit to count the number of errors in the question (returns 0 if none)
 	 * @return
 	 */
 	public int audit() {

@@ -53,6 +53,9 @@ public class ShowQuestionActivity extends Activity {
 		return arrayReturn;
 	}
 
+	/**
+	 * Method who is going to take a random question on the server
+	 */
 	private void fetchQuestion() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -82,6 +85,12 @@ public class ShowQuestionActivity extends Activity {
 		fetchQuestion();
 	}
 	
+	/**
+	 * Method who is going to put correctly the display for the question 
+	 * and search the question to display it. 
+	 * @param v
+	 */
+	//TODO param v
 	public void fetchAndDisplay(View v) {
 		//disable the button nextQuestion and empty the TextView that indicate correctness of an answer
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
@@ -91,6 +100,9 @@ public class ShowQuestionActivity extends Activity {
 		fetchQuestion();
 	}
 
+	/**
+	 * Method who is going to make the window to diaplay the question.
+	 */
 	public void displayQuestion() {
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
 		nextQuestion.setEnabled(false);
@@ -156,7 +168,11 @@ public class ShowQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.show_question, menu);
 		return true;
 	}
-
+	/**
+	 * Method who is use to get the task of the question
+	 * @author juniors
+	 *
+	 */
 	private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -174,6 +190,9 @@ public class ShowQuestionActivity extends Activity {
 			return null;
 		}
 
+		/**
+		 * 
+		 */
 		protected void onPostExecute(String result) {
 			try {
 				JSONObject jsonQuestion = new JSONObject(result);
