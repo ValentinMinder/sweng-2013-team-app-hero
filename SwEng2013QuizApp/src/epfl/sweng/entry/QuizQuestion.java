@@ -35,12 +35,12 @@ public class QuizQuestion {
 	 */
 	private ArrayList<String> tags;
 
-	public QuizQuestion(long id, String question, ArrayList<String> answer, int solutionIndex, ArrayList<String> tags) {
-		this.id=id;
-		this.question=question;
-		this.answer=answer;
-		this.solutionIndex=solutionIndex;
-		this.tags=tags;
+	public QuizQuestion(long idQ, String quest, ArrayList<String> answ, int solutionInd, ArrayList<String> tagsList) {
+		this.id=idQ;
+		this.question=quest;
+		this.answer=answ;
+		this.solutionIndex=solutionInd;
+		this.tags=tagsList;
 	}
 
 	public long getId() {

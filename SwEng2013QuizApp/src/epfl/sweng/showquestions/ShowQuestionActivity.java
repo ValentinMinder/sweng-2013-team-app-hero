@@ -41,7 +41,6 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
 public class ShowQuestionActivity extends Activity {
 
 	private QuizQuestion question = null;
-	//TODO look if there is an available method that can be used to check if the AsyncTask has ended
 	//TODO: this method may be useful elsewhere: why not putting it in a separate utility class?
 	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException {
 		ArrayList<String> arrayReturn = new ArrayList<String>();
@@ -86,7 +85,7 @@ public class ShowQuestionActivity extends Activity {
 
 		fetchQuestion();
 	}
-	
+
 	/**
 	 * Method who is going to put correctly the display for the question 
 	 * and search the question to display it. 
@@ -108,43 +107,43 @@ public class ShowQuestionActivity extends Activity {
 	public void displayQuestion() {
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
 		nextQuestion.setEnabled(false);
-		
+
 		if (question != null) {
 			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
 			questionTitle.setText(question.getQuestion());
-	
+
 			ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
-	
+
 			if (possibleAnswers != null) {
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 						android.R.layout.simple_list_item_1, question.getAnswer());
-	
+
 				possibleAnswers.setAdapter(adapter);
 				TestingTransactions.check(TTChecks.QUESTION_SHOWN);
-				
-				possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
-						@Override
-						public void onItemClick(AdapterView<?> a, View v,
-								int position, long id) {
-							TextView correctness = (TextView) findViewById(R.id.correctness);
-							Button nextQuestion = (Button) findViewById(R.id.next_question_button);
-							if (!nextQuestion.isEnabled()) {
-								// The right solution has not already been
-								// found, thus we can react to user input
-								if (id == question.getSolutionIndex()) {
-									// The right answer has been found
-									correctness.setText(R.string.right_answer);
-									((Button) findViewById(R.id.next_question_button)).setEnabled(true);
-								} else {
-									correctness.setText(R.string.wrong_answer);
-								}
-							}
-							TestingTransactions.check(TTChecks.ANSWER_SELECTED);
 
+				possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> a, View v,
+							int position, long id) {
+						TextView correctness = (TextView) findViewById(R.id.correctness);
+						Button nextQuestion = (Button) findViewById(R.id.next_question_button);
+						if (!nextQuestion.isEnabled()) {
+							// The right solution has not already been
+							// found, thus we can react to user input
+							if (id == question.getSolutionIndex()) {
+								// The right answer has been found
+								correctness.setText(R.string.right_answer);
+								((Button) findViewById(R.id.next_question_button)).setEnabled(true);
+							} else {
+								correctness.setText(R.string.wrong_answer);
+							}
 						}
-					});
+						TestingTransactions.check(TTChecks.ANSWER_SELECTED);
+
+					}
+				});
 			}
-			
+
 			TextView tags = (TextView) findViewById(R.id.tags);
 			if (tags != null) {
 				String stringTags = "Tags : ";
@@ -153,17 +152,16 @@ public class ShowQuestionActivity extends Activity {
 					String tag = itTag.next();
 					if (itTag.hasNext()) {
 						stringTags += tag + ", ";
-					}
-					else {
+					} else {
 						stringTags += tag;
 					}
 				}
-				
+
 				tags.setText(stringTags);
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -201,9 +199,9 @@ public class ShowQuestionActivity extends Activity {
 				JSONObject jsonQuestion = new JSONObject(result);
 				question = new QuizQuestion(jsonQuestion.getInt("id"),
 						jsonQuestion.getString("question"),
-							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
-							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
 				displayQuestion();
 			} catch (JSONException e) {
 				e.printStackTrace();

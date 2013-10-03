@@ -16,6 +16,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -67,6 +68,7 @@ public class EditQuestionActivity extends Activity {
 		answerIndex=answerCst;
 		gridIndex=gridCst;
 
+
 		container = (LinearLayout) findViewById(R.id.container);
 		submit = (Button) findViewById(R.id.submit_question);
 		questionField = (EditText) findViewById(R.id.type_question);
@@ -82,13 +84,13 @@ public class EditQuestionActivity extends Activity {
 		grid.setId(gridIndex);
 
 		answer.setId(answerIndex);
-		answer.setHint("Type in an answer");
+		answer.setHint(R.string.type_answer);
 
-		correct.setText("\u2718");
+		correct.setText(R.string.wrong_answer);
 		correct.setId(correctIndex);
 		correct.setOnClickListener(answerHandler);
 
-		remove.setText("\u002D");
+		remove.setText(R.string.minus);
 		remove.setId(removeIndex);
 		remove.setOnClickListener(removeHandler);
 
@@ -119,6 +121,8 @@ public class EditQuestionActivity extends Activity {
 		}
 	}
 
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -136,10 +140,10 @@ public class EditQuestionActivity extends Activity {
 
 			for (int i=0; i<idList.size(); i++) {
 				Button allFalse = (Button) findViewById(idList.get(i));
-				allFalse.setText("\u2718");
+				allFalse.setText(R.string.wrong_answer);
 			}
 
-			((Button) findViewById(view.getId())).setText("\u2714");
+			((Button) findViewById(view.getId())).setText(R.string.right_answer);
 			submitControler(submit);
 
 		}
@@ -201,14 +205,14 @@ public class EditQuestionActivity extends Activity {
 
 		nextGrid.setId(gridIndex);
 		nextAnswer.setId(answerIndex);
-		nextAnswer.setHint("Type in an answer");
+		nextAnswer.setHint(R.string.type_answer);
 		nextAnswer.addTextChangedListener(textListener);
 
-		nextCorrect.setText("\u2718");
+		nextCorrect.setText(R.string.wrong_answer);
 		nextCorrect.setId(correctIndex);
 		nextCorrect.setOnClickListener(answerHandler);
 
-		nextRemove.setText("\u002D");
+		nextRemove.setText(R.string.minus);
 		nextRemove.setId(removeIndex);
 		nextRemove.setOnClickListener(removeHandler);
 
@@ -250,7 +254,7 @@ public class EditQuestionActivity extends Activity {
 			answers.add(ansString);
 
 			Button correct = (Button) findViewById(idList.get(i));
-			if (correct.getText().equals("\u2714")) {
+			if (correct.getText().equals(R.string.right_answer)) {
 				solutionIndex=i;
 			}	
 		}
@@ -258,6 +262,7 @@ public class EditQuestionActivity extends Activity {
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
 		submitQuestion(question.toPostEntity());
 		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show(); // TODO: TO REMOVE BEFORE DEADLINE
+
 
 	}
 	/**
@@ -292,7 +297,7 @@ public class EditQuestionActivity extends Activity {
 		return checkErrors;
 
 	}
-	
+
 	/**
 	 * This method submit the question to the server.
 	 * 
@@ -317,7 +322,13 @@ public class EditQuestionActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 		}
 	}
-	
+	/**
+	 * 
+	 *  Task to submit a question
+	 * 
+	 * @author Valentin
+	 *
+	 */
 	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
 
 		/**
@@ -327,7 +338,7 @@ public class EditQuestionActivity extends Activity {
 		protected String doInBackground(String... questionElement) {
 			String SERVER_URL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(SERVER_URL + "quizquestions/");
-			
+
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 				post.setHeader("Content-type", "application/json");
@@ -336,7 +347,7 @@ public class EditQuestionActivity extends Activity {
 				return s;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
-			} catch (HttpResponseException e){
+			} catch (HttpResponseException e) {
 				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -355,12 +366,17 @@ public class EditQuestionActivity extends Activity {
 			if (result != null) {
 				Toast.makeText(getBaseContext(), "Server successfully replied! Question submitted",
 						Toast.LENGTH_SHORT).show();
+
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
+
 				// result contain the question submitted with it's id replied by server, but we don't use it for now.
 			} else {
 				Toast.makeText(getBaseContext(), "Unable to submit question: something wrong happen!",
 						Toast.LENGTH_LONG).show();
 			}
-			
+
 			//TODO: RESET the edit question view (voir avec steph)
 		}
 
