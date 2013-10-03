@@ -47,11 +47,13 @@ public class EditQuestionActivity extends Activity {
 	private final int answerCst=2000;
 	private final int gridCst=3000;
 
+
 	private int correctIndex;
 	private int removeIndex;
 	private int answerIndex;
 	private int gridIndex;
 	private LinearLayout container;
+	private LinearLayout mainLayout;
 	private EditText questionField;
 	private int idIndex=0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
@@ -62,6 +64,15 @@ public class EditQuestionActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
 
+		mainLayout = (LinearLayout) findViewById(R.id.mainLayout);
+
+		initialize();
+
+	}
+
+
+	private void initialize() {
+
 		correctIndex=correctCst;
 		removeIndex=removeCst;
 		answerIndex=answerCst;
@@ -71,8 +82,6 @@ public class EditQuestionActivity extends Activity {
 		submit = (Button) findViewById(R.id.submit_question);
 		questionField = (EditText) findViewById(R.id.type_question);
 		questionField.addTextChangedListener(textListener);
-
-		submit.setEnabled(false);
 
 		GridLayout grid = new GridLayout(this);
 		EditText answer = new EditText(this);
@@ -106,7 +115,9 @@ public class EditQuestionActivity extends Activity {
 		gridIndex++;
 		idIndex++;
 
+		submit.setEnabled(false);
 	}
+
 	/**
 	 * Method to set enable a button who is put in parameter.
 	 * @param sub the button who will be set enable if the function audit returns 0.
@@ -259,6 +270,8 @@ public class EditQuestionActivity extends Activity {
 		submitQuestion(question.toPostEntity());
 		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show(); // TODO: TO REMOVE BEFORE DEADLINE
 
+
+
 	}
 	/**
 	 * Method audit to count the number of errors in the question (returns 0 if none)
@@ -292,7 +305,7 @@ public class EditQuestionActivity extends Activity {
 		return checkErrors;
 
 	}
-	
+
 	/**
 	 * This method submit the question to the server.
 	 * 
@@ -317,7 +330,7 @@ public class EditQuestionActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
 	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
 
 		/**
@@ -327,7 +340,7 @@ public class EditQuestionActivity extends Activity {
 		protected String doInBackground(String... questionElement) {
 			String SERVER_URL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(SERVER_URL + "quizquestions/");
-			
+
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 				post.setHeader("Content-type", "application/json");
@@ -355,12 +368,15 @@ public class EditQuestionActivity extends Activity {
 			if (result != null) {
 				Toast.makeText(getBaseContext(), "Server successfully replied! Question submitted",
 						Toast.LENGTH_SHORT).show();
+					mainLayout.removeAllViewsInLayout();
+					initialize();
+				
 				// result contain the question submitted with it's id replied by server, but we don't use it for now.
 			} else {
 				Toast.makeText(getBaseContext(), "Unable to submit question: something wrong happen!",
 						Toast.LENGTH_LONG).show();
 			}
-			
+
 			//TODO: RESET the edit question view (voir avec steph)
 		}
 
