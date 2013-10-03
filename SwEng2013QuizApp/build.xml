@@ -88,9 +88,7 @@
     -->
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
-	
-</project>
-<target name="reports" depends="debug" description="generates javadoc and also UML Diagram" >
+	<target name="reports" depends="debug" description="generates javadoc and also UML Diagram" >
 
   	  <property name="reports.dir" value="reports" />
 	
@@ -118,3 +116,5 @@
         	<mapper from="*.dot" to="*.png" type="glob" />
     	</apply>
 	</target>
+    
+</project>
