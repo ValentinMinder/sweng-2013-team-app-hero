@@ -320,6 +320,9 @@ public class EditQuestionActivity extends Activity {
 	
 	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
 
+		/**
+		 * Execute and retrieve the answer from the website.
+		 */
 		@Override
 		protected String doInBackground(String... questionElement) {
 			String SERVER_URL = "https://sweng-quiz.appspot.com/";
@@ -329,11 +332,11 @@ public class EditQuestionActivity extends Activity {
 				post.setEntity(new StringEntity(questionElement[0]));
 				post.setHeader("Content-type", "application/json");
 				ResponseHandler<String> handler = new BasicResponseHandler();
-				return SwengHttpClientFactory.getInstance().execute(post, handler);
+				String s = SwengHttpClientFactory.getInstance().execute(post, handler);
+				return s;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			} catch (HttpResponseException e){
-				//TODO: in case of errors (not http 201) - app kills! handle it but how?!?
 				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -348,23 +351,15 @@ public class EditQuestionActivity extends Activity {
 		 * Execute and retrieve the answer from the website.
 		 */
 		protected void onPostExecute(String result) {
-			//System.out.println(result);
-			//TODO: how to check that it's 201 and not 400 bad request?!?
-			Toast.makeText(getBaseContext(), "server replied!",
-					Toast.LENGTH_LONG).show();
-//			try {
-//				JSONObject jsonQuestion = new JSONObject(result);
-//				// TODO: do we need to check it?
-//				QuizQuestion question = new QuizQuestion(jsonQuestion.getInt("id"),
-//						jsonQuestion.getString("question"),
-//							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
-//						jsonQuestion.getInt("solutionIndex"),
-//							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
-//				//TODO: do we need to display it
-//				displayQuestion();
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
+			// if result is null, server replied not a 2xx status.
+			if (result != null) {
+				Toast.makeText(getBaseContext(), "Server successfully replied! Question submitted",
+						Toast.LENGTH_SHORT).show();
+				// result contain the question submitted with it's id replied by server, but we don't use it for now.
+			} else {
+				Toast.makeText(getBaseContext(), "Unable to submit question: something wrong happen!",
+						Toast.LENGTH_LONG).show();
+			}
 			
 			//TODO: RESET the edit question view (voir avec steph)
 		}
