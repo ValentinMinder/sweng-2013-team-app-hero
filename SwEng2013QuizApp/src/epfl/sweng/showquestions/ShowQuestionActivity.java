@@ -1,7 +1,6 @@
 package epfl.sweng.showquestions;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
@@ -9,7 +8,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +31,7 @@ import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.utils.JSONUtils;
 /**
  * Class to show random question from the server.
  * @author juniors
@@ -41,17 +40,6 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
 public class ShowQuestionActivity extends Activity {
 
 	private QuizQuestion question = null;
-	//TODO: this method may be useful elsewhere: why not putting it in a separate utility class?
-	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException {
-		ArrayList<String> arrayReturn = new ArrayList<String>();
-		if (jsonArray != null) {
-			for (int i = 0; i < jsonArray.length(); i++) {
-				arrayReturn.add(jsonArray.get(i).toString());
-			}
-		}
-
-		return arrayReturn;
-	}
 
 	/**
 	 * Method who is going to take a random question on the server.
@@ -199,9 +187,9 @@ public class ShowQuestionActivity extends Activity {
 				JSONObject jsonQuestion = new JSONObject(result);
 				question = new QuizQuestion(jsonQuestion.getInt("id"),
 						jsonQuestion.getString("question"),
-						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+						JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
 						jsonQuestion.getInt("solutionIndex"),
-						convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+						JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
 				displayQuestion();
 			} catch (JSONException e) {
 				e.printStackTrace();
