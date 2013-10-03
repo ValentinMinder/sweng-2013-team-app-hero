@@ -99,7 +99,7 @@ public class QuizQuestion {
 			if (i == 0){
 				entity.append(" \"" + tags.get(i) + " \"");
 			} else {
-				entity.append(", \"" + tags.get(i) + "\"");
+				entity.append(", \"" + tags.get(i) + "\""); //todo
 			}
 		}
 		entity.append(" ] }");
