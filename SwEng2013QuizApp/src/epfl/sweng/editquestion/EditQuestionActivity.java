@@ -256,8 +256,7 @@ public class EditQuestionActivity extends Activity {
 		}
 
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
-		executeNetworkASzncTask(question.toPostEntity(), new SubmitQuestionTask());
-//		submitQuestion(question.toPostEntity());
+		submitQuestion(question.toPostEntity());
 		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show(); // TODO: TO REMOVE BEFORE DEADLINE
 
 	}
@@ -294,15 +293,20 @@ public class EditQuestionActivity extends Activity {
 
 	}
 	
-	
-	private void executeNetworkASzncTask(String questionAsEntity, AsyncTask<String, Void, String> aSync) {
+	/**
+	 * This method submit the question to the server.
+	 * 
+	 * In fact, it checks the connection and ask an async task to submit the question
+	 * @param questionAsEntity question already formatted as entity
+	 */
+	private void submitQuestion(String questionAsEntity) {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
 		// Test network connection
 		if (networkInfo != null && networkInfo.isConnected()) {
 			try {
-				aSync.execute(questionAsEntity).get();
+				new SubmitQuestionTask().execute(questionAsEntity).get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -313,39 +317,12 @@ public class EditQuestionActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 		}
 	}
-	/**
-	 * This method submit the question to the server.
-	 * 
-	 * In fact, it checks the connection and ask an async task to submit the question
-	 * @param questionAsEntity question already formatted as entity
-	 */
-	//TODO: factorise this submit!
-//	private void submitQuestion(String questionAsEntity) {
-//		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//
-//		// Test network connection
-//		if (networkInfo != null && networkInfo.isConnected()) {
-//			try {
-//				new SubmitQuestionTask().execute(questionAsEntity).get();
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			} catch (ExecutionException e) {
-//				e.printStackTrace();
-//			}
-//		} else {
-//			Toast.makeText(getBaseContext(), "No network connection available",
-//					Toast.LENGTH_LONG).show();
-//		}
-//	}
 	
 	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... questionElement) {
-			// TODO: put this elsewhere?
 			String SERVER_URL = "https://sweng-quiz.appspot.com/";
-			
 			HttpPost post = new HttpPost(SERVER_URL + "quizquestions/");
 			
 			try {

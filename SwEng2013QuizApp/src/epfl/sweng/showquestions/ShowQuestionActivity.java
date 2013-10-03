@@ -55,7 +55,9 @@ public class ShowQuestionActivity extends Activity {
 	}
 
 	/**
-	 * Method who is going to take a random question on the server
+	 * Method who is going to take a random question on the server.
+	 * 
+	 * This is going to ask an asynchronous task to do this.
 	 */
 	private void fetchQuestion() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -72,7 +74,6 @@ public class ShowQuestionActivity extends Activity {
 				e.printStackTrace();
 			}
 		} else {
-			// TODO No network connection available
 			Toast.makeText(getBaseContext(), "No network connection available",
 					Toast.LENGTH_LONG).show();
 		}
