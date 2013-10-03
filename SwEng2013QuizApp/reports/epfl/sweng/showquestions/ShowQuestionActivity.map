@@ -1,0 +1,18 @@
+<map id="G" name="G">
+<area shape="rect" id="c540" href="../entry/QuizQuestion.html" title="epfl.sweng.entry.QuizQuestion" alt="" coords="16,7686,707,7871"/>
+<area shape="rect" id="node1" href="../entry/QuizQuestion.html" title="&lt;TABLE&gt;" alt="" coords="5,7681,717,7877"/>
+<area shape="rect" id="c559" href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/ArrayList.html" title="java.util.ArrayList" alt="" coords="206,12203,517,12725"/>
+<area shape="rect" id="node6" href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/ArrayList.html" title="&lt;TABLE&gt;" alt="" coords="196,12198,527,12730"/>
+<area shape="rect" id="c543" href="./ShowQuestionActivity.html" title="epfl.sweng.showquestions.ShowQuestionActivity" alt="" coords="1401,3217,1705,3354"/>
+<area shape="rect" id="node2" href="./ShowQuestionActivity.html" title="&lt;TABLE&gt;" alt="" coords="1391,3211,1716,3359"/>
+<area shape="rect" id="c560" href="http://java.sun.com/j2se/1.4.2/docs/api/android/view/Menu.html" title="android.view.Menu" alt="" coords="803,7486,1619,8071"/>
+<area shape="rect" id="node11" href="http://java.sun.com/j2se/1.4.2/docs/api/android/view/Menu.html" title="&lt;TABLE&gt;" alt="" coords="792,7481,1629,8077"/>
+<area shape="rect" id="c561" href="http://java.sun.com/j2se/1.4.2/docs/api/android/os/Bundle.html" title="android.os.Bundle" alt="" coords="1664,7022,2131,8535"/>
+<area shape="rect" id="node13" href="http://java.sun.com/j2se/1.4.2/docs/api/android/os/Bundle.html" title="&lt;TABLE&gt;" alt="" coords="1653,7017,2141,8541"/>
+<area shape="rect" id="c562" href="http://java.sun.com/j2se/1.4.2/docs/api/android/view/View.html" title="android.view.View" alt="" coords="2176,3414,2901,12143"/>
+<area shape="rect" id="node17" href="http://java.sun.com/j2se/1.4.2/docs/api/android/view/View.html" title="&lt;TABLE&gt;" alt="" coords="2165,3409,2912,12149"/>
+<area shape="rect" id="c563" href="http://java.sun.com/j2se/1.4.2/docs/api/org/json/JSONArray.html" title="org.json.JSONArray" alt="" coords="2946,7406,3262,8151"/>
+<area shape="rect" id="node19" href="http://java.sun.com/j2se/1.4.2/docs/api/org/json/JSONArray.html" title="&lt;TABLE&gt;" alt="" coords="2936,7401,3272,8157"/>
+<area shape="rect" id="c558" href="http://java.sun.com/j2se/1.4.2/docs/api/android/app/Activity.html" title="android.app.Activity" alt="" coords="1153,11,1953,3157"/>
+<area shape="rect" id="node3" href="http://java.sun.com/j2se/1.4.2/docs/api/android/app/Activity.html" title="&lt;TABLE&gt;" alt="" coords="1143,6,1964,3162"/>
+</map>
