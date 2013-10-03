@@ -138,8 +138,8 @@ public class ShowQuestionActivity extends Activity {
 								} else {
 									correctness.setText(R.string.wrong_answer);
 								}
-								TestingTransactions.check(TTChecks.ANSWER_SELECTED);
 							}
+							TestingTransactions.check(TTChecks.ANSWER_SELECTED);
 
 						}
 					});
