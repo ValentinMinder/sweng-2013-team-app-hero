@@ -42,6 +42,7 @@ public class ShowQuestionActivity extends Activity {
 
 	private QuizQuestion question = null;
 	//TODO look if there is an available method that can be used to check if the AsyncTask has ended
+	//TODO: this method may be useful elsewhere: why not putting it in a separate utility class?
 	private ArrayList<String> convertJSONArrayToArrayListString(JSONArray jsonArray) throws JSONException {
 		ArrayList<String> arrayReturn = new ArrayList<String>();
 		if (jsonArray != null) {
@@ -101,7 +102,7 @@ public class ShowQuestionActivity extends Activity {
 	}
 
 	/**
-	 * Method who is going to make the window to diaplay the question.
+	 * Method who is going to make the window to display the question.
 	 */
 	public void displayQuestion() {
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);

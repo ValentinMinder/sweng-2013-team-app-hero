@@ -1,10 +1,24 @@
 package epfl.sweng.editquestion;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.entry.QuizQuestion;
+import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 /**
  * 
@@ -241,8 +256,8 @@ public class EditQuestionActivity extends Activity {
 		}
 
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
-		Toast.makeText(this, question.toString(), Toast.LENGTH_SHORT).show(); // TO REMOVE BEFORE DEADLINE
-
+		submitQuestion(question.toPostEntity());
+		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show(); // TODO: TO REMOVE BEFORE DEADLINE
 
 	}
 	/**
@@ -275,6 +290,88 @@ public class EditQuestionActivity extends Activity {
 		}
 
 		return checkErrors;
+
+	}
+	
+	/**
+	 * This method submit the question to the server.
+	 * 
+	 * In fact, it checks the connection and ask an async task to submit the question
+	 * @param questionAsEntity question already formatted as entity
+	 */
+	private void submitQuestion(String questionAsEntity) {
+		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+		// Test network connection
+		if (networkInfo != null && networkInfo.isConnected()) {
+			try {
+				new SubmitQuestionTask().execute(questionAsEntity).get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// TODO No network connection available
+			// in fact, doesn't go in there, and then app freeze!  and launch UnknownHostException
+			Toast.makeText(getBaseContext(), "No network connection available",
+					Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... questionElement) {
+			// TODO: put this elsewhere
+			String SERVER_URL = "https://sweng-quiz.appspot.com/";
+			
+			HttpPost post = new HttpPost(SERVER_URL + "quizquestions/");
+			
+			try {
+				post.setEntity(new StringEntity(questionElement[0]));
+				post.setHeader("Content-type", "application/json");
+				ResponseHandler<String> handler = new BasicResponseHandler();
+				return SwengHttpClientFactory.getInstance().execute(post, handler);
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (HttpResponseException e){
+				//TODO: in case of errors (not http 201) - app kills! handle it but how?!?
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+
+			return null;
+		}
+
+		/**
+		 * 
+		 */
+		protected void onPostExecute(String result) {
+			//System.out.println(result);
+			//TODO: how to check that it's 201 and not 400 bad request?!?
+			Toast.makeText(getBaseContext(), "server replied!",
+					Toast.LENGTH_LONG).show();
+//			try {
+//				JSONObject jsonQuestion = new JSONObject(result);
+//				// TODO: do we need to check it?
+//				QuizQuestion question = new QuizQuestion(jsonQuestion.getInt("id"),
+//						jsonQuestion.getString("question"),
+//							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+//						jsonQuestion.getInt("solutionIndex"),
+//							convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+//				//TODO: do we need to display it
+//				displayQuestion();
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+			
+			//TODO: RESET
+		}
 
 	}
 

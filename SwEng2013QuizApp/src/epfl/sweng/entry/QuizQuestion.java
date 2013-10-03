@@ -70,5 +70,41 @@ public class QuizQuestion {
 				+ ", tags=" + tags + "]";
 	}
 	
+	/**
+	 * Formats the question in a JSON object.
+	 * 
+	 * Example:
+	 *  "{" +
+	 *  " \"question\":\"What is the answer to life, the universe and everything?\"," +
+	 *  " \"answers\": [ \"42\", \"24\" ]," +
+	 *  " \"solutionIndex\": 0," +
+	 *  " \"tags\": [ \"h2g2\", \"trivia\" ]" +
+	 *  " }";
+	 * @return a formatted JSON object that fits for posting on sweng website
+	 */
+	public String toPostEntity() {
+		// TODO: it works, but it seems very VERY complicated!
+		StringBuffer entity = new StringBuffer();
+		entity.append("{" +
+			    " \"question\": \"" + question + "\"," +
+			    " \"answers\": [");
+		entity.append(" \"" + answer.get(0) + " \"");
+		for (int i = 1; i < answer.size(); i++) {
+			entity.append(", \"" + answer.get(i) + "\"");
+		}
+		entity.append(" ]," +
+			    " \"solutionIndex\": " + solutionIndex + "," +
+			    " \"tags\": [");
+		for (int i = 1; i < tags.size(); i++) {
+			if (i == 0){
+				entity.append(" \"" + tags.get(i) + " \"");
+			} else {
+				entity.append(", \"" + tags.get(i) + "\"");
+			}
+		}
+		entity.append(" ] }");
+		return entity.toString();
+	}
+	
 
 }
