@@ -83,7 +83,6 @@ public class QuizQuestion {
 	 * @return a formatted JSON object that fits for posting on sweng website
 	 */
 	public String toPostEntity() {
-		// TODO: it works, but it seems very VERY complicated!
 		StringBuffer entity = new StringBuffer();
 		entity.append("{" +
 			    " \"question\": \"" + question + "\"," +
@@ -96,10 +95,10 @@ public class QuizQuestion {
 			    " \"solutionIndex\": " + solutionIndex + "," +
 			    " \"tags\": [");
 		for (int i = 1; i < tags.size(); i++) {
-			if (i == 0){
+			if (i == 0) {
 				entity.append(" \"" + tags.get(i) + " \"");
 			} else {
-				entity.append(", \"" + tags.get(i) + "\""); //todo
+				entity.append(", \"" + tags.get(i) + "\"");
 			}
 		}
 		entity.append(" ] }");
