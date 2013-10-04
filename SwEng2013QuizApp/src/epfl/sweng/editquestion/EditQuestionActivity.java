@@ -254,7 +254,7 @@ public class EditQuestionActivity extends Activity {
 			answers.add(ansString);
 
 			Button correct = (Button) findViewById(idList.get(i));
-			if (correct.getText().equals(R.string.right_answer)) {
+			if (correct.getText().equals("\u2714")) {
 				solutionIndex=i;
 			}	
 		}
