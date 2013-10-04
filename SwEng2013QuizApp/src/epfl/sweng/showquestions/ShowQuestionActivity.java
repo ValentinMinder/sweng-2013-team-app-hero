@@ -61,7 +61,7 @@ public class ShowQuestionActivity extends Activity {
 				e.printStackTrace();
 			}
 		} else {
-			Toast.makeText(getBaseContext(), "No network connection available",
+			Toast.makeText(getBaseContext(), R.string.no_network,
 					Toast.LENGTH_LONG).show();
 		}
 	}

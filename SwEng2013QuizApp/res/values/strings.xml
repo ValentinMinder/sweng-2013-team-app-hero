@@ -18,5 +18,10 @@
     <string name="plus">\u002B</string>
     <string name="minus">\u002D</string>
     <string name="submit_question">Submit</string>
-
+    <string name="no_network">No network connection available</string>
+    <string name="question_submitted">Server successfully replied! Question submitted</string>
+    <string name="problem_submit">Unable to submit question: something wrong happen!</string>
+    <string name="serverURL">https://sweng-quiz.appspot.com/</string>
+    
+    
 </resources>

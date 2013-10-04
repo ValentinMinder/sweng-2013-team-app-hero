@@ -261,7 +261,7 @@ public class EditQuestionActivity extends Activity {
 
 		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
 		submitQuestion(question.toPostEntity());
-		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show(); // TODO: TO REMOVE BEFORE DEADLINE
+		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show();
 
 
 	}
@@ -318,7 +318,7 @@ public class EditQuestionActivity extends Activity {
 				e.printStackTrace();
 			}
 		} else {
-			Toast.makeText(getBaseContext(), "No network connection available",
+			Toast.makeText(getBaseContext(), R.string.no_network,
 					Toast.LENGTH_LONG).show();
 		}
 	}
@@ -336,8 +336,8 @@ public class EditQuestionActivity extends Activity {
 		 */
 		@Override
 		protected String doInBackground(String... questionElement) {
-			String SERVER_URL = "https://sweng-quiz.appspot.com/";
-			HttpPost post = new HttpPost(SERVER_URL + "quizquestions/");
+			String serverURL = "https://sweng-quiz.appspot.com/";
+			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
@@ -364,7 +364,7 @@ public class EditQuestionActivity extends Activity {
 		protected void onPostExecute(String result) {
 			// if result is null, server replied not a 2xx status.
 			if (result != null) {
-				Toast.makeText(getBaseContext(), "Server successfully replied! Question submitted",
+				Toast.makeText(getBaseContext(), R.string.question_submitted,
 						Toast.LENGTH_SHORT).show();
 
 				Intent intent = getIntent();
@@ -373,11 +373,10 @@ public class EditQuestionActivity extends Activity {
 
 				// result contain the question submitted with it's id replied by server, but we don't use it for now.
 			} else {
-				Toast.makeText(getBaseContext(), "Unable to submit question: something wrong happen!",
+				Toast.makeText(getBaseContext(), R.string.problem_submit,
 						Toast.LENGTH_LONG).show();
 			}
 
-			//TODO: RESET the edit question view (voir avec steph)
 		}
 
 	}
