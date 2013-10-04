@@ -77,9 +77,8 @@ public class ShowQuestionActivity extends Activity {
 	/**
 	 * Method who is going to put correctly the display for the question 
 	 * and search the question to display it. 
-	 * @param v
+	 * @param v View corresponding to the button "Next question"
 	 */
-	//TODO param v
 	public void fetchAndDisplay(View v) {
 		//disable the button nextQuestion and empty the TextView that indicate correctness of an answer
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
@@ -157,7 +156,7 @@ public class ShowQuestionActivity extends Activity {
 		return true;
 	}
 	/**
-	 * Method who is use to get the task of the question
+	 * Class who is use to get the question from the server
 	 * @author juniors
 	 *
 	 */
