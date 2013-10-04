@@ -33,6 +33,8 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.testing.TestingTransactions;
+import epfl.sweng.testing.TestingTransactions.TTChecks;
 
 /**
  * 
@@ -61,6 +63,7 @@ public class EditQuestionActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 		setContentView(R.layout.activity_edit_question);
 
 		correctIndex=correctCst;
@@ -175,6 +178,7 @@ public class EditQuestionActivity extends Activity {
 		@Override
 		public void afterTextChanged(Editable s) {
 			submitControler(submit);
+			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 		}
 
 		@Override
@@ -367,16 +371,19 @@ public class EditQuestionActivity extends Activity {
 				Toast.makeText(getBaseContext(), R.string.question_submitted,
 						Toast.LENGTH_SHORT).show();
 
-				Intent intent = getIntent();
-				finish();
-				startActivity(intent);
 
 				// result contain the question submitted with it's id replied by server, but we don't use it for now.
 			} else {
 				Toast.makeText(getBaseContext(), R.string.problem_submit,
 						Toast.LENGTH_LONG).show();
 			}
+			
 
+			TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
+
+			Intent intent = getIntent();
+			finish();
+			startActivity(intent);
 		}
 
 	}
