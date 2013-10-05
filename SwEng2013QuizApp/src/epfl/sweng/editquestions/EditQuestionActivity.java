@@ -76,6 +76,9 @@ public class EditQuestionActivity extends Activity {
 		submit = (Button) findViewById(R.id.submit_question);
 		questionField = (EditText) findViewById(R.id.type_question);
 		questionField.addTextChangedListener(textListener);
+		//julien tracking change
+		EditText tagsText = (EditText) findViewById(R.id.tags);
+		tagsText.addTextChangedListener(changeListener);
 
 		submit.setEnabled(false);
 
@@ -88,7 +91,9 @@ public class EditQuestionActivity extends Activity {
 
 		answer.setId(answerIndex);
 		answer.setHint(R.string.type_answer);
-
+		//julien: track change
+		answer.addTextChangedListener(changeListener);
+		
 		correct.setText(R.string.wrong_answer);
 		correct.setId(correctIndex);
 		correct.setOnClickListener(answerHandler);
@@ -148,6 +153,7 @@ public class EditQuestionActivity extends Activity {
 
 			((Button) findViewById(view.getId())).setText(R.string.right_answer);
 			submitControler(submit);
+			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 
 		}
 	};
@@ -167,6 +173,7 @@ public class EditQuestionActivity extends Activity {
 			container.removeView(delAnswer);
 			idList.remove((Integer) (idToRemove-removeCst));
 			submitControler(submit);
+			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 
 		}
 	};
@@ -178,6 +185,30 @@ public class EditQuestionActivity extends Activity {
 		@Override
 		public void afterTextChanged(Editable s) {
 			submitControler(submit);
+			TestingTransactions.check(TTChecks.QUESTION_EDITED);
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+
+		}
+
+	};
+	
+	/**
+	 * Listener that check if a tag has been modified.
+	 */
+	private TextWatcher changeListener = new TextWatcher() {
+
+		@Override
+		public void afterTextChanged(Editable s) {
 			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 		}
 
@@ -233,8 +264,8 @@ public class EditQuestionActivity extends Activity {
 		nextGrid.addView(nextRemove);
 
 		submitControler(submit);
-
-
+		
+		TestingTransactions.check(TTChecks.QUESTION_EDITED);
 	}
 	/**
 	 * Method to create and submit a question.
