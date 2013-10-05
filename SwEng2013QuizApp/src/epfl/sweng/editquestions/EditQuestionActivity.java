@@ -78,7 +78,7 @@ public class EditQuestionActivity extends Activity {
 		questionField.addTextChangedListener(textListener);
 		//julien tracking change
 		EditText tagsText = (EditText) findViewById(R.id.tags);
-		tagsText.addTextChangedListener(changeListener);
+		tagsText.addTextChangedListener(textListener);
 
 		submit.setEnabled(false);
 
@@ -92,7 +92,7 @@ public class EditQuestionActivity extends Activity {
 		answer.setId(answerIndex);
 		answer.setHint(R.string.type_answer);
 		//julien: track change
-		answer.addTextChangedListener(changeListener);
+		answer.addTextChangedListener(textListener);
 		
 		correct.setText(R.string.wrong_answer);
 		correct.setId(correctIndex);
@@ -203,31 +203,6 @@ public class EditQuestionActivity extends Activity {
 	};
 	
 	/**
-	 * Listener that check if a tag has been modified.
-	 */
-	private TextWatcher changeListener = new TextWatcher() {
-
-		@Override
-		public void afterTextChanged(Editable s) {
-			TestingTransactions.check(TTChecks.QUESTION_EDITED);
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-
-		}
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-
-		}
-
-	};
-
-
-	/**
 	 * Method to add an answer field, a button to set it correct and a button to remove it.
 	 * @param view 
 	 */
@@ -309,6 +284,13 @@ public class EditQuestionActivity extends Activity {
 		boolean oneTrue = false;
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		String question = editQuestion.getText().toString();
+		
+		EditText editTags = (EditText) findViewById(R.id.tags);
+		String tagsToString = editTags.getText().toString();
+		if (tagsToString.trim().length() == 0) {
+			checkErrors++;
+		}
+		
 		if (idList.size()<2 || question.trim().length()==0) {
 			checkErrors++;
 		}
