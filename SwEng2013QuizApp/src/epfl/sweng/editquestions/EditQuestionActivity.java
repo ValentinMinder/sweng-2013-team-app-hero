@@ -63,7 +63,6 @@ public class EditQuestionActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 		setContentView(R.layout.activity_edit_question);
 
 		correctIndex=correctCst;
@@ -115,6 +114,8 @@ public class EditQuestionActivity extends Activity {
 		answerIndex++;
 		gridIndex++;
 		idIndex++;
+		
+		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 
 	}
 	/**
