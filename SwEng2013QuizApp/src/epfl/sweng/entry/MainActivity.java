@@ -2,8 +2,8 @@ package epfl.sweng.entry;
 
 
 import epfl.sweng.R;
-import epfl.sweng.editquestion.EditQuestionActivity;
-import epfl.sweng.showquestions.ShowQuestionActivity;
+import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
 	
 	
 	public void showQuestion(View view) {		
-		Intent showQuestionIntent = new Intent(this, ShowQuestionActivity.class);
+		Intent showQuestionIntent = new Intent(this, ShowQuestionsActivity.class);
 		
 		startActivity(showQuestionIntent);
 	}

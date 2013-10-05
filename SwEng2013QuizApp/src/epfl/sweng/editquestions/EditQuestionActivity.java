@@ -1,4 +1,4 @@
-package epfl.sweng.editquestion;
+package epfl.sweng.editquestions;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

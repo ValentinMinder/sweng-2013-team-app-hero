@@ -37,7 +37,7 @@ import epfl.sweng.utils.JSONUtils;
  * @author juniors
  *
  */
-public class ShowQuestionActivity extends Activity {
+public class ShowQuestionsActivity extends Activity {
 
 	private QuizQuestion question = null;
 

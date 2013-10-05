@@ -26,11 +26,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="epfl.sweng.showquestions.ShowQuestionActivity"
+            android:name="epfl.sweng.showquestions.ShowQuestionsActivity"
             android:label="@string/title_activity_show_question" >
         </activity>
         <activity
-            android:name="epfl.sweng.editquestion.EditQuestionActivity"
+            android:name="epfl.sweng.editquestions.EditQuestionActivity"
             android:label="@string/title_activity_edit_question" >
         </activity>
     </application>
