@@ -87,16 +87,16 @@ public class QuizQuestion {
 		entity.append("{" +
 			    " \"question\": \"" + question + "\"," +
 			    " \"answers\": [");
-		entity.append(" \"" + answer.get(0) + " \"");
+		entity.append(" \"" + answer.get(0) + "\"");
 		for (int i = 1; i < answer.size(); i++) {
 			entity.append(", \"" + answer.get(i) + "\"");
 		}
 		entity.append(" ]," +
 			    " \"solutionIndex\": " + solutionIndex + "," +
 			    " \"tags\": [");
-		for (int i = 1; i < tags.size(); i++) {
+		for (int i = 0; i < tags.size(); i++) {
 			if (i == 0) {
-				entity.append(" \"" + tags.get(i) + " \"");
+				entity.append(" \"" + tags.get(i) + "\"");
 			} else {
 				entity.append(", \"" + tags.get(i) + "\"");
 			}
