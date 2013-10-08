@@ -3,14 +3,18 @@ package epfl.sweng.authentication;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,6 +30,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Entity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
@@ -119,16 +124,18 @@ public class AuthenticationActivity extends Activity {
 	}
 	
 	public void step5LogInTekila() {
-		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-		// Test network connection
-		if (networkInfo != null && networkInfo.isConnected()) {
-			new SendAuthenticationTokenTask().execute(
-					"https://sweng-quiz.appspot.com/login");
-		} else {
-			Toast.makeText(getBaseContext(), R.string.no_network,
-					Toast.LENGTH_LONG).show();
+		if (authenticationToken != null) {
+			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+	
+			// Test network connection
+			if (networkInfo != null && networkInfo.isConnected()) {
+				new SendAuthenticationTokenTask().execute(
+						"https://sweng-quiz.appspot.com/login");
+			} else {
+				Toast.makeText(getBaseContext(), R.string.no_network,
+						Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 	
@@ -148,8 +155,6 @@ public class AuthenticationActivity extends Activity {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				authenticationToken = null;
 			}
 
 			return null;
@@ -178,7 +183,7 @@ public class AuthenticationActivity extends Activity {
 
 		@Override
 		protected String doInBackground(String... urls) {
-			HttpPost postAuthenticationTask = new HttpPost(urls[0]);
+			HttpPost postAuthentication = new HttpPost(urls[0]);
 			
 			TextView username = (TextView) findViewById(R.id.gaspar_username);
 			TextView password = (TextView) findViewById(R.id.gaspar_password);
@@ -189,11 +194,14 @@ public class AuthenticationActivity extends Activity {
 			postParameters.add(new BasicNameValuePair("requestkey", authenticationToken));
 			
 			try {
-				postAuthenticationTask.setEntity(new UrlEncodedFormEntity(postParameters));
-				
-				ResponseHandler<String> firstHandler = new BasicResponseHandler();
-				
-				return SwengHttpClientFactory.getInstance().execute(postAuthenticationTask, firstHandler);
+				postAuthentication.setEntity(new UrlEncodedFormEntity(postParameters));
+				HttpResponse response = SwengHttpClientFactory.getInstance().execute(postAuthentication);
+				if (response.getStatusLine().getStatusCode() == 302) {
+					return "success";
+				}
+				else {
+					return "failed";
+				}
 			} catch (UnsupportedEncodingException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -203,10 +211,9 @@ public class AuthenticationActivity extends Activity {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				authenticationToken = null;
 			}
 			
+			authenticationToken = null;
 			return null;
 		}
 
@@ -216,7 +223,7 @@ public class AuthenticationActivity extends Activity {
 		 */
 		protected void onPostExecute(String result) {
 			// à changer c'est en attendant
-			if (result == null) {
+			if (result.equals("success")) {
 				// Authentication successful
 				step5LogInTekila();
 			}
@@ -236,11 +243,14 @@ public class AuthenticationActivity extends Activity {
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpPost getAuthenticationToken = new HttpPost(urls[0]);
-			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-			postParameters.add(new BasicNameValuePair("token", authenticationToken));
-			ResponseHandler<String> firstHandler = new BasicResponseHandler();
+			
 			try {
-				return SwengHttpClientFactory.getInstance().execute(getAuthenticationToken, firstHandler);
+				getAuthenticationToken.setEntity(new StringEntity("{ \"token\": \"" + authenticationToken + "\" }"));
+				getAuthenticationToken.setHeader("Content-type", "application/json");
+				
+				HttpResponse response = SwengHttpClientFactory.getInstance().execute(getAuthenticationToken);
+				
+				return EntityUtils.toString(response.getEntity());
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -261,10 +271,6 @@ public class AuthenticationActivity extends Activity {
 				JSONObject jsonResponse = new JSONObject(result);
 				//TODO Il faut stocker la session id
 				String session_id = (String) jsonResponse.get("session");
-				
-				//TODO Juste pour tester
-				TextView test = (TextView) findViewById(R.id.authentication_token);
-				test.setText(session_id);
 				
 				authenticationSuccessful();
 			} catch (JSONException e) {
