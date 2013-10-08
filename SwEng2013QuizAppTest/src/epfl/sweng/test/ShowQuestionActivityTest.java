@@ -5,17 +5,17 @@ import android.widget.Button;
 
 import com.jayway.android.robotium.solo.Solo;
 
-import epfl.sweng.showquestions.ShowQuestionActivity;
+import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 
 public class ShowQuestionActivityTest extends
-ActivityInstrumentationTestCase2<ShowQuestionActivity> {
+ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 	  private Solo solo;
 
 	  public ShowQuestionActivityTest() {
-	    super(ShowQuestionActivity.class);
+	    super(ShowQuestionsActivity.class);
 	  }
 
 	  @Override
