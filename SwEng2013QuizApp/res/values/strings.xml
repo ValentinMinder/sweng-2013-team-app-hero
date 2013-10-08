@@ -22,6 +22,10 @@
     <string name="question_submitted">Server replied: Question submitted !</string>
     <string name="problem_submit">Unable to submit question: something wrong happen!</string>
     <string name="serverURL">https://sweng-quiz.appspot.com/</string>
-    
-    
+    <string name="title_activity_authentication">AuthenticationActivity</string>
+    <string name="gaspar_username">GASPAR Username</string>
+    <string name="gaspar_password">GASPAR Password</string>
+    <string name="log_in_tekila">Log in using Tequila</string>
+	<string name="authentication_failed">Authentication failed</string>
+
 </resources>

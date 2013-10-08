@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".AuthenticationActivity" >
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/authentication_token" />
+
+    <EditText
+            android:id="@+id/gaspar_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/gaspar_username" />
+    
+    <EditText
+            android:id="@+id/gaspar_password"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/gaspar_password" />
+    
+    <Button
+            android:id="@+id/log_in_tekila"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="step1LogInTekila"
+            android:text="@string/log_in_tekila" />
+    
+</LinearLayout>
