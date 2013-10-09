@@ -27,5 +27,6 @@
     <string name="gaspar_password">GASPAR Password</string>
     <string name="log_in_tekila">Log in using Tequila</string>
 	<string name="authentication_failed">Authentication failed</string>
+	<string name="log_out">Log out</string>
 
 </resources>

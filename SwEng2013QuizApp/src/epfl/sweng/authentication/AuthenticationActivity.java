@@ -39,8 +39,11 @@ import android.widget.Toast;
 public class AuthenticationActivity extends Activity {
 	
 	private String authenticationToken = null;
-	public final static String nameVariableSession = "session_id";
-	public final static String namePreferenceSession = "SESSION";
+	public final static String nameVariableSession = "SESSION_ID";
+	public final static String namePreferenceSession = "user_session";
+	public static enum appState {
+	 AUTHENTICATED, NOT_AUTHENTICATED;
+	}
 	
 	private void authenticationFailed() {
 		authenticationToken = null;

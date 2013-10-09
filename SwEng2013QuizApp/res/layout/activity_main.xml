@@ -27,5 +27,12 @@
         android:layout_height="wrap_content"
         android:onClick="submitQuestion"
         android:text="@string/submit_quiz_question" />
+    
+    <Button
+        android:id="@+id/button_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="logInOut"
+        android:text="@string/log_out" />
 
 </LinearLayout>
