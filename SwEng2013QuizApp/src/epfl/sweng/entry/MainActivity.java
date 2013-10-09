@@ -25,6 +25,11 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+		
+		/* A utiliser lorsqu'on veut récupérer la session_id de l'utilisateur
+		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.namePreferenceSession, MODE_PRIVATE);
+		preferences.getString(AuthenticationActivity.nameVariableSession, "");
+		*/
 	}
 
 	@Override

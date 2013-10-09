@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import epfl.sweng.R;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
-import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.net.ConnectivityManager;
@@ -30,8 +29,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Entity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -40,7 +39,9 @@ import android.widget.Toast;
 public class AuthenticationActivity extends Activity {
 	
 	private String authenticationToken = null;
-
+	public final static String nameVariableSession = "session_id";
+	public final static String namePreferenceSession = "SESSION";
+	
 	private void authenticationFailed() {
 		authenticationToken = null;
 		
@@ -56,7 +57,14 @@ public class AuthenticationActivity extends Activity {
 		TestingTransactions.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 	
-	private void authenticationSuccessful() {
+	private void authenticationSuccessful(String session_id) {
+		SharedPreferences preferences = getSharedPreferences(namePreferenceSession, MODE_PRIVATE);
+		SharedPreferences.Editor ed = preferences.edit();
+		ed.putString(nameVariableSession, session_id);
+		ed.commit();
+		
+		this.finish();
+		
 		Intent mainActivityIntent = new Intent(this, MainActivity.class);
 		
 		startActivity(mainActivityIntent);
@@ -271,8 +279,7 @@ public class AuthenticationActivity extends Activity {
 				JSONObject jsonResponse = new JSONObject(result);
 				//TODO Il faut stocker la session id
 				String session_id = (String) jsonResponse.get("session");
-				
-				authenticationSuccessful();
+				authenticationSuccessful(session_id);
 			} catch (JSONException e) {
 				authenticationFailed();
 			}
