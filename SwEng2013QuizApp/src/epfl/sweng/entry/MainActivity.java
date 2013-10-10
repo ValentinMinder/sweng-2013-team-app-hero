@@ -27,8 +27,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.namePreferenceSession, MODE_PRIVATE);
-		String session = preferences.getString(AuthenticationActivity.nameVariableSession, "");
+		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.NAME_PREFERENCE_SESSION, MODE_PRIVATE);
+		String session = preferences.getString(AuthenticationActivity.NAME_VARIABLE_SESSION, "");
 		if (session.equals("")) {
 			Button button1 = (Button) findViewById(R.id.button1);
 			button1.setEnabled(false);
@@ -56,12 +56,12 @@ public class MainActivity extends Activity {
 	}
 	
 	public void logInOut(View view) {
-		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.namePreferenceSession, MODE_PRIVATE);
-		String session = preferences.getString(AuthenticationActivity.nameVariableSession, "");
+		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.NAME_PREFERENCE_SESSION, MODE_PRIVATE);
+		String session = preferences.getString(AuthenticationActivity.NAME_VARIABLE_SESSION, "");
 		
 		if (!session.equals("")) {
 			SharedPreferences.Editor ed = preferences.edit();
-			ed.remove(AuthenticationActivity.nameVariableSession);
+			ed.remove(AuthenticationActivity.NAME_VARIABLE_SESSION);
 			ed.commit();
 			
 			TestingTransactions.check(TTChecks.LOGGED_OUT);

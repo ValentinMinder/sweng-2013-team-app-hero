@@ -39,12 +39,17 @@ import android.widget.Toast;
 public class AuthenticationActivity extends Activity {
 	
 	private String authenticationToken = null;
-	public final static String nameVariableSession = "SESSION_ID";
-	public final static String namePreferenceSession = "user_session";
+	private final static int TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL = 302;
+	public final static String NAME_VARIABLE_SESSION = "SESSION_ID";
+	public final static String NAME_PREFERENCE_SESSION = "user_session";
 	public static enum appState {
 	 AUTHENTICATED, NOT_AUTHENTICATED;
 	}
 	
+	/**
+	 * Method who is called if authentication failed, clear the text values
+	 * of the text view
+	 */
 	private void authenticationFailed() {
 		authenticationToken = null;
 		
@@ -60,10 +65,15 @@ public class AuthenticationActivity extends Activity {
 		TestingTransactions.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 	
-	private void authenticationSuccessful(String session_id) {
-		SharedPreferences preferences = getSharedPreferences(namePreferenceSession, MODE_PRIVATE);
+	/**
+	 * Method who is called if authentication successful, session id
+	 * is stored in SharedPreferences
+	 * @param session_id
+	 */
+	private void authenticationSuccessful(String sessionId) {
+		SharedPreferences preferences = getSharedPreferences(NAME_PREFERENCE_SESSION, MODE_PRIVATE);
 		SharedPreferences.Editor ed = preferences.edit();
-		ed.putString(nameVariableSession, session_id);
+		ed.putString(NAME_VARIABLE_SESSION, sessionId);
 		ed.commit();
 		
 		this.finish();
@@ -88,6 +98,9 @@ public class AuthenticationActivity extends Activity {
 		return true;
 	}
 	
+	/**
+	 * Method who is used to recover authentication token
+	 */
 	public void step1LogInTekila(View view) {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -102,6 +115,9 @@ public class AuthenticationActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * Method who is used to test username and password (Step 3)
+	 */
 	public void step3LogInTekila() {
 		if (authenticationToken != null) {
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -116,24 +132,11 @@ public class AuthenticationActivity extends Activity {
 						Toast.LENGTH_LONG).show();
 			}
 		}
-		
-		/*
-		// Tester connection ici
-		if (true) {
-			Intent mainActivityIntent = new Intent(this, MainActivity.class);
-			startActivity(mainActivityIntent);
-		}
-		else {
-			TextView username = (TextView) findViewById(R.id.gaspar_username);
-			username.setText("");
-			
-			TextView password = (TextView) findViewById(R.id.gaspar_password);
-			password.setText("");
-			
-			TestingTransactions.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
-		}*/
 	}
 	
+	/**
+	 * Method who is used to test authentication token (Step 5)
+	 */
 	public void step5LogInTekila() {
 		if (authenticationToken != null) {
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -151,7 +154,7 @@ public class AuthenticationActivity extends Activity {
 	}
 	
 	/**
-	 * Class who is use to get the authentication token from the server (Step 1)
+	 * Class who is used to get the authentication token from the server (Step 1)
 	 *
 	 */
 	private class GetAuthenticationTokenTask extends AsyncTask<String, Void, String> {
@@ -207,7 +210,7 @@ public class AuthenticationActivity extends Activity {
 			try {
 				postAuthentication.setEntity(new UrlEncodedFormEntity(postParameters));
 				HttpResponse response = SwengHttpClientFactory.getInstance().execute(postAuthentication);
-				if (response.getStatusLine().getStatusCode() == 302) {
+				if (response.getStatusLine().getStatusCode() == TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL) {
 					return "success";
 				}
 				else {
@@ -246,8 +249,8 @@ public class AuthenticationActivity extends Activity {
 	}
 	
 	/**
-	 * Class who sends the authentication token back to the SwEng2013QuizApp 
-	 * server (Step 5 - 6 - 7)
+	 * Class who sends the authentication token back to the SwEng2013QuizApp
+	 * server and recover the session id (Step 5 - 6 - 7)
 	 */
 	private class SendAuthenticationTokenTask extends AsyncTask<String, Void, String> {
 
@@ -280,9 +283,8 @@ public class AuthenticationActivity extends Activity {
 		protected void onPostExecute(String result) {
 			try {
 				JSONObject jsonResponse = new JSONObject(result);
-				//TODO Il faut stocker la session id
-				String session_id = (String) jsonResponse.get("session");
-				authenticationSuccessful(session_id);
+				String sessionId = (String) jsonResponse.get("session");
+				authenticationSuccessful(sessionId);
 			} catch (JSONException e) {
 				authenticationFailed();
 			}
