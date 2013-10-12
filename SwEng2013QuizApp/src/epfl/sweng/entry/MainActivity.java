@@ -3,6 +3,7 @@ package epfl.sweng.entry;
 
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
+import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransactions;
@@ -27,8 +28,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.NAME_PREFERENCE_SESSION, MODE_PRIVATE);
-		String session = preferences.getString(AuthenticationActivity.NAME_VARIABLE_SESSION, "");
+		String session = StoreCredential.getInstance().getSessionId(getApplicationContext());
+		
 		if (session.equals("")) {
 			Button button1 = (Button) findViewById(R.id.button1);
 			button1.setEnabled(false);
@@ -42,7 +43,7 @@ public class MainActivity extends Activity {
 		
 		TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 		
-		/* A utiliser lorsqu'on veut récupérer la session_id de l'utilisateur
+		/* A utiliser lorsqu'on veut rï¿½cupï¿½rer la session_id de l'utilisateur
 		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.namePreferenceSession, MODE_PRIVATE);
 		preferences.getString(AuthenticationActivity.nameVariableSession, "");
 		*/
@@ -56,14 +57,12 @@ public class MainActivity extends Activity {
 	}
 	
 	public void logInOut(View view) {
-		SharedPreferences preferences = getSharedPreferences(AuthenticationActivity.NAME_PREFERENCE_SESSION, MODE_PRIVATE);
-		String session = preferences.getString(AuthenticationActivity.NAME_VARIABLE_SESSION, "");
+		String session = StoreCredential.getInstance().getSessionId(getApplicationContext());
+
 		
 		if (!session.equals("")) {
-			SharedPreferences.Editor ed = preferences.edit();
-			ed.remove(AuthenticationActivity.NAME_VARIABLE_SESSION);
-			ed.commit();
-			
+			//TODO which context shall we pass, getBaseContext, applicationContext ... ? 
+			StoreCredential.getInstance().removeSessionId(getApplicationContext());
 			TestingTransactions.check(TTChecks.LOGGED_OUT);
 		}
 		
