@@ -40,8 +40,6 @@ public class AuthenticationActivity extends Activity {
 	
 	private String authenticationToken = null;
 	private final static int TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL = 302;
-	public final static String NAME_VARIABLE_SESSION = "SESSION_ID";
-	public final static String NAME_PREFERENCE_SESSION = "user_session";
 	public static enum appState {
 	 AUTHENTICATED, NOT_AUTHENTICATED;
 	}
@@ -71,11 +69,12 @@ public class AuthenticationActivity extends Activity {
 	 * @param session_id
 	 */
 	private void authenticationSuccessful(String sessionId) {
-		SharedPreferences preferences = getSharedPreferences(NAME_PREFERENCE_SESSION, MODE_PRIVATE);
-		SharedPreferences.Editor ed = preferences.edit();
-		ed.putString(NAME_VARIABLE_SESSION, sessionId);
-		ed.commit();
-		
+//		SharedPreferences preferences = getSharedPreferences(NAME_PREFERENCE_SESSION, MODE_PRIVATE);
+//		SharedPreferences.Editor ed = preferences.edit();
+//		ed.putString(NAME_VARIABLE_SESSION, sessionId);
+//		ed.commit();
+		//TODO see which one of the two method for 3.4 in HW3 is better
+		StoreCredential.getInstance().storeSessionId(sessionId, getApplicationContext());
 		this.finish();
 		
 		Intent mainActivityIntent = new Intent(this, MainActivity.class);
@@ -236,7 +235,7 @@ public class AuthenticationActivity extends Activity {
 		 * authentication failed or not
 		 */
 		protected void onPostExecute(String result) {
-			// à changer c'est en attendant
+			// ï¿½ changer c'est en attendant
 			if (result.equals("success")) {
 				// Authentication successful
 				step5LogInTekila();
