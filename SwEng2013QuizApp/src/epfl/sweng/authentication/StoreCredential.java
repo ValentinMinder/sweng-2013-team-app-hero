@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 
 public class StoreCredential {
 	private static StoreCredential instance = null;
-	public final static String NAME_VARIABLE_SESSION = "SESSION_ID";
-	public final static String NAME_PREFERENCE_SESSION = "user_session";
+	private final String NAME_VARIABLE_SESSION = "SESSION_ID";
+	private final String NAME_PREFERENCE_SESSION = "user_session";
 	
 	public static StoreCredential getInstance() {
 		if (instance == null) {
