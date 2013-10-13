@@ -1,6 +1,7 @@
 package epfl.sweng.test;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.Button;
 
 import com.jayway.android.robotium.solo.Solo;
 
@@ -25,7 +26,20 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 
 	public void testEditQuestion() {
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-		solo.clickOnButton(R.id.submit_question);
+		//Button submit = solo.getButton(solo.getString(R.string.plus));
+		Button submit = (Button) solo.getView(R.id.submit_question);
+		assertFalse("Submit is disabled",submit.isEnabled());
+		solo.clickOnView((Button) solo.getView(R.id.add));
+		solo.clickOnView((Button) solo.getView(R.id.add));
+		solo.enterText(R.id.type_question, "Test Question");
+		solo.enterText(2000, "Reponse1");
+		solo.enterText(2001, "Reponse2");
+		solo.enterText(R.id.tags, "a, b, c");
+		solo.clickOnView((Button)solo.getView(1));
+		solo.clickOnView((Button)solo.getView(1003));
+		solo.clickOnView(submit);
+
+		
 		
 		
 	
