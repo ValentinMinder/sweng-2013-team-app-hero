@@ -2,6 +2,7 @@ package epfl.sweng.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.jayway.android.robotium.solo.Solo;
 
@@ -20,29 +21,46 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 	}
 
 	@Override
-	  protected void setUp() {
-	    solo = new Solo(getInstrumentation());
-	  }
+	protected void setUp() {
+		solo = new Solo(getInstrumentation());
+	}
 
 	public void testEditQuestion() {
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-		//Button submit = solo.getButton(solo.getString(R.string.plus));
 		Button submit = (Button) solo.getView(R.id.submit_question);
 		assertFalse("Submit is disabled",submit.isEnabled());
-		solo.clickOnView((Button) solo.getView(R.id.add));
-		solo.clickOnView((Button) solo.getView(R.id.add));
-		solo.enterText(R.id.type_question, "Test Question");
-		solo.enterText(2000, "Reponse1");
-		solo.enterText(2001, "Reponse2");
-		solo.enterText(R.id.tags, "a, b, c");
-		solo.clickOnView((Button)solo.getView(1));
-		solo.clickOnView((Button)solo.getView(1003));
-		solo.clickOnView(submit);
+		Button add = (Button) solo.getView(R.id.add);
+		solo.clickOnView(add);
+
+		Button correct = (Button) solo.getView(0);
+		EditText question = (EditText)solo.getView(R.id.type_question);
+		solo.enterText(question, "test question, please ignore");
 
 		
+		EditText tags = (EditText)solo.getView(R.id.tags);
+		EditText ans1 = (EditText)solo.getView(2000);
+		EditText ans2 = (EditText)solo.getView(2001);
+
+		solo.enterText(ans1, "Reponse1");
+		assertFalse("Submit is enabled",submit.isEnabled());
+
+		solo.enterText(ans2, "Reponse2");
+		assertFalse("Submit is enabled",submit.isEnabled());
+
+		solo.enterText(tags, "a, b, c");
+		assertFalse("Submit is enabled",submit.isEnabled());
+
+		solo.clickOnView(correct);
+		assertFalse("Submit is enabled",submit.isEnabled());
 		
+		solo.clickOnView(submit);
 		
-	
+		Button remove = (Button) solo.getView(1000);
+		
+		solo.clickOnView(remove);
+		
+
+
 	}
 
 
