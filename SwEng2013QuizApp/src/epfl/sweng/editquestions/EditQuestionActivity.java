@@ -1,4 +1,4 @@
-package epfl.sweng.editquestions;
+ package epfl.sweng.editquestions;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -354,6 +354,7 @@ public class EditQuestionActivity extends Activity {
 		 */
 		@Override
 		protected String doInBackground(String... questionElement) {
+			//TODO regarder pour mettre le header tequila
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 

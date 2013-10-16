@@ -54,6 +54,7 @@ public class ShowQuestionsActivity extends Activity {
 		if (networkInfo != null && networkInfo.isConnected()) {
 			try {
 				new GetQuestionTask().execute(
+						//TODO metre le header de tequila pour securiser le truc
 						"https://sweng-quiz.appspot.com/quizquestions/random").get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -163,6 +164,7 @@ public class ShowQuestionsActivity extends Activity {
 	private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
 		@Override
+		//TODO regarder pour le header tequila
 		protected String doInBackground(String... urls) {
 			HttpGet firstRandom = new HttpGet(urls[0]);
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
