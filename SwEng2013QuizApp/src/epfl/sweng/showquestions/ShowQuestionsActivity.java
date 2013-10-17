@@ -166,7 +166,6 @@ public class ShowQuestionsActivity extends Activity {
 	private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
 		@Override
-		//TODO regarder pour le header tequila
 		protected String doInBackground(String... urls) {
 			HttpGet firstRandom = new HttpGet(urls[0]);
 			firstRandom.setHeader("Authorization", StoreCredential.getInstance().getSessionId(getApplicationContext()));
