@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceActivity.Header;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
+import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestingTransactions;
@@ -167,6 +169,7 @@ public class ShowQuestionsActivity extends Activity {
 		//TODO regarder pour le header tequila
 		protected String doInBackground(String... urls) {
 			HttpGet firstRandom = new HttpGet(urls[0]);
+			firstRandom.setHeader("Authorization", StoreCredential.getInstance().getSessionId(getApplicationContext()));
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
 				return SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);

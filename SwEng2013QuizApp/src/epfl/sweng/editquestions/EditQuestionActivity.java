@@ -31,6 +31,7 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import epfl.sweng.R;
+import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestingTransactions;
@@ -357,7 +358,7 @@ public class EditQuestionActivity extends Activity {
 			//TODO regarder pour mettre le header tequila
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
-
+			post.setHeader("Authorization", StoreCredential.getInstance().getSessionId(getApplicationContext()));
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 				post.setHeader("Content-type", "application/json");
