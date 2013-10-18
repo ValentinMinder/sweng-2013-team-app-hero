@@ -25,8 +25,8 @@ ActivityInstrumentationTestCase2<AuthenticationActivity> {
 		solo = new Solo(getInstrumentation());
 	}
 
-	public void testEditQuestion() {
-		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+	public void testAuthentification() {
+		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 		
 		EditText username = (EditText)solo.getView(R.id.gaspar_username);
 		EditText pwd = (EditText)solo.getView(R.id.gaspar_password);

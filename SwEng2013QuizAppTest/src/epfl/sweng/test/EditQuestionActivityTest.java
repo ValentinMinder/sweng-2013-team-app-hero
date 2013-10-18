@@ -52,10 +52,8 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 		solo.clickOnButton("Submit");
 		solo.clickOnButton("Submit");
 		solo.sleep(3000);
-
-		Button remove = (Button) solo.getView(1000);
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-
+		Button remove = (Button) solo.getView(1000);
 		solo.clickOnView(remove);
 
 	}
