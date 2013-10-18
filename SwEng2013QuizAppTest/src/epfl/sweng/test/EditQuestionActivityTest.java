@@ -36,30 +36,23 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 		EditText question = (EditText)solo.getView(R.id.type_question);
 		solo.enterText(question, "test question, please ignore");
 
-		
 		EditText tags = (EditText)solo.getView(R.id.tags);
 		EditText ans1 = (EditText)solo.getView(2000);
 		EditText ans2 = (EditText)solo.getView(2001);
+		assertFalse("Submit is disabled",submit.isEnabled());
 
 		solo.enterText(ans1, "Reponse1");
-		assertFalse("Submit is enabled",submit.isEnabled());
 
 		solo.enterText(ans2, "Reponse2");
-		assertFalse("Submit is enabled",submit.isEnabled());
 
 		solo.enterText(tags, "a, b, c");
-		assertFalse("Submit is enabled",submit.isEnabled());
 
 		solo.clickOnView(correct);
-		assertFalse("Submit is enabled",submit.isEnabled());
-		
+
 		solo.clickOnView(submit);
-		
 		Button remove = (Button) solo.getView(1000);
-		
 		solo.clickOnView(remove);
 		
-
 
 	}
 
