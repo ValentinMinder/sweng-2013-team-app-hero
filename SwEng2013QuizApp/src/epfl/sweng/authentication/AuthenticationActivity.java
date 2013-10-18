@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -69,11 +68,6 @@ public class AuthenticationActivity extends Activity {
 	 * @param session_id
 	 */
 	private void authenticationSuccessful(String sessionId) {
-//		SharedPreferences preferences = getSharedPreferences(NAME_PREFERENCE_SESSION, MODE_PRIVATE);
-//		SharedPreferences.Editor ed = preferences.edit();
-//		ed.putString(NAME_VARIABLE_SESSION, sessionId);
-//		ed.commit();
-		//TODO see which one of the two method for 3.4 in HW3 is better
 		StoreCredential.getInstance().storeSessionId(sessionId, getApplicationContext());
 		this.finish();
 		
