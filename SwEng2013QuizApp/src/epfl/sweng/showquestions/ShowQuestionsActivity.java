@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -28,16 +30,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
+import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import epfl.sweng.utils.JSONUtils;
+
 /**
  * Class to show random question from the server.
+ * 
  * @author juniors
- *
+ * 
  */
 public class ShowQuestionsActivity extends Activity {
 
@@ -56,8 +61,8 @@ public class ShowQuestionsActivity extends Activity {
 		if (networkInfo != null && networkInfo.isConnected()) {
 			try {
 				new GetQuestionTask().execute(
-						//TODO metre le header de tequila pour securiser le truc
-						"https://sweng-quiz.appspot.com/quizquestions/random").get();
+
+				"https://sweng-quiz.appspot.com/quizquestions/random").get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -78,12 +83,15 @@ public class ShowQuestionsActivity extends Activity {
 	}
 
 	/**
-	 * Method who is going to put correctly the display for the question 
-	 * and search the question to display it. 
-	 * @param v View corresponding to the button "Next question"
+	 * Method who is going to put correctly the display for the question and
+	 * search the question to display it.
+	 * 
+	 * @param v
+	 *            View corresponding to the button "Next question"
 	 */
 	public void fetchAndDisplay(View v) {
-		//disable the button nextQuestion and empty the TextView that indicate correctness of an answer
+		// disable the button nextQuestion and empty the TextView that indicate
+		// correctness of an answer
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
 		nextQuestion.setEnabled(false);
 		TextView correctness = (TextView) findViewById(R.id.correctness);
@@ -106,32 +114,38 @@ public class ShowQuestionsActivity extends Activity {
 
 			if (possibleAnswers != null) {
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-						android.R.layout.simple_list_item_1, question.getAnswer());
+						android.R.layout.simple_list_item_1,
+						question.getAnswer());
 
 				possibleAnswers.setAdapter(adapter);
 				TestingTransactions.check(TTChecks.QUESTION_SHOWN);
 
-				possibleAnswers.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> a, View v,
-							int position, long id) {
-						TextView correctness = (TextView) findViewById(R.id.correctness);
-						Button nextQuestion = (Button) findViewById(R.id.next_question_button);
-						if (!nextQuestion.isEnabled()) {
-							// The right solution has not already been
-							// found, thus we can react to user input
-							if (id == question.getSolutionIndex()) {
-								// The right answer has been found
-								correctness.setText(R.string.right_answer);
-								((Button) findViewById(R.id.next_question_button)).setEnabled(true);
-							} else {
-								correctness.setText(R.string.wrong_answer);
-							}
-						}
-						TestingTransactions.check(TTChecks.ANSWER_SELECTED);
+				possibleAnswers
+						.setOnItemClickListener(new OnItemClickListener() {
+							@Override
+							public void onItemClick(AdapterView<?> a, View v,
+									int position, long id) {
+								TextView correctness = (TextView) findViewById(R.id.correctness);
+								Button nextQuestion = (Button) findViewById(R.id.next_question_button);
+								if (!nextQuestion.isEnabled()) {
+									// The right solution has not already been
+									// found, thus we can react to user input
+									if (id == question.getSolutionIndex()) {
+										// The right answer has been found
+										correctness
+												.setText(R.string.right_answer);
+										((Button) findViewById(R.id.next_question_button))
+												.setEnabled(true);
+									} else {
+										correctness
+												.setText(R.string.wrong_answer);
+									}
+								}
+								TestingTransactions
+										.check(TTChecks.ANSWER_SELECTED);
 
-					}
-				});
+							}
+						});
 			}
 
 			TextView tags = (TextView) findViewById(R.id.tags);
@@ -158,20 +172,34 @@ public class ShowQuestionsActivity extends Activity {
 		getMenuInflater().inflate(R.menu.show_question, menu);
 		return true;
 	}
+
+	private void badAuthentification() {
+		this.finish();
+		Intent authetificationActivity = new Intent(this,
+				AuthenticationActivity.class);
+		startActivity(authetificationActivity);
+	}
+
 	/**
 	 * Class who is use to get the question from the server
+	 * 
 	 * @author juniors
-	 *
+	 * 
 	 */
 	private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpGet firstRandom = new HttpGet(urls[0]);
-			firstRandom.setHeader("Authorization", StoreCredential.getInstance().getSessionId(getApplicationContext()));
+			firstRandom.setHeader(
+					"Authorization",
+					"Tequila "
+							+ StoreCredential.getInstance().getSessionId(
+									getApplicationContext()));
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
+				return SwengHttpClientFactory.getInstance().execute(
+						firstRandom, firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -182,20 +210,30 @@ public class ShowQuestionsActivity extends Activity {
 		}
 
 		/**
-		 * Method who is gonna take the result of an URL request and parse it in a 
-		 * QuizQuestion Object. and after display it.
+		 * Method who is gonna take the result of an URL request and parse it in
+		 * a QuizQuestion Object. and after display it.
 		 */
 		protected void onPostExecute(String result) {
 			try {
-				JSONObject jsonQuestion = new JSONObject(result);
-				question = new QuizQuestion(jsonQuestion.getInt("id"),
-						jsonQuestion.getString("question"),
-						JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
-						jsonQuestion.getInt("solutionIndex"),
-						JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
-				displayQuestion();
+				if (result == null) {
+					badAuthentification();
+				} else {
+					JSONObject jsonQuestion = new JSONObject(result);
+					if (jsonQuestion.has("message")) {
+						badAuthentification();
+					} else {
+						question = new QuizQuestion(
+								jsonQuestion.getInt("id"),
+								jsonQuestion.getString("question"),
+								JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
+								jsonQuestion.getInt("solutionIndex"),
+								JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+						displayQuestion();
+					}
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
+
 			}
 		}
 

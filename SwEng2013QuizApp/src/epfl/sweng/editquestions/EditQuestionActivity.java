@@ -1,4 +1,4 @@
- package epfl.sweng.editquestions;
+package epfl.sweng.editquestions;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +13,8 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,6 +33,7 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import epfl.sweng.R;
+import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
@@ -39,17 +42,15 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
 
 /**
  * 
- * @author xhanto
- * This class is used to submit a new question to the server.
- *
+ * @author xhanto This class is used to submit a new question to the server.
+ * 
  */
 public class EditQuestionActivity extends Activity {
 
-
-	private final int correctCst=0;
-	private final int removeCst=1000;
-	private final int answerCst=2000;
-	private final int gridCst=3000;
+	private final int correctCst = 0;
+	private final int removeCst = 1000;
+	private final int answerCst = 2000;
+	private final int gridCst = 3000;
 
 	private int correctIndex;
 	private int removeIndex;
@@ -57,7 +58,7 @@ public class EditQuestionActivity extends Activity {
 	private int gridIndex;
 	private LinearLayout container;
 	private EditText questionField;
-	private int idIndex=0;
+	private int idIndex = 0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
 
@@ -66,17 +67,16 @@ public class EditQuestionActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
 
-		correctIndex=correctCst;
-		removeIndex=removeCst;
-		answerIndex=answerCst;
-		gridIndex=gridCst;
-
+		correctIndex = correctCst;
+		removeIndex = removeCst;
+		answerIndex = answerCst;
+		gridIndex = gridCst;
 
 		container = (LinearLayout) findViewById(R.id.container);
 		submit = (Button) findViewById(R.id.submit_question);
 		questionField = (EditText) findViewById(R.id.type_question);
 		questionField.addTextChangedListener(textListener);
-		//julien tracking change
+		// julien tracking change
 		EditText tagsText = (EditText) findViewById(R.id.tags);
 		tagsText.addTextChangedListener(textListener);
 
@@ -85,15 +85,15 @@ public class EditQuestionActivity extends Activity {
 		GridLayout grid = new GridLayout(this);
 		EditText answer = new EditText(this);
 		Button correct = new Button(this);
-		Button remove = new Button(this); 
+		Button remove = new Button(this);
 
 		grid.setId(gridIndex);
 
 		answer.setId(answerIndex);
 		answer.setHint(R.string.type_answer);
-		//julien: track change
+		// julien: track change
 		answer.addTextChangedListener(textListener);
-		
+
 		correct.setText(R.string.wrong_answer);
 		correct.setId(correctIndex);
 		correct.setOnClickListener(answerHandler);
@@ -115,23 +115,25 @@ public class EditQuestionActivity extends Activity {
 		answerIndex++;
 		gridIndex++;
 		idIndex++;
-		
+
 		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 
 	}
+
 	/**
 	 * Method to set enable a button who is put in parameter.
-	 * @param sub the button who will be set enable if the function audit returns 0.
+	 * 
+	 * @param sub
+	 *            the button who will be set enable if the function audit
+	 *            returns 0.
 	 */
 	private void submitControler(Button sub) {
-		if (audit()==0) {
+		if (audit() == 0) {
 			sub.setEnabled(true);
 		} else {
 			sub.setEnabled(false);
 		}
 	}
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -148,12 +150,13 @@ public class EditQuestionActivity extends Activity {
 		@Override
 		public void onClick(View view) {
 
-			for (int i=0; i<idList.size(); i++) {
+			for (int i = 0; i < idList.size(); i++) {
 				Button allFalse = (Button) findViewById(idList.get(i));
 				allFalse.setText(R.string.wrong_answer);
 			}
 
-			((Button) findViewById(view.getId())).setText(R.string.right_answer);
+			((Button) findViewById(view.getId()))
+					.setText(R.string.right_answer);
 			submitControler(submit);
 			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 
@@ -168,19 +171,21 @@ public class EditQuestionActivity extends Activity {
 		public void onClick(View view) {
 
 			int idToRemove = view.getId();
-			GridLayout delGrid = (GridLayout) findViewById(idToRemove+answerCst);
-			EditText delAnswer = (EditText) findViewById(idToRemove+removeCst);
+			GridLayout delGrid = (GridLayout) findViewById(idToRemove
+					+ answerCst);
+			EditText delAnswer = (EditText) findViewById(idToRemove + removeCst);
 			delGrid.removeAllViews();
 			container.removeView(delGrid);
 			container.removeView(delAnswer);
-			idList.remove((Integer) (idToRemove-removeCst));
+			idList.remove((Integer) (idToRemove - removeCst));
 			submitControler(submit);
 			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 
 		}
 	};
 	/**
-	 * Listener that react and check if the question is correctly constructed when a text is written on an answer field.
+	 * Listener that react and check if the question is correctly constructed
+	 * when a text is written on an answer field.
 	 */
 	private TextWatcher textListener = new TextWatcher() {
 
@@ -203,17 +208,19 @@ public class EditQuestionActivity extends Activity {
 		}
 
 	};
-	
+
 	/**
-	 * Method to add an answer field, a button to set it correct and a button to remove it.
-	 * @param view 
+	 * Method to add an answer field, a button to set it correct and a button to
+	 * remove it.
+	 * 
+	 * @param view
 	 */
-	//View a faire
+	// View a faire
 	public void addAnswer(View view) {
 		GridLayout nextGrid = new GridLayout(this);
 		EditText nextAnswer = new EditText(this);
 		Button nextCorrect = new Button(this);
-		Button nextRemove = new Button(this); 
+		Button nextRemove = new Button(this);
 
 		nextGrid.setId(gridIndex);
 		nextAnswer.setId(answerIndex);
@@ -241,70 +248,77 @@ public class EditQuestionActivity extends Activity {
 		nextGrid.addView(nextRemove);
 
 		submitControler(submit);
-		
+
 		TestingTransactions.check(TTChecks.QUESTION_EDITED);
 	}
+
 	/**
 	 * Method to create and submit a question.
+	 * 
 	 * @param view
 	 */
-	//View a faire
+	// View a faire
 	public void submitQuestion(View view) {
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagsText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
 
-		int solutionIndex=-1;
+		int solutionIndex = -1;
 		String questionBody = editQuestion.getText().toString();
 		String tagString = tagsText.getText().toString();
 
-		ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagString.split("\\W+")));
+		ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagString
+				.split("\\W+")));
 
-		for (int i = 0; i<idList.size(); i++) {
-			EditText ans = (EditText) findViewById(idList.get(i)+answerCst);
+		for (int i = 0; i < idList.size(); i++) {
+			EditText ans = (EditText) findViewById(idList.get(i) + answerCst);
 			String ansString = ans.getText().toString();
 			answers.add(ansString);
 
 			Button correct = (Button) findViewById(idList.get(i));
 			if (correct.getText().equals("\u2714")) {
-				solutionIndex=i;
-			}	
+				solutionIndex = i;
+			}
 		}
 
-		QuizQuestion question = new QuizQuestion(0, questionBody, answers, solutionIndex, tags);
+		QuizQuestion question = new QuizQuestion(0, questionBody, answers,
+				solutionIndex, tags);
 		submitQuestion(question.toPostEntity());
-		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT).show();
-
+		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT)
+				.show();
 
 	}
+
 	/**
-	 * Method audit to count the number of errors in the question (returns 0 if none)
+	 * Method audit to count the number of errors in the question (returns 0 if
+	 * none)
+	 * 
 	 * @return
 	 */
 	public int audit() {
-		int checkErrors=0;
+		int checkErrors = 0;
 		boolean oneTrue = false;
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		String question = editQuestion.getText().toString();
-		
+
 		EditText editTags = (EditText) findViewById(R.id.tags);
 		String tagsToString = editTags.getText().toString();
 		if (tagsToString.trim().length() == 0) {
 			checkErrors++;
 		}
-		
-		if (idList.size()<2 || question.trim().length()==0) {
+
+		if (idList.size() < 2 || question.trim().length() == 0) {
 			checkErrors++;
 		}
 
-		for (int i=0; i<idList.size(); i++) {
+		for (int i = 0; i < idList.size(); i++) {
 			Button isCorrect = (Button) findViewById(idList.get(i));
 			if (isCorrect.getText().equals("\u2714")) {
-				oneTrue=true;
+				oneTrue = true;
 			}
 
-			EditText isFull = (EditText) findViewById(idList.get(i)+answerCst);
-			if (isFull.getText().toString().trim().length()==0) {
+			EditText isFull = (EditText) findViewById(idList.get(i) + answerCst);
+			if (isFull.getText().toString().trim().length() == 0) {
 				checkErrors++;
 			}
 		}
@@ -320,8 +334,11 @@ public class EditQuestionActivity extends Activity {
 	/**
 	 * This method submit the question to the server.
 	 * 
-	 * In fact, it checks the connection and ask an async task to submit the question
-	 * @param questionAsEntity question already formatted as entity
+	 * In fact, it checks the connection and ask an async task to submit the
+	 * question
+	 * 
+	 * @param questionAsEntity
+	 *            question already formatted as entity
 	 */
 	private void submitQuestion(String questionAsEntity) {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -341,12 +358,20 @@ public class EditQuestionActivity extends Activity {
 					Toast.LENGTH_LONG).show();
 		}
 	}
+
+	private void badAuthentification() {
+		this.finish();
+		Intent authetificationActivity = new Intent(this,
+				AuthenticationActivity.class);
+		startActivity(authetificationActivity);
+	}
+
 	/**
 	 * 
-	 *  Task to submit a question
+	 * Task to submit a question
 	 * 
 	 * @author Valentin
-	 *
+	 * 
 	 */
 	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
 
@@ -357,12 +382,17 @@ public class EditQuestionActivity extends Activity {
 		protected String doInBackground(String... questionElement) {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
-			post.setHeader("Authorization", StoreCredential.getInstance().getSessionId(getApplicationContext()));
+			post.setHeader(
+					"Authorization",
+					"Tequila "
+							+ StoreCredential.getInstance().getSessionId(
+									getApplicationContext()));
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 				post.setHeader("Content-type", "application/json");
 				ResponseHandler<String> handler = new BasicResponseHandler();
-				String s = SwengHttpClientFactory.getInstance().execute(post, handler);
+				String s = SwengHttpClientFactory.getInstance().execute(post,
+						handler);
 				return s;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -372,7 +402,7 @@ public class EditQuestionActivity extends Activity {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
+			}
 
 			return null;
 		}
@@ -383,16 +413,25 @@ public class EditQuestionActivity extends Activity {
 		protected void onPostExecute(String result) {
 			// if result is null, server replied not a 2xx status.
 			if (result != null) {
-				Toast.makeText(getBaseContext(), R.string.question_submitted,
-						Toast.LENGTH_SHORT).show();
+				try {
+					JSONObject jsonQuestion = new JSONObject(result);
+					if (jsonQuestion.has("message")) {
+						badAuthentification();
+					} else {
+						Toast.makeText(getBaseContext(),
+								R.string.question_submitted, Toast.LENGTH_SHORT)
+								.show();
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 
-
-				// result contain the question submitted with it's id replied by server, but we don't use it for now.
+				// result contain the question submitted with it's id replied by
+				// server, but we don't use it for now.
 			} else {
 				Toast.makeText(getBaseContext(), R.string.problem_submit,
 						Toast.LENGTH_LONG).show();
 			}
-			
 
 			TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
@@ -402,6 +441,5 @@ public class EditQuestionActivity extends Activity {
 		}
 
 	}
-
 
 }
