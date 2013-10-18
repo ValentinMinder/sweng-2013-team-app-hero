@@ -25,23 +25,21 @@ ActivityInstrumentationTestCase2<MainActivity> {
 		solo = new Solo(getInstrumentation());
 	}
 
-	public void testMain1() {
+/*	public void testMain1() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		Button button1 = (Button) solo.getView(R.id.button1);
-		solo.clickOnView(button1);
+		solo.clickOnButton(R.string.show_random_question);
 
 	}
 	public void testMain2() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		Button button2 = (Button) solo.getView(R.id.button2);
-		solo.clickOnView(button2);
+		solo.clickOnButton(R.string.submit_quiz_question);
 
-	}
+	}*/
 	public void testMain3() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		Button butlog = (Button) solo.getView(R.id.button_log);
 		solo.clickOnView(butlog);
-
+		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 	
 

@@ -40,6 +40,8 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 		} while(correctness.toString().equals(R.string.right_answer));
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 
+		Button bouton = (Button) solo.getView(R.id.next_question_button);
+		solo.clickOnView(bouton);
 	}
 	/*public void testShowQuestion() {
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);

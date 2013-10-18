@@ -48,11 +48,15 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 		solo.enterText(tags, "a, b, c");
 
 		solo.clickOnView(correct);
+		submit = (Button) solo.getView(R.id.submit_question);
+		solo.clickOnButton("Submit");
+		solo.clickOnButton("Submit");
+		solo.sleep(3000);
 
-		solo.clickOnView(submit);
 		Button remove = (Button) solo.getView(1000);
+		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+
 		solo.clickOnView(remove);
-		
 
 	}
 
