@@ -2,18 +2,14 @@ package epfl.sweng.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
-import android.widget.EditText;
-
 import com.jayway.android.robotium.solo.Solo;
-
 import epfl.sweng.R;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 
-public class MainActivityTest extends
-ActivityInstrumentationTestCase2<MainActivity> {
+public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 	private Solo solo;
 
 	public MainActivityTest() {

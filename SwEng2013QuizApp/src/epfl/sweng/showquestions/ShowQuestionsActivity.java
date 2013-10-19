@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.auth.AuthenticationException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +18,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceActivity.Header;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -60,9 +58,7 @@ public class ShowQuestionsActivity extends Activity {
 		// Test network connection
 		if (networkInfo != null && networkInfo.isConnected()) {
 			try {
-				new GetQuestionTask().execute(
-
-				"https://sweng-quiz.appspot.com/quizquestions/random").get();
+				new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -121,31 +117,31 @@ public class ShowQuestionsActivity extends Activity {
 				TestingTransactions.check(TTChecks.QUESTION_SHOWN);
 
 				possibleAnswers
-						.setOnItemClickListener(new OnItemClickListener() {
-							@Override
-							public void onItemClick(AdapterView<?> a, View v,
-									int position, long id) {
-								TextView correctness = (TextView) findViewById(R.id.correctness);
-								Button nextQuestion = (Button) findViewById(R.id.next_question_button);
-								if (!nextQuestion.isEnabled()) {
-									// The right solution has not already been
-									// found, thus we can react to user input
-									if (id == question.getSolutionIndex()) {
-										// The right answer has been found
-										correctness
-												.setText(R.string.right_answer);
-										((Button) findViewById(R.id.next_question_button))
-												.setEnabled(true);
-									} else {
-										correctness
-												.setText(R.string.wrong_answer);
-									}
-								}
-								TestingTransactions
-										.check(TTChecks.ANSWER_SELECTED);
-
+				.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> a, View v,
+							int position, long id) {
+						TextView correctness = (TextView) findViewById(R.id.correctness);
+						Button nextQuestion = (Button) findViewById(R.id.next_question_button);
+						if (!nextQuestion.isEnabled()) {
+							// The right solution has not already been
+							// found, thus we can react to user input
+							if (id == question.getSolutionIndex()) {
+								// The right answer has been found
+								correctness
+								.setText(R.string.right_answer);
+								((Button) findViewById(R.id.next_question_button))
+								.setEnabled(true);
+							} else {
+								correctness
+								.setText(R.string.wrong_answer);
 							}
-						});
+						}
+						TestingTransactions
+						.check(TTChecks.ANSWER_SELECTED);
+
+					}
+				});
 			}
 
 			TextView tags = (TextView) findViewById(R.id.tags);

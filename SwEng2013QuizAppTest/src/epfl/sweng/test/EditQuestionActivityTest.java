@@ -12,10 +12,12 @@ import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 
-public class EditQuestionActivityTest extends
-ActivityInstrumentationTestCase2<EditQuestionActivity> {
+public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<EditQuestionActivity> {
 	private Solo solo;
-
+	public static final int ID1 = 2000;
+	public static final int ID2 = 2001;
+	public static final int DODO = 10000;
+	public static final int REM = 1000;
 	public EditQuestionActivityTest() {
 		super(EditQuestionActivity.class);
 	}
@@ -28,18 +30,17 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 	public void testEditQuestion() {
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
 		Button submit = (Button) solo.getView(R.id.submit_question);
-		assertFalse("Submit is disabled",submit.isEnabled());
+		assertFalse("Submit is disabled", submit.isEnabled());
 		Button add = (Button) solo.getView(R.id.add);
 		solo.clickOnView(add);
 
 		Button correct = (Button) solo.getView(0);
-		EditText question = (EditText)solo.getView(R.id.type_question);
+		EditText question = (EditText) solo.getView(R.id.type_question);
 		solo.enterText(question, "test question, please ignore");
-
-		EditText tags = (EditText)solo.getView(R.id.tags);
-		EditText ans1 = (EditText)solo.getView(2000);
-		EditText ans2 = (EditText)solo.getView(2001);
-		assertFalse("Submit is disabled",submit.isEnabled());
+		EditText tags = (EditText) solo.getView(R.id.tags);
+		EditText ans1 = (EditText) solo.getView(ID1);
+		EditText ans2 = (EditText) solo.getView(ID2);
+		assertFalse("Submit is disabled", submit.isEnabled());
 
 		solo.enterText(ans1, "Reponse1");
 
@@ -51,8 +52,8 @@ ActivityInstrumentationTestCase2<EditQuestionActivity> {
 		submit = (Button) solo.getView(R.id.submit_question);
 		solo.clickOnButton("Submit");
 		solo.clickOnButton("Submit");
-		solo.sleep(10000);
-		Button remove = (Button) solo.getView(1000);
+		solo.sleep(DODO);
+		Button remove = (Button) solo.getView(REM);
 		solo.clickOnView(remove);
 		getActivityAndWaitFor(TTChecks.QUESTION_EDITED);
 

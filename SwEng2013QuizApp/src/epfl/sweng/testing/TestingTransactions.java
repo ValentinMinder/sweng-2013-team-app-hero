@@ -1,4 +1,4 @@
-package epfl.sweng.testing;
+	package epfl.sweng.testing;
 
 import android.app.Instrumentation;
 import android.util.Log;

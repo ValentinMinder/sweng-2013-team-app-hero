@@ -12,8 +12,7 @@ import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 
-public class AuthenticationActivityTest extends
-ActivityInstrumentationTestCase2<AuthenticationActivity> {
+public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2<AuthenticationActivity> {
 	private Solo solo;
 
 	public AuthenticationActivityTest() {
@@ -27,10 +26,10 @@ ActivityInstrumentationTestCase2<AuthenticationActivity> {
 
 	public void testAuthentification() {
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
-		
-		EditText username = (EditText)solo.getView(R.id.gaspar_username);
-		EditText pwd = (EditText)solo.getView(R.id.gaspar_password);
-		
+
+		EditText username = (EditText) solo.getView(R.id.gaspar_username);
+		EditText pwd = (EditText) solo.getView(R.id.gaspar_password);
+
 		solo.enterText(username, "aa");
 		solo.enterText(pwd, "bb");
 		Button authentication = (Button) solo.getView(R.id.log_in_tekila);

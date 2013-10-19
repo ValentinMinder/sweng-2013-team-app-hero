@@ -42,7 +42,7 @@ public class QuizQuestion {
 		this.solutionIndex=solutionInd;
 		this.tags=tagsList;
 	}
-
+	
 	public String getQuestion() {
 		return question;
 	}

@@ -205,18 +205,14 @@ public class AuthenticationActivity extends Activity {
 				HttpResponse response = SwengHttpClientFactory.getInstance().execute(postAuthentication);
 				if (response.getStatusLine().getStatusCode() == TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL) {
 					return "success";
-				}
-				else {
+				} else {
 					return "failed";
 				}
 			} catch (UnsupportedEncodingException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -229,12 +225,11 @@ public class AuthenticationActivity extends Activity {
 		 * authentication failed or not
 		 */
 		protected void onPostExecute(String result) {
-			// � changer c'est en attendant
+			// changer c'est en attendant
 			if (result.equals("success")) {
 				// Authentication successful
 				step5LogInTekila();
-			}
-			else {
+			} else {
 				// Authentication failed
 				authenticationFailed();
 			}

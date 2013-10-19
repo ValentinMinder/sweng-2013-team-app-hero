@@ -13,9 +13,9 @@ import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 
-public class ShowQuestionsActivityTest extends
-ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
+public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 	private Solo solo;
+	public static final int DODO = 3000;
 
 	public ShowQuestionsActivityTest() {
 		super(ShowQuestionsActivity.class);
@@ -25,14 +25,14 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 	protected void setUp() {
 		solo = new Solo(getInstrumentation());
 	}
-	public void testShowQuestion(){
+	public void testShowQuestion() {
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		solo.sleep(3000);	
+		solo.sleep(DODO);	
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
 		//Button nextQuesiton = (Button) solo.getButton("Next question");
 		int i = 0;
 		TextView correctness;
-		do{
+		do {
 			String answer = (String) answers.getItemAtPosition(i);
 			solo.clickOnText(answer);
 			correctness = (TextView) solo.getView(R.id.correctness);
@@ -42,28 +42,29 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 
 		Button bouton = (Button) solo.getView(R.id.next_question_button);
 		solo.clickOnView(bouton);
-		solo.sleep(3000);
+		solo.sleep(DODO);
 		answers = (ListView) solo.getView(R.id.multiple_choices);
-			String answer = (String) answers.getItemAtPosition(1);
-			solo.clickOnText(answer);
-		
+		String answer = (String) answers.getItemAtPosition(1);
+		solo.clickOnText(answer);
+
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 
 	}
-	
+
 
 	/*public void testShowQuestion() {
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 
 		solo.sleep(3000);	
-		assertTrue("Question is displayed", solo.searchText("What is the answer to Life, the universe and everything?"));
+		assertTrue("Question is displayed", 
+		solo.searchText("What is the answer to Life, the universe and everything?"));
 		assertTrue("Correct answer is displayed", solo.searchText("Forty-two"));
 		assertTrue("Incorrect answer is displayed", solo.searchText("Twenty-seven"));
 
 		Button nextQuestionButton = solo.getButton("Next question");
 		assertFalse("Next question button is disabled", nextQuestionButton.isEnabled());
 	}
-*/
+	 */
 	private void getActivityAndWaitFor(final TestingTransactions.TTChecks expected) {
 		TestingTransactions.run(getInstrumentation(), new TestingTransaction() {
 			@Override
