@@ -42,7 +42,16 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 
 		Button bouton = (Button) solo.getView(R.id.next_question_button);
 		solo.clickOnView(bouton);
+		solo.sleep(3000);
+		answers = (ListView) solo.getView(R.id.multiple_choices);
+			String answer = (String) answers.getItemAtPosition(1);
+			solo.clickOnText(answer);
+		
+		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
+
 	}
+	
+
 	/*public void testShowQuestion() {
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 

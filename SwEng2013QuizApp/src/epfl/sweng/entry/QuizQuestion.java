@@ -43,10 +43,6 @@ public class QuizQuestion {
 		this.tags=tagsList;
 	}
 
-	public long getId() {
-		return id;
-	}
-
 	public String getQuestion() {
 		return question;
 	}
@@ -61,13 +57,6 @@ public class QuizQuestion {
 
 	public ArrayList<String> getTags() {
 		return tags;
-	}
-
-	@Override
-	public String toString() {
-		return "QuizQuestion [id=" + id + ", question=" + question
-				+ ", answer=" + answer + ", solutionIndex=" + solutionIndex
-				+ ", tags=" + tags + "]";
 	}
 	
 	/**

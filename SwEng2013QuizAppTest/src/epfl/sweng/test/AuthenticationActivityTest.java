@@ -33,7 +33,6 @@ ActivityInstrumentationTestCase2<AuthenticationActivity> {
 		
 		solo.enterText(username, "aa");
 		solo.enterText(pwd, "bb");
-		
 		Button authentication = (Button) solo.getView(R.id.log_in_tekila);
 		solo.clickOnView(authentication);
 	}
