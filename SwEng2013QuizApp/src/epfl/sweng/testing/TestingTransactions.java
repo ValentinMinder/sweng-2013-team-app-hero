@@ -1,4 +1,4 @@
-	package epfl.sweng.testing;
+package epfl.sweng.testing;
 
 import android.app.Instrumentation;
 import android.util.Log;
@@ -62,7 +62,7 @@ public class TestingTransactions {
 	public static void run(Instrumentation instr, TestingTransaction t) {
 		TestingTransactions tts = TestingTransactions.getInstance();
 		TTChecks receivedCheck = null;
-		
+
 		try {
 			// 1) initiate the transaction
 			synchronized (tts) {
@@ -73,10 +73,10 @@ public class TestingTransactions {
 				}
 				tts.startTime = System.currentTimeMillis();
 				Log.d(TAG, String.format("Starting transaction %s", t));
-	
+
 				tts.state = TTState.INITIATED;
 			}
-	
+
 			// We give up our lock while initiating the transaction. There are now
 			// two cases:
 			// 1) The transaction completes immediately. In that case, the state
@@ -84,7 +84,7 @@ public class TestingTransactions {
 			// 2) The transaction does not complete immediately. In that case, we'll
 			//    call tts.wait() to wait for completion.
 			t.initiate();
-	
+
 			synchronized (tts) {
 				// If the transaction is not initiated or completed, this
 				// probably means that another transaction was run
@@ -94,7 +94,7 @@ public class TestingTransactions {
 							"Attempt to wait for transaction '" + t +
 							"', but it was aborted.");
 				}
-				
+
 				// 2) wait for the transaction to complete (i.e., to call check)
 				long currentTime = System.currentTimeMillis();
 				while (tts.state != TTState.COMPLETED
@@ -108,7 +108,7 @@ public class TestingTransactions {
 					}
 					currentTime = System.currentTimeMillis();
 				}
-	
+
 				if (tts.state != TTState.COMPLETED) {
 					throw new TestingTransactionsError(String.format(
 							"Transaction %s timed out (elapsed: %d)",
@@ -116,7 +116,7 @@ public class TestingTransactions {
 				}
 				receivedCheck = tts.currentCheck;
 			}
-	
+
 			// 3) verify the result of the transaction
 			// Again, we give up our lock for this, because otherwise a deadlock
 			// can occur if the student code calls check() during the

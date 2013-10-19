@@ -11,11 +11,6 @@ import java.util.ArrayList;
  */
 public class QuizQuestion {
 	/**
-	 * Question identifier
-	 */
-	private long id;
-	
-	/**
 	 * Question field
 	 */
 	private String question;
@@ -36,7 +31,6 @@ public class QuizQuestion {
 	private ArrayList<String> tags;
 
 	public QuizQuestion(long idQ, String quest, ArrayList<String> answ, int solutionInd, ArrayList<String> tagsList) {
-		this.id=idQ;
 		this.question=quest;
 		this.answer=answ;
 		this.solutionIndex=solutionInd;
