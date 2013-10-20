@@ -171,12 +171,17 @@ public class AuthenticationActivity extends Activity {
 		 * Method who is gonna take the result of an URL request and recover the authentication token
 		 */
 		protected void onPostExecute(String result) {
-			try {
-				JSONObject jsonResponse = new JSONObject(result);
-				authenticationToken = (String) jsonResponse.get("token");
-				step3LogInTekila();
-			} catch (JSONException e) {
-				e.printStackTrace();
+			if (result != null) {
+				try {
+					JSONObject jsonResponse = new JSONObject(result);
+					authenticationToken = (String) jsonResponse.get("token");
+					step3LogInTekila();
+				} catch (JSONException e) {
+					e.printStackTrace();
+					authenticationToken = null;
+				}
+			}
+			else {
 				authenticationToken = null;
 			}
 		}
@@ -245,20 +250,21 @@ public class AuthenticationActivity extends Activity {
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpPost getAuthenticationToken = new HttpPost(urls[0]);
-			
-			try {
-				getAuthenticationToken.setEntity(new StringEntity("{ \"token\": \"" + authenticationToken + "\" }"));
-				getAuthenticationToken.setHeader("Content-type", "application/json");
-				
-				HttpResponse response = SwengHttpClientFactory.getInstance().execute(getAuthenticationToken);
-				
-				return EntityUtils.toString(response.getEntity());
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				authenticationToken = null;
+			if (getAuthenticationToken != null) {
+				try {
+					getAuthenticationToken.setEntity(new StringEntity("{ \"token\": \"" + authenticationToken + "\" }"));
+					getAuthenticationToken.setHeader("Content-type", "application/json");
+					
+					HttpResponse response = SwengHttpClientFactory.getInstance().execute(getAuthenticationToken);
+					
+					return EntityUtils.toString(response.getEntity());
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					authenticationToken = null;
+				}
 			}
 
 			return null;
@@ -269,12 +275,14 @@ public class AuthenticationActivity extends Activity {
 		 * the session_id
 		 */
 		protected void onPostExecute(String result) {
-			try {
-				JSONObject jsonResponse = new JSONObject(result);
-				String sessionId = (String) jsonResponse.get("session");
-				authenticationSuccessful(sessionId);
-			} catch (JSONException e) {
-				authenticationFailed();
+			if (result != null) {
+				try {
+					JSONObject jsonResponse = new JSONObject(result);
+					String sessionId = (String) jsonResponse.get("session");
+					authenticationSuccessful(sessionId);
+				} catch (JSONException e) {
+					authenticationFailed();
+				}
 			}
 		}
 	}
