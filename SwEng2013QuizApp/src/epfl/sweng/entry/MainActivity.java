@@ -12,8 +12,8 @@ import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 /**
  * 
  * Main activity of our application
@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
 			buttonLog.setText(R.string.log_in_tekila);
 		}
 		
-		TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 		
 		/* A utiliser lorsqu'on veut r���cup���rer la session_id de l'utilisateur
 		SharedPreferences preferences = 
@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
 		if (!session.equals("")) {
 			//TODO which context shall we pass, getBaseContext, applicationContext ... ? 
 			StoreCredential.getInstance().removeSessionId(getApplicationContext());
-			TestingTransactions.check(TTChecks.LOGGED_OUT);
+			TestCoordinator.check(TTChecks.LOGGED_OUT);
 		}
 		
 		this.finish();

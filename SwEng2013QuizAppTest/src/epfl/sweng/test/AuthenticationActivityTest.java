@@ -8,9 +8,9 @@ import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
 
 public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2<AuthenticationActivity> {
 	private Solo solo;
@@ -37,14 +37,14 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	}
 
 
-	private void getActivityAndWaitFor(final TestingTransactions.TTChecks expected) {
-		TestingTransactions.run(getInstrumentation(), new TestingTransaction() {
+	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
+		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
 			@Override
 			public void initiate() {
 				getActivity();
 			}
 			@Override
-			public void verify(TestingTransactions.TTChecks notification) {
+			public void verify(TestCoordinator.TTChecks notification) {
 				assertEquals(String.format(
 						"Expected notification %s, but received %s", expected,
 						notification), expected, notification);

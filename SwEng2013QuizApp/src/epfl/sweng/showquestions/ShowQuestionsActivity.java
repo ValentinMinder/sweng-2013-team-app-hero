@@ -32,8 +32,8 @@ import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.utils.JSONUtils;
 
 /**
@@ -114,7 +114,7 @@ public class ShowQuestionsActivity extends Activity {
 						question.getAnswer());
 
 				possibleAnswers.setAdapter(adapter);
-				TestingTransactions.check(TTChecks.QUESTION_SHOWN);
+				TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 
 				possibleAnswers
 				.setOnItemClickListener(new OnItemClickListener() {
@@ -137,7 +137,7 @@ public class ShowQuestionsActivity extends Activity {
 								.setText(R.string.wrong_answer);
 							}
 						}
-						TestingTransactions
+						TestCoordinator
 						.check(TTChecks.ANSWER_SELECTED);
 
 					}

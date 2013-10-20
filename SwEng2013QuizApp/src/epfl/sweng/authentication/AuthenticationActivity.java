@@ -18,22 +18,22 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import epfl.sweng.R;
-import epfl.sweng.entry.MainActivity;
-import epfl.sweng.servercomm.SwengHttpClientFactory;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import epfl.sweng.R;
+import epfl.sweng.entry.MainActivity;
+import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class AuthenticationActivity extends Activity {
 	
@@ -59,7 +59,7 @@ public class AuthenticationActivity extends Activity {
 		Toast.makeText(getBaseContext(), R.string.authentication_failed,
 				Toast.LENGTH_LONG).show();
 		
-		TestingTransactions.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
+		TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class AuthenticationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_authentication);
 		
-		TestingTransactions.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
+		TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 
 	@Override
