@@ -61,7 +61,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 	}
 
 
-	private void getActivityAndWaitFor(final TestingTransactions.TTChecks expected) {
+	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestingTransactions.run(getInstrumentation(), new TestingTransaction() {
 			@Override
 			public void initiate() {

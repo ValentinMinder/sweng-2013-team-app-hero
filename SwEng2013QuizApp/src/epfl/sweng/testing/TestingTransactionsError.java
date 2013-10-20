@@ -1,7 +1,9 @@
 package epfl.sweng.testing;
 
-/// An exception that is thrown whenever TestingTransactions are used in a wrong
-/// way.
+/**
+ * An exception that is thrown whenever TestingTransactions are used in a wrong
+ * way.
+ */
 public class TestingTransactionsError extends AssertionError {
 	public TestingTransactionsError(String msg) {
 		super(msg);
