@@ -13,7 +13,6 @@ import epfl.sweng.R;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.test.minimalmock.MockHttpClient;
-import epfl.sweng.testing.TestCoordinationError;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;

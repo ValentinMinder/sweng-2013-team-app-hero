@@ -33,7 +33,6 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import epfl.sweng.R;
-import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
@@ -61,6 +60,16 @@ public class EditQuestionActivity extends Activity {
 	private int idIndex = 0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
+	
+	/**
+	 * Method who is called if error occured
+	 */
+	private void errorEditQuestion()
+	{
+		Toast.makeText(getBaseContext(),
+				R.string.not_upload_question, Toast.LENGTH_SHORT)
+				.show();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -359,15 +368,6 @@ public class EditQuestionActivity extends Activity {
 		}
 	}
 
-	private void badAuthentification(String s) {
-		this.finish();
-		Toast.makeText(getBaseContext(), s, 
-				Toast.LENGTH_SHORT).show();
-		Intent authetificationActivity = new Intent(this,
-				AuthenticationActivity.class);
-		startActivity(authetificationActivity);
-	}
-
 	/**
 	 * 
 	 * Task to submit a question
@@ -418,11 +418,17 @@ public class EditQuestionActivity extends Activity {
 				try {
 					JSONObject jsonQuestion = new JSONObject(result);
 					if (jsonQuestion.has("message")) {
-						badAuthentification((String) jsonQuestion.get("message"));
+						errorEditQuestion();
+						//badAuthentification(jsonQuestion.getString("message"));
 					} else {
 						Toast.makeText(getBaseContext(),
 								R.string.question_submitted, Toast.LENGTH_SHORT)
 								.show();
+						TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+
+						Intent intent = getIntent();
+						finish();
+						startActivity(intent);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -431,15 +437,8 @@ public class EditQuestionActivity extends Activity {
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.
 			} else {
-				Toast.makeText(getBaseContext(), R.string.problem_submit,
-						Toast.LENGTH_LONG).show();
+				errorEditQuestion();
 			}
-
-			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
-
-			Intent intent = getIntent();
-			finish();
-			startActivity(intent);
 		}
 
 	}

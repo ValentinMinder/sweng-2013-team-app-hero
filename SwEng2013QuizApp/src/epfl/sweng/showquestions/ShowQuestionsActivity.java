@@ -13,7 +13,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -28,7 +27,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
-import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
@@ -46,6 +44,16 @@ public class ShowQuestionsActivity extends Activity {
 
 	private QuizQuestion question = null;
 
+	/**
+	 * Method who is called if error occured
+	 */
+	private void errorDisplayQuestion()
+	{
+		Toast.makeText(getBaseContext(),
+				R.string.error_retrieving_question, Toast.LENGTH_SHORT)
+				.show();
+	}
+	
 	/**
 	 * Method who is going to take a random question on the server.
 	 * 
@@ -169,13 +177,6 @@ public class ShowQuestionsActivity extends Activity {
 		return true;
 	}
 
-	private void badAuthentification() {
-		this.finish();
-		Intent authetificationActivity = new Intent(this,
-				AuthenticationActivity.class);
-		startActivity(authetificationActivity);
-	}
-
 	/**
 	 * Class who is use to get the question from the server
 	 * 
@@ -212,11 +213,11 @@ public class ShowQuestionsActivity extends Activity {
 		protected void onPostExecute(String result) {
 			try {
 				if (result == null) {
-					badAuthentification();
+					errorDisplayQuestion();
 				} else {
 					JSONObject jsonQuestion = new JSONObject(result);
 					if (jsonQuestion.has("message")) {
-						badAuthentification();
+						errorDisplayQuestion();
 					} else {
 						question = new QuizQuestion(
 								jsonQuestion.getInt("id"),
@@ -229,7 +230,7 @@ public class ShowQuestionsActivity extends Activity {
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
-
+				errorDisplayQuestion();
 			}
 		}
 
