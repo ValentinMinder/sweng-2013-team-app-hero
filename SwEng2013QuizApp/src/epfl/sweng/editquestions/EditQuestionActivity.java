@@ -35,7 +35,7 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
-import epfl.sweng.entry.QuizQuestion;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;

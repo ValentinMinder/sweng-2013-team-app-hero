@@ -174,8 +174,10 @@ public class AuthenticationActivity extends Activity {
 			if (result != null) {
 				try {
 					JSONObject jsonResponse = new JSONObject(result);
-					authenticationToken = (String) jsonResponse.get("token");
-					step3LogInTekila();
+					if (jsonResponse.has("token")) {
+						authenticationToken = (String) jsonResponse.get("token");
+						step3LogInTekila();
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 					authenticationToken = null;
@@ -230,7 +232,6 @@ public class AuthenticationActivity extends Activity {
 		 * authentication failed or not
 		 */
 		protected void onPostExecute(String result) {
-			// changer c'est en attendant
 			if (result.equals("success")) {
 				// Authentication successful
 				step5LogInTekila();

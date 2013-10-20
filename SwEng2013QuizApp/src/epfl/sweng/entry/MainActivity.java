@@ -22,6 +22,20 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  */
 public class MainActivity extends Activity {
 	
+	/**
+	 * Method who is called for modify each buttons when the user isn't authenticated
+	 */
+	private void modifyButtonIfNotAuthenticated() {
+		Button button1 = (Button) findViewById(R.id.button1);
+		button1.setEnabled(false);
+		
+		Button button2 = (Button) findViewById(R.id.button2);
+		button2.setEnabled(false);
+		
+		Button buttonLog = (Button) findViewById(R.id.button_log);
+		buttonLog.setText(R.string.log_in_tekila);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,25 +44,10 @@ public class MainActivity extends Activity {
 		String session = StoreCredential.getInstance().getSessionId(getApplicationContext());
 		
 		if (session.equals("")) {
-			Button button1 = (Button) findViewById(R.id.button1);
-			button1.setEnabled(false);
-			
-			Button button2 = (Button) findViewById(R.id.button2);
-			button2.setEnabled(false);
-			
-			Button buttonLog = (Button) findViewById(R.id.button_log);
-			buttonLog.setText(R.string.log_in_tekila);
+			modifyButtonIfNotAuthenticated();
 		}
 		
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
-		
-		/* A utiliser lorsqu'on veut r���cup���rer la session_id de l'utilisateur
-		SharedPreferences preferences = 
-		getSharedPreferences
-		(AuthenticationActivity
-		.namePreferenceSession,MODE_PRIVATE);
-		preferences.getString(AuthenticationActivity.nameVariableSession, "");
-		*/
 	}
 
 	@Override
@@ -63,8 +62,8 @@ public class MainActivity extends Activity {
 
 		
 		if (!session.equals("")) {
-			//TODO which context shall we pass, getBaseContext, applicationContext ... ? 
 			StoreCredential.getInstance().removeSessionId(getApplicationContext());
+			modifyButtonIfNotAuthenticated();
 			TestCoordinator.check(TTChecks.LOGGED_OUT);
 		}
 		
