@@ -189,9 +189,11 @@ public class AuthenticationActivity extends Activity {
 				} catch (JSONException e) {
 					e.printStackTrace();
 					authenticationToken = null;
+					authenticationFailed();
 				}
 			} else {
 				authenticationToken = null;
+				authenticationFailed();
 			}
 		}
 	}
@@ -302,6 +304,9 @@ public class AuthenticationActivity extends Activity {
 				} catch (JSONException e) {
 					authenticationFailed();
 				}
+			}
+			else {
+				authenticationFailed();
 			}
 		}
 	}
