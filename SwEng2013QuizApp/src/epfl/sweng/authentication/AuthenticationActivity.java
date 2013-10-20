@@ -36,51 +36,54 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class AuthenticationActivity extends Activity {
-	
+
 	private String authenticationToken = null;
 	private final static int TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL = 302;
+
 	public static enum appState {
-	 AUTHENTICATED, NOT_AUTHENTICATED;
+		AUTHENTICATED, NOT_AUTHENTICATED;
 	}
-	
+
 	/**
-	 * Method who is called if authentication failed, clear the text values
-	 * of the text view
+	 * Method who is called if authentication failed, clear the text values of
+	 * the text view
 	 */
 	private void authenticationFailed() {
 		authenticationToken = null;
-		
+
 		TextView username = (TextView) findViewById(R.id.gaspar_username);
 		username.setText("");
-		
+
 		TextView password = (TextView) findViewById(R.id.gaspar_password);
 		password.setText("");
-		
+
 		Toast.makeText(getBaseContext(), R.string.authentication_failed,
 				Toast.LENGTH_LONG).show();
-		
+
 		TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
-	
+
 	/**
-	 * Method who is called if authentication successful, session id
-	 * is stored in SharedPreferences
+	 * Method who is called if authentication successful, session id is stored
+	 * in SharedPreferences
+	 * 
 	 * @param session_id
 	 */
 	private void authenticationSuccessful(String sessionId) {
-		StoreCredential.getInstance().storeSessionId(sessionId, getApplicationContext());
+		StoreCredential.getInstance().storeSessionId(sessionId,
+				getApplicationContext());
 		this.finish();
-		
+
 		Intent mainActivityIntent = new Intent(this, MainActivity.class);
-		
+
 		startActivity(mainActivityIntent);
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_authentication);
-		
+
 		TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 
@@ -90,7 +93,7 @@ public class AuthenticationActivity extends Activity {
 		getMenuInflater().inflate(R.menu.authentication, menu);
 		return true;
 	}
-	
+
 	/**
 	 * Method who is used to recover authentication token
 	 */
@@ -100,14 +103,14 @@ public class AuthenticationActivity extends Activity {
 
 		// Test network connection
 		if (networkInfo != null && networkInfo.isConnected()) {
-			new GetAuthenticationTokenTask().execute(
-					"https://sweng-quiz.appspot.com/login");
+			new GetAuthenticationTokenTask()
+					.execute("https://sweng-quiz.appspot.com/login");
 		} else {
 			Toast.makeText(getBaseContext(), R.string.no_network,
 					Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
 	/**
 	 * Method who is used to test username and password (Step 3)
 	 */
@@ -115,18 +118,18 @@ public class AuthenticationActivity extends Activity {
 		if (authenticationToken != null) {
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-	
+
 			// Test network connection
 			if (networkInfo != null && networkInfo.isConnected()) {
-				new TekilaAuthenticationTask().execute(
-						"https://tequila.epfl.ch/cgi-bin/tequila/login");
+				new TekilaAuthenticationTask()
+						.execute("https://tequila.epfl.ch/cgi-bin/tequila/login");
 			} else {
 				Toast.makeText(getBaseContext(), R.string.no_network,
 						Toast.LENGTH_LONG).show();
 			}
 		}
 	}
-	
+
 	/**
 	 * Method who is used to test authentication token (Step 5)
 	 */
@@ -134,30 +137,33 @@ public class AuthenticationActivity extends Activity {
 		if (authenticationToken != null) {
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-	
+
 			// Test network connection
 			if (networkInfo != null && networkInfo.isConnected()) {
-				new SendAuthenticationTokenTask().execute(
-						"https://sweng-quiz.appspot.com/login");
+				new SendAuthenticationTokenTask()
+						.execute("https://sweng-quiz.appspot.com/login");
 			} else {
 				Toast.makeText(getBaseContext(), R.string.no_network,
 						Toast.LENGTH_LONG).show();
 			}
 		}
 	}
-	
+
 	/**
-	 * Class who is used to get the authentication token from the server (Step 1)
-	 *
+	 * Class who is used to get the authentication token from the server (Step
+	 * 1)
+	 * 
 	 */
-	private class GetAuthenticationTokenTask extends AsyncTask<String, Void, String> {
+	private class GetAuthenticationTokenTask extends
+			AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpGet getAuthenticationToken = new HttpGet(urls[0]);
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return SwengHttpClientFactory.getInstance().execute(getAuthenticationToken, firstHandler);
+				return SwengHttpClientFactory.getInstance().execute(
+						getAuthenticationToken, firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -168,48 +174,56 @@ public class AuthenticationActivity extends Activity {
 		}
 
 		/**
-		 * Method who is gonna take the result of an URL request and recover the authentication token
+		 * Method who is gonna take the result of an URL request and recover the
+		 * authentication token
 		 */
 		protected void onPostExecute(String result) {
 			if (result != null) {
 				try {
 					JSONObject jsonResponse = new JSONObject(result);
 					if (jsonResponse.has("token")) {
-						authenticationToken = (String) jsonResponse.get("token");
+						authenticationToken = (String) jsonResponse
+								.get("token");
 						step3LogInTekila();
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 					authenticationToken = null;
 				}
-			}
-			else {
+			} else {
 				authenticationToken = null;
 			}
 		}
 	}
-	
+
 	/**
-	 * Class who is use to test if username and password are correct in Tekila (Step 3)
-	 *
+	 * Class who is use to test if username and password are correct in Tekila
+	 * (Step 3)
+	 * 
 	 */
-	private class TekilaAuthenticationTask extends AsyncTask<String, Void, String> {
+	private class TekilaAuthenticationTask extends
+			AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpPost postAuthentication = new HttpPost(urls[0]);
-			
+
 			TextView username = (TextView) findViewById(R.id.gaspar_username);
 			TextView password = (TextView) findViewById(R.id.gaspar_password);
-			
+
 			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-			postParameters.add(new BasicNameValuePair("username", username.getText().toString()));
-			postParameters.add(new BasicNameValuePair("password", password.getText().toString()));
-			postParameters.add(new BasicNameValuePair("requestkey", authenticationToken));
-			
+			postParameters.add(new BasicNameValuePair("username", username
+					.getText().toString()));
+			postParameters.add(new BasicNameValuePair("password", password
+					.getText().toString()));
+			postParameters.add(new BasicNameValuePair("requestkey",
+					authenticationToken));
+
 			try {
-				postAuthentication.setEntity(new UrlEncodedFormEntity(postParameters));
-				HttpResponse response = SwengHttpClientFactory.getInstance().execute(postAuthentication);
+				postAuthentication.setEntity(new UrlEncodedFormEntity(
+						postParameters));
+				HttpResponse response = SwengHttpClientFactory.getInstance()
+						.execute(postAuthentication);
 				if (response.getStatusLine().getStatusCode() == TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL) {
 					return "success";
 				} else {
@@ -222,13 +236,13 @@ public class AuthenticationActivity extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			authenticationToken = null;
 			return null;
 		}
 
 		/**
-		 * Method who is gonna take the result of an URL and test if 
+		 * Method who is gonna take the result of an URL and test if
 		 * authentication failed or not
 		 */
 		protected void onPostExecute(String result) {
@@ -241,23 +255,27 @@ public class AuthenticationActivity extends Activity {
 			}
 		}
 	}
-	
+
 	/**
 	 * Class who sends the authentication token back to the SwEng2013QuizApp
 	 * server and recover the session id (Step 5 - 6 - 7)
 	 */
-	private class SendAuthenticationTokenTask extends AsyncTask<String, Void, String> {
+	private class SendAuthenticationTokenTask extends
+			AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpPost getAuthenticationToken = new HttpPost(urls[0]);
 			if (getAuthenticationToken != null) {
 				try {
-					getAuthenticationToken.setEntity(new StringEntity("{ \"token\": \"" + authenticationToken + "\" }"));
-					getAuthenticationToken.setHeader("Content-type", "application/json");
-					
-					HttpResponse response = SwengHttpClientFactory.getInstance().execute(getAuthenticationToken);
-					
+					getAuthenticationToken.setEntity(new StringEntity(
+							"{ \"token\": \"" + authenticationToken + "\" }"));
+					getAuthenticationToken.setHeader("Content-type",
+							"application/json");
+
+					HttpResponse response = SwengHttpClientFactory
+							.getInstance().execute(getAuthenticationToken);
+
 					return EntityUtils.toString(response.getEntity());
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
@@ -272,8 +290,8 @@ public class AuthenticationActivity extends Activity {
 		}
 
 		/**
-		 * Method who is gonna take the result of an URL request and recover
-		 * the session_id
+		 * Method who is gonna take the result of an URL request and recover the
+		 * session_id
 		 */
 		protected void onPostExecute(String result) {
 			if (result != null) {
