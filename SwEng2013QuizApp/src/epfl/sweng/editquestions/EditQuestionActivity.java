@@ -361,9 +361,8 @@ public class EditQuestionActivity extends Activity {
 
 	private void badAuthentification(String s) {
 		this.finish();
-		Toast.makeText(getBaseContext(),s
-				, Toast.LENGTH_SHORT)
-				.show();
+		Toast.makeText(getBaseContext(), s, 
+				Toast.LENGTH_SHORT).show();
 		Intent authetificationActivity = new Intent(this,
 				AuthenticationActivity.class);
 		startActivity(authetificationActivity);
