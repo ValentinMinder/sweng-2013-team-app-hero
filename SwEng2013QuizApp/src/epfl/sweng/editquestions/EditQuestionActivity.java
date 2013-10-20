@@ -64,8 +64,7 @@ public class EditQuestionActivity extends Activity {
 	/**
 	 * Method who is called if error occured
 	 */
-	private void errorEditQuestion()
-	{
+	private void errorEditQuestion() {
 		Toast.makeText(getBaseContext(),
 				R.string.not_upload_question, Toast.LENGTH_SHORT)
 				.show();

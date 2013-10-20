@@ -47,8 +47,7 @@ public class ShowQuestionsActivity extends Activity {
 	/**
 	 * Method who is called if error occured
 	 */
-	private void errorDisplayQuestion()
-	{
+	private void errorDisplayQuestion() {
 		Toast.makeText(getBaseContext(),
 				R.string.error_retrieving_question, Toast.LENGTH_SHORT)
 				.show();
