@@ -418,7 +418,7 @@ public class EditQuestionActivity extends Activity {
 				try {
 					JSONObject jsonQuestion = new JSONObject(result);
 					if (jsonQuestion.has("message")) {
-						badAuthentification(jsonQuestion.get("message"));
+						badAuthentification((String) jsonQuestion.get("message"));
 					} else {
 						Toast.makeText(getBaseContext(),
 								R.string.question_submitted, Toast.LENGTH_SHORT)
