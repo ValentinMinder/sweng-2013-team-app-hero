@@ -359,8 +359,11 @@ public class EditQuestionActivity extends Activity {
 		}
 	}
 
-	private void badAuthentification() {
+	private void badAuthentification(String s) {
 		this.finish();
+		Toast.makeText(getBaseContext(),s
+				, Toast.LENGTH_SHORT)
+				.show();
 		Intent authetificationActivity = new Intent(this,
 				AuthenticationActivity.class);
 		startActivity(authetificationActivity);
@@ -416,7 +419,7 @@ public class EditQuestionActivity extends Activity {
 				try {
 					JSONObject jsonQuestion = new JSONObject(result);
 					if (jsonQuestion.has("message")) {
-						badAuthentification();
+						badAuthentification(jsonQuestion.get("message"));
 					} else {
 						Toast.makeText(getBaseContext(),
 								R.string.question_submitted, Toast.LENGTH_SHORT)
