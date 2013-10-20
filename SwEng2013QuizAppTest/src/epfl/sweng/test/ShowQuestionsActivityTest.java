@@ -1,5 +1,7 @@
 package epfl.sweng.test;
 
+import org.apache.http.HttpStatus;
+
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 import android.widget.ListView;
@@ -8,7 +10,10 @@ import android.widget.TextView;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.R;
+import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
+import epfl.sweng.test.minimalmock.MockHttpClient;
+import epfl.sweng.testing.TestCoordinationError;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
@@ -16,6 +21,7 @@ import epfl.sweng.testing.TestingTransaction;
 public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 	private Solo solo;
 	public static final int DODO = 3000;
+	private MockHttpClient httpClient;
 
 	public ShowQuestionsActivityTest() {
 		super(ShowQuestionsActivity.class);
@@ -23,9 +29,19 @@ public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<
 
 	@Override
 	protected void setUp() {
+		httpClient = new MockHttpClient();
+		SwengHttpClientFactory.setInstance(httpClient);
 		solo = new Solo(getInstrumentation());
 	}
 	public void testShowQuestion() {
+		httpClient.pushCannedResponse(
+				"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+				HttpStatus.SC_OK,
+				"{\"question\": \"What is the answer to life, the universe, and everything?\","
+						+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
+						+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+				"application/json");
+
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo.sleep(DODO);	
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
@@ -50,7 +66,6 @@ public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 
 	}
-
 
 	/*public void testShowQuestion() {
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
