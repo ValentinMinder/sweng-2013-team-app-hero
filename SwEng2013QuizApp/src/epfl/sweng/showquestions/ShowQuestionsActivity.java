@@ -51,6 +51,9 @@ public class ShowQuestionsActivity extends Activity {
 		Toast.makeText(getBaseContext(),
 				R.string.error_retrieving_question, Toast.LENGTH_SHORT)
 				.show();
+		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
+
+		
 	}
 	
 	/**
