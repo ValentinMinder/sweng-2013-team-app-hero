@@ -37,8 +37,8 @@ import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.entry.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /**
  * 
@@ -116,7 +116,7 @@ public class EditQuestionActivity extends Activity {
 		gridIndex++;
 		idIndex++;
 
-		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 
 	}
 
@@ -158,7 +158,7 @@ public class EditQuestionActivity extends Activity {
 			((Button) findViewById(view.getId()))
 					.setText(R.string.right_answer);
 			submitControler(submit);
-			TestingTransactions.check(TTChecks.QUESTION_EDITED);
+			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 
 		}
 	};
@@ -179,7 +179,7 @@ public class EditQuestionActivity extends Activity {
 			container.removeView(delAnswer);
 			idList.remove((Integer) (idToRemove - removeCst));
 			submitControler(submit);
-			TestingTransactions.check(TTChecks.QUESTION_EDITED);
+			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 
 		}
 	};
@@ -192,7 +192,7 @@ public class EditQuestionActivity extends Activity {
 		@Override
 		public void afterTextChanged(Editable s) {
 			submitControler(submit);
-			TestingTransactions.check(TTChecks.QUESTION_EDITED);
+			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 		}
 
 		@Override
@@ -249,7 +249,7 @@ public class EditQuestionActivity extends Activity {
 
 		submitControler(submit);
 
-		TestingTransactions.check(TTChecks.QUESTION_EDITED);
+		TestCoordinator.check(TTChecks.QUESTION_EDITED);
 	}
 
 	/**
@@ -433,7 +433,7 @@ public class EditQuestionActivity extends Activity {
 						Toast.LENGTH_LONG).show();
 			}
 
-			TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
+			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
 			Intent intent = getIntent();
 			finish();
