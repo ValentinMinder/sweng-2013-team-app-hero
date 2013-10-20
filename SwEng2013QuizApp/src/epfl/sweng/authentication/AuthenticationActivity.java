@@ -304,8 +304,7 @@ public class AuthenticationActivity extends Activity {
 				} catch (JSONException e) {
 					authenticationFailed();
 				}
-			}
-			else {
+			} else {
 				authenticationFailed();
 			}
 		}
