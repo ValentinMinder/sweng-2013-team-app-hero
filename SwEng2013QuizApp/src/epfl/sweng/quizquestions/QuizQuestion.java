@@ -1,6 +1,13 @@
 package epfl.sweng.quizquestions;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import epfl.sweng.utils.JSONUtils;
 
 /**
  * 
@@ -10,6 +17,12 @@ import java.util.ArrayList;
  *
  */
 public class QuizQuestion {
+	
+	/**
+	 * Question id
+	 */
+	private int id;
+	
 	/**
 	 * Question field
 	 */
@@ -18,7 +31,7 @@ public class QuizQuestion {
 	/**
 	 * List of answers
 	 */
-	private ArrayList<String> answer;
+	private List<String> answer;
 	
 	/**
 	 * Index of the solution in the list of answers 
@@ -26,22 +39,46 @@ public class QuizQuestion {
 	private int solutionIndex;
 	
 	/**
+	 * Question's owner
+	 */
+	private String owner;
+	
+	/**
 	 * Question tags
 	 */
-	private ArrayList<String> tags;
+	private Set<String> tags;
+	
+	public QuizQuestion(final String jsonInput) throws JSONException  {
+		JSONObject jsonQuestion = new JSONObject(jsonInput);
+		
+		id = jsonQuestion.getInt("id");
+		question = jsonQuestion.getString("question");
+		answer = JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers"));
+		solutionIndex = jsonQuestion.getInt("solutionIndex");
+		tags = JSONUtils.convertJSONArraySetString(jsonQuestion.getJSONArray("tags"));
+    }
 
-	public QuizQuestion(long idQ, String quest, ArrayList<String> answ, int solutionInd, ArrayList<String> tagsList) {
-		this.question=quest;
-		this.answer=answ;
-		this.solutionIndex=solutionInd;
-		this.tags=tagsList;
+	public QuizQuestion(final String question, final List<String> answers, final int
+	        solutionIndex, final Set<String> tags, final int id, final String owner) {
+		this.question=question;
+		this.answer=answers;
+		this.solutionIndex=solutionIndex;
+		this.tags=tags;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public String getOwner() {
+		return owner;
 	}
 	
 	public String getQuestion() {
 		return question;
 	}
 
-	public ArrayList<String> getAnswer() {
+	public List<String> getAnswer() {
 		return answer;
 	}
 
@@ -49,7 +86,7 @@ public class QuizQuestion {
 		return solutionIndex;
 	}
 
-	public ArrayList<String> getTags() {
+	public Set<String> getTags() {
 		return tags;
 	}
 	
@@ -77,11 +114,14 @@ public class QuizQuestion {
 		entity.append(" ]," +
 			    " \"solutionIndex\": " + solutionIndex + "," +
 			    " \"tags\": [");
-		for (int i = 0; i < tags.size(); i++) {
-			if (i == 0) {
-				entity.append(" \"" + tags.get(i) + "\"");
+		
+		Iterator<String> itTags = tags.iterator();
+		while (itTags.hasNext()) {
+			String tag = itTags.next();
+			if (itTags.hasNext()) {
+				entity.append(" \"" + tag + "\", ");
 			} else {
-				entity.append(", \"" + tags.get(i) + "\"");
+				entity.append("\"" + tag + "\"");
 			}
 		}
 		entity.append(" ] }");

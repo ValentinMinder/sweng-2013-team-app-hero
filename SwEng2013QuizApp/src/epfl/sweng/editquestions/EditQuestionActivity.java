@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.ClientProtocolException;
@@ -276,7 +278,7 @@ public class EditQuestionActivity extends Activity {
 		String questionBody = editQuestion.getText().toString();
 		String tagString = tagsText.getText().toString();
 
-		ArrayList<String> tags = new ArrayList<String>(Arrays.asList(tagString
+		Set<String> tags = new HashSet<String>(Arrays.asList(tagString
 				.split("\\W+")));
 
 		for (int i = 0; i < idList.size(); i++) {
@@ -289,9 +291,11 @@ public class EditQuestionActivity extends Activity {
 				solutionIndex = i;
 			}
 		}
-
-		QuizQuestion question = new QuizQuestion(0, questionBody, answers,
-				solutionIndex, tags);
+        
+        QuizQuestion question = new QuizQuestion(questionBody, answers,
+				solutionIndex, tags, 0, "OWNER");
+		/*QuizQuestion question = new QuizQuestion(0, questionBody, answers,
+				solutionIndex, tags);*/
 		submitQuestion(question.toPostEntity());
 		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT)
 				.show();

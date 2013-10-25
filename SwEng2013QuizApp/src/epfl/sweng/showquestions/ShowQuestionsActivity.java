@@ -32,7 +32,6 @@ import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
-import epfl.sweng.utils.JSONUtils;
 
 /**
  * Class to show random question from the server.
@@ -221,12 +220,7 @@ public class ShowQuestionsActivity extends Activity {
 					if (jsonQuestion.has("message")) {
 						errorDisplayQuestion();
 					} else {
-						question = new QuizQuestion(
-								jsonQuestion.getInt("id"),
-								jsonQuestion.getString("question"),
-								JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers")),
-								jsonQuestion.getInt("solutionIndex"),
-								JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("tags")));
+						question = new QuizQuestion(result);
 						displayQuestion();
 					}
 				}
