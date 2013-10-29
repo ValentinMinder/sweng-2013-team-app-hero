@@ -9,15 +9,12 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import org.apache.http.util.EntityUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +45,8 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  */
 public class EditQuestionActivity extends Activity {
 
+	private final static int SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL = 201;
+	
 	private final int correctCst = 0;
 	private final int removeCst = 1000;
 	private final int answerCst = 2000;
@@ -388,18 +387,23 @@ public class EditQuestionActivity extends Activity {
 		protected String doInBackground(String... questionElement) {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
-			post.setHeader(
+			post.addHeader(
 					"Authorization",
 					"Tequila "
 							+ StoreCredential.getInstance().getSessionId(
 									getApplicationContext()));
+			post.addHeader("Content-type", "application/json");
+			
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
-				post.setHeader("Content-type", "application/json");
-				ResponseHandler<String> handler = new BasicResponseHandler();
-				String s = SwengHttpClientFactory.getInstance().execute(post,
-						handler);
-				return s;
+
+				HttpResponse response = SwengHttpClientFactory
+						.getInstance().execute(post);
+				
+				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL)
+				{
+					return EntityUtils.toString(response.getEntity());
+				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			} catch (HttpResponseException e) {
@@ -419,24 +423,14 @@ public class EditQuestionActivity extends Activity {
 		protected void onPostExecute(String result) {
 			// if result is null, server replied not a 2xx status.
 			if (result != null) {
-				try {
-					JSONObject jsonQuestion = new JSONObject(result);
-					if (jsonQuestion.has("message")) {
-						errorEditQuestion();
-						//badAuthentification(jsonQuestion.getString("message"));
-					} else {
-						Toast.makeText(getBaseContext(),
-								R.string.question_submitted, Toast.LENGTH_SHORT)
-								.show();
-						TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+				Toast.makeText(getBaseContext(),
+						R.string.question_submitted, Toast.LENGTH_SHORT)
+						.show();
+				TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
-						Intent intent = getIntent();
-						finish();
-						startActivity(intent);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
 
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.

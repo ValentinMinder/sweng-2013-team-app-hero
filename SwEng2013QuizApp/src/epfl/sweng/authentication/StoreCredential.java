@@ -29,7 +29,6 @@ public class StoreCredential {
 	}
 	
 	public void removeSessionId(Context context) {
-		//TODO lot of repetition here, see if we can factorise a little bit
 		SharedPreferences preferences = context.getSharedPreferences(NAME_PREFERENCE_SESSION, Context.MODE_PRIVATE);
 		SharedPreferences.Editor ed = preferences.edit();
 		ed.remove(NAME_VARIABLE_SESSION);

@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -37,8 +35,10 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class AuthenticationActivity extends Activity {
 
-	private String authenticationToken = null;
 	private final static int TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL = 302;
+	private final static int SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL = 200;
+	
+	private String authenticationToken = null;
 
 	public static enum appState {
 		AUTHENTICATED, NOT_AUTHENTICATED;
@@ -160,10 +160,14 @@ public class AuthenticationActivity extends Activity {
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpGet getAuthenticationToken = new HttpGet(urls[0]);
-			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return SwengHttpClientFactory.getInstance().execute(
-						getAuthenticationToken, firstHandler);
+				HttpResponse response = SwengHttpClientFactory
+						.getInstance().execute(getAuthenticationToken);
+				
+				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL)
+				{
+					return EntityUtils.toString(response.getEntity());
+				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -185,9 +189,10 @@ public class AuthenticationActivity extends Activity {
 						authenticationToken = (String) jsonResponse
 								.get("token");
 						step3LogInTekila();
+					} else {
+						authenticationFailed();
 					}
 				} catch (JSONException e) {
-					e.printStackTrace();
 					authenticationToken = null;
 					authenticationFailed();
 				}
@@ -268,24 +273,25 @@ public class AuthenticationActivity extends Activity {
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpPost getAuthenticationToken = new HttpPost(urls[0]);
-			if (getAuthenticationToken != null) {
-				try {
-					getAuthenticationToken.setEntity(new StringEntity(
-							"{ \"token\": \"" + authenticationToken + "\" }"));
-					getAuthenticationToken.setHeader("Content-type",
-							"application/json");
-
-					HttpResponse response = SwengHttpClientFactory
-							.getInstance().execute(getAuthenticationToken);
-
+			
+			try {
+				getAuthenticationToken.setEntity(new StringEntity("{\"token\": \""+ authenticationToken +"\"}"));
+				getAuthenticationToken.setHeader("Content-type",
+						"application/json");
+				
+				HttpResponse response = SwengHttpClientFactory
+						.getInstance().execute(getAuthenticationToken);
+				
+				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL)
+				{
 					return EntityUtils.toString(response.getEntity());
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					authenticationToken = null;
 				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				authenticationToken = null;
 			}
 
 			return null;
