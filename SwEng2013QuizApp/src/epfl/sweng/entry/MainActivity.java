@@ -63,15 +63,17 @@ public class MainActivity extends Activity {
 		
 		if (!session.equals("")) {
 			StoreCredential.getInstance().removeSessionId(getApplicationContext());
+			
 			modifyButtonIfNotAuthenticated();
+			
 			TestCoordinator.check(TTChecks.LOGGED_OUT);
+		} else {
+			this.finish();
+		
+			Intent logInIntent = new Intent(this, AuthenticationActivity.class);
+			
+			startActivity(logInIntent);
 		}
-		
-		this.finish();
-		
-		Intent logInIntent = new Intent(this, AuthenticationActivity.class);
-		
-		startActivity(logInIntent);
 	}
 	
 	public void showQuestion(View view) {		

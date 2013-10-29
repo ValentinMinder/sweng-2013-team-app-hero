@@ -387,12 +387,12 @@ public class EditQuestionActivity extends Activity {
 		protected String doInBackground(String... questionElement) {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
-			post.addHeader(
+			post.setHeader("Content-type", "application/json");
+			post.setHeader(
 					"Authorization",
 					"Tequila "
 							+ StoreCredential.getInstance().getSessionId(
 									getApplicationContext()));
-			post.addHeader("Content-type", "application/json");
 			
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
