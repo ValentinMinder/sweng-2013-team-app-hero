@@ -119,10 +119,12 @@ public class EditQuestionActivity extends Activity {
 		submit = (Button) findViewById(R.id.submit_question);
 
 		questionField = (EditText) findViewById(R.id.type_question);
+		questionField.removeTextChangedListener(textListener);
 		questionField.setText("");
 		questionField.addTextChangedListener(textListener);
 		// julien tracking change
 		EditText tagsText = (EditText) findViewById(R.id.tags);
+		tagsText.removeTextChangedListener(textListener);
 		tagsText.setText("");
 		tagsText.addTextChangedListener(textListener);
 
@@ -134,16 +136,19 @@ public class EditQuestionActivity extends Activity {
 		Button remove = new Button(this);
 
 		grid.setId(gridIndex);
-
+		
+		answer.removeTextChangedListener(textListener);
 		answer.setId(answerIndex);
 		answer.setHint(R.string.type_answer);
 		// julien: track change
 		answer.addTextChangedListener(textListener);
 
+		correct.setOnClickListener(null);
 		correct.setText(R.string.wrong_answer);
 		correct.setId(correctIndex);
 		correct.setOnClickListener(answerHandler);
 
+		remove.setOnClickListener(null);
 		remove.setText(R.string.minus);
 		remove.setId(removeIndex);
 		remove.setOnClickListener(removeHandler);
