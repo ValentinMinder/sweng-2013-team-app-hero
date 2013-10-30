@@ -77,17 +77,53 @@ public class EditQuestionActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
 
+
+		initUI();
+		 	
+		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+
+	}
+
+	/**
+	 * Method to set enable a button who is put in parameter.
+	 * 
+	 * @param sub
+	 *            the button who will be set enable if the function audit
+	 *            returns 0.
+	 */
+	private void submitControler(Button sub) {
+		if (audit() == 0) {
+			sub.setEnabled(true);
+		} else {
+			sub.setEnabled(false);
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.edit_question, menu);
+		return true;
+	}
+	
+	public void initUI() {
 		correctIndex = correctCst;
 		removeIndex = removeCst;
 		answerIndex = answerCst;
 		gridIndex = gridCst;
+		idIndex = 0;
 
 		container = (LinearLayout) findViewById(R.id.container);
+		container.removeAllViews();
+		
 		submit = (Button) findViewById(R.id.submit_question);
+
 		questionField = (EditText) findViewById(R.id.type_question);
+		questionField.setText("");
 		questionField.addTextChangedListener(textListener);
 		// julien tracking change
 		EditText tagsText = (EditText) findViewById(R.id.tags);
+		tagsText.setText("");
 		tagsText.addTextChangedListener(textListener);
 
 		submit.setEnabled(false);
@@ -118,6 +154,7 @@ public class EditQuestionActivity extends Activity {
 		grid.addView(correct);
 		grid.addView(remove);
 
+		idList.clear();
 		idList.add(idIndex);
 
 		correctIndex++;
@@ -125,31 +162,6 @@ public class EditQuestionActivity extends Activity {
 		answerIndex++;
 		gridIndex++;
 		idIndex++;
-
-		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
-
-	}
-
-	/**
-	 * Method to set enable a button who is put in parameter.
-	 * 
-	 * @param sub
-	 *            the button who will be set enable if the function audit
-	 *            returns 0.
-	 */
-	private void submitControler(Button sub) {
-		if (audit() == 0) {
-			sub.setEnabled(true);
-		} else {
-			sub.setEnabled(false);
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.edit_question, menu);
-		return true;
 	}
 
 	/**
@@ -324,7 +336,7 @@ public class EditQuestionActivity extends Activity {
 		}
 
 		for (int i = 0; i < idList.size(); i++) {
-			Button isCorrect = (Button) findViewById(idList.get(i));
+			Button isCorrect = (Button) findViewById(idList.get(i));			
 			if (isCorrect.getText().equals("\u2714")) {
 				oneTrue = true;
 			}
@@ -428,10 +440,10 @@ public class EditQuestionActivity extends Activity {
 						.show();
 				TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
-				Intent intent = getIntent();
-				finish();
-				startActivity(intent);
-
+//				Intent intent = getIntent();
+//				finish();
+//				startActivity(intent);
+				initUI();
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.
 			} else {
@@ -440,5 +452,7 @@ public class EditQuestionActivity extends Activity {
 		}
 
 	}
+	
+	
 
 }
