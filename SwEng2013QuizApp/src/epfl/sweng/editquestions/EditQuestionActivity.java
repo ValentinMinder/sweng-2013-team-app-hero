@@ -68,7 +68,6 @@ public class EditQuestionActivity extends Activity {
 		Toast.makeText(getBaseContext(),
 				R.string.not_upload_question, Toast.LENGTH_SHORT)
 				.show();
-		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 	}
 
 	@Override
@@ -444,9 +443,6 @@ public class EditQuestionActivity extends Activity {
 						.show();
 				TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
-//				Intent intent = getIntent();
-//				finish();
-//				startActivity(intent);
 				initUI();
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.
