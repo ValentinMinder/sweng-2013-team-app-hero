@@ -17,7 +17,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
