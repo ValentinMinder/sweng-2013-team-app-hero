@@ -68,6 +68,7 @@ public class EditQuestionActivity extends Activity {
 		Toast.makeText(getBaseContext(),
 				R.string.not_upload_question, Toast.LENGTH_SHORT)
 				.show();
+		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 	}
 
 	@Override
