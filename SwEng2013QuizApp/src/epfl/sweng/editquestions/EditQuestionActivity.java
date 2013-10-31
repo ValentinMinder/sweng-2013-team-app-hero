@@ -62,14 +62,20 @@ public class EditQuestionActivity extends Activity {
 	private Button submit;
 	
 	/**
-	 * Method who is called if error occured
+	 * Method who is called if error occurred on submit
 	 */
 	private void errorEditQuestion() {
 		Toast.makeText(getBaseContext(),
 				R.string.not_upload_question, Toast.LENGTH_SHORT)
 				.show();
-		// already DONE before calling error()
-//		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+	}
+	/**
+	 * Method who is called if success on submit
+	 */
+	private void successEditQuestion() {
+		Toast.makeText(getBaseContext(),
+				R.string.question_submitted, Toast.LENGTH_SHORT)
+				.show();
 	}
 
 	@Override
@@ -439,26 +445,13 @@ public class EditQuestionActivity extends Activity {
 		 * Execute and retrieve the answer from the website.
 		 */
 		protected void onPostExecute(String result) {
-			// if result is null, server replied not a 2xx status.
+			// if result is null, server something else than a 2xx status.
 			if (result != null) {
-				// test: shouldn't be commented
-//				Toast.makeText(getBaseContext(),
-//						R.string.question_submitted, Toast.LENGTH_SHORT)
-//						.show();
-
-				// testing purpose: please dont uncomment
-//				Toast.makeText(getBaseContext(),
-//						result, Toast.LENGTH_LONG)
-//						.show();
-				
-				// result contain the question submitted with it's id replied by
-				// server, but we don't use it for now.
+				// result contain a JSON object representing the question if success on submit
+				successEditQuestion();
 			} else {
-				
-			}
-			// this is known as FALSE but only for testing purpose (Valou)
-			errorEditQuestion();
-			
+				errorEditQuestion();
+			}			
 			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 			initUI();
 		}
