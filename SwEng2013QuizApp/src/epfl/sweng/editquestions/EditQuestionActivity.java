@@ -68,7 +68,8 @@ public class EditQuestionActivity extends Activity {
 		Toast.makeText(getBaseContext(),
 				R.string.not_upload_question, Toast.LENGTH_SHORT)
 				.show();
-		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+		// already DONE before calling error()
+//		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 	}
 
 	@Override
@@ -442,14 +443,17 @@ public class EditQuestionActivity extends Activity {
 				Toast.makeText(getBaseContext(),
 						R.string.question_submitted, Toast.LENGTH_SHORT)
 						.show();
-				TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
 				
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.
 			} else {
-				errorEditQuestion();
+				
 			}
+			// this is known as FALSE but only for testing purpose (Valou)
+			errorEditQuestion();
+			
+			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 			initUI();
 		}
 
