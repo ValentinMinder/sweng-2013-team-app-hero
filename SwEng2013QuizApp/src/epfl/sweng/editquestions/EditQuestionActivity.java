@@ -313,8 +313,9 @@ public class EditQuestionActivity extends Activity {
 		/*QuizQuestion question = new QuizQuestion(0, questionBody, answers,
 				solutionIndex, tags);*/
 		submitQuestion(question.toPostEntity());
-		Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT)
-				.show();
+		// Valou: why did i do this f*ck*ng useless toast!
+		// Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT)
+		//		.show();
 
 	}
 
@@ -440,10 +441,15 @@ public class EditQuestionActivity extends Activity {
 		protected void onPostExecute(String result) {
 			// if result is null, server replied not a 2xx status.
 			if (result != null) {
-				Toast.makeText(getBaseContext(),
-						R.string.question_submitted, Toast.LENGTH_SHORT)
-						.show();
+				// test: shouldn't be commented
+//				Toast.makeText(getBaseContext(),
+//						R.string.question_submitted, Toast.LENGTH_SHORT)
+//						.show();
 
+				// testing purpose: please dont uncomment
+//				Toast.makeText(getBaseContext(),
+//						result, Toast.LENGTH_LONG)
+//						.show();
 				
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.
