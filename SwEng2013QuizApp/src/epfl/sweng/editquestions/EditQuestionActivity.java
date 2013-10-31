@@ -444,12 +444,13 @@ public class EditQuestionActivity extends Activity {
 						.show();
 				TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
-				initUI();
+				
 				// result contain the question submitted with it's id replied by
 				// server, but we don't use it for now.
 			} else {
 				errorEditQuestion();
 			}
+			initUI();
 		}
 
 	}
