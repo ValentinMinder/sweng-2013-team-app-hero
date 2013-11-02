@@ -30,8 +30,9 @@ public class QuizQuestion {
 	
 	/**
 	 * List of answers
+	 * Valou: refactoring answer to answers to be consistent.
 	 */
-	private List<String> answer;
+	private List<String> answers;
 	
 	/**
 	 * Index of the solution in the list of answers 
@@ -39,57 +40,84 @@ public class QuizQuestion {
 	private int solutionIndex;
 	
 	/**
-	 * Question's owner
-	 */
-	private String owner;
-	
-	/**
 	 * Question tags
 	 */
 	private Set<String> tags;
+	
+	/**
+	 * Question's owner
+	 */
+	private String owner;
 	
 	public QuizQuestion(final String jsonInput) throws JSONException  {
 		JSONObject jsonQuestion = new JSONObject(jsonInput);
 		
 		id = jsonQuestion.getInt("id");
 		question = jsonQuestion.getString("question");
-		answer = JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers"));
+		answers = JSONUtils.convertJSONArrayToArrayListString(jsonQuestion.getJSONArray("answers"));
 		solutionIndex = jsonQuestion.getInt("solutionIndex");
 		tags = JSONUtils.convertJSONArraySetString(jsonQuestion.getJSONArray("tags"));
+		owner = jsonQuestion.getString("owner");
     }
 
 	public QuizQuestion(final String question, final List<String> answers, final int
 	        solutionIndex, final Set<String> tags, final int id, final String owner) {
 		this.question=question;
-		this.answer=answers;
+		this.answers=answers;
 		this.solutionIndex=solutionIndex;
 		this.tags=tags;
+		this.id = id;
+		this.owner = owner;
 	}
 	
 	public int getId() {
 		return id;
 	}
-	
-	public String getOwner() {
-		return owner;
+
+	public void setId(int id) {
+		this.id = id;
 	}
-	
+
 	public String getQuestion() {
 		return question;
 	}
 
-	public List<String> getAnswer() {
-		return answer;
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public List<String> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<String> answers) {
+		this.answers = answers;
 	}
 
 	public int getSolutionIndex() {
 		return solutionIndex;
 	}
 
+	public void setSolutionIndex(int solutionIndex) {
+		this.solutionIndex = solutionIndex;
+	}
+
 	public Set<String> getTags() {
 		return tags;
 	}
-	
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
 	/**
 	 * Formats the question in a JSON object.
 	 * 
@@ -107,9 +135,9 @@ public class QuizQuestion {
 		entity.append("{" +
 			    " \"question\": \"" + question + "\"," +
 			    " \"answers\": [");
-		entity.append(" \"" + answer.get(0) + "\"");
-		for (int i = 1; i < answer.size(); i++) {
-			entity.append(", \"" + answer.get(i) + "\"");
+		entity.append(" \"" + answers.get(0) + "\"");
+		for (int i = 1; i < answers.size(); i++) {
+			entity.append(", \"" + answers.get(i) + "\"");
 		}
 		entity.append(" ]," +
 			    " \"solutionIndex\": " + solutionIndex + "," +
