@@ -125,6 +125,17 @@ public class QuizQuestion {
 	public int auditErrors() {
 		// TODO: to check the importance of the numbers of errors returned...
 		int errors = 0;
+		// INV n° 1: 0 < len(question.question) <= 500 AND there exists i SUCH THAT !question.question.charAt(i).isWhitespace() 
+		boolean inv1part3 = false;
+		for (int i = 0; i < question.length() && !inv1part3; i++) {
+			if (!Character.isWhitespace(question.charAt(i))) {
+				inv1part3 = true;
+			}
+		}
+		boolean inv1 = (question.length() > 0) && (question.length() <= 500) && inv1part3;
+		if (!inv1){
+			errors ++;
+		}
 		return errors;
 	}
 
