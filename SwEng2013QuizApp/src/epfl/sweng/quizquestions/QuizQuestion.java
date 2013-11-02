@@ -124,6 +124,10 @@ public class QuizQuestion {
 	 */
 	public int auditErrors() {
 		int errors = 0;
+
+		// TODO: to check the importance of the numbers of errors returned (inv 2 and 6)...
+		// TODO: bullet/invariant 4 is it sufficient or correct regarding the given invariant?
+		// TODO: check with jenkins, they are maybe errors in the audit (it's impossible to see them)
 		
 		// INV n° 1: 0 < len(question.question) <= 500 AND there exists i SUCH THAT !Character.isWhitespace(question.question.charAt(i)) 
 		boolean inv1part3 = false;
