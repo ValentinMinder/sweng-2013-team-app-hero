@@ -3,4 +3,4 @@ FOR ALL k from 0 up to len(question.answers), 0 <len(question.answers[k]) <= 500
 2 <= len(question.answers) <= 10
 there exists i such that isMarkedCorrect(question.answers[i])
 1 <= len(question.tags) <= 20
-FOR ALL k from 0 up to len(question.tags), 0 <len(question.tags[k]) <= 20 AND there exists i such that !Character.isWhitespace(question.answers[k].charAt(i))
+FOR ALL k from 0 up to len(question.tags), 0 <len(question.tags[k]) <= 20 AND there exists i such that !Character.isWhitespace(question.tags[k].charAt(i))

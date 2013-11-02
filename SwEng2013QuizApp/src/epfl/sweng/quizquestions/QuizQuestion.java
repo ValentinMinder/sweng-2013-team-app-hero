@@ -123,19 +123,70 @@ public class QuizQuestion {
 	 * @return
 	 */
 	public int auditErrors() {
-		// TODO: to check the importance of the numbers of errors returned...
 		int errors = 0;
-		// INV n° 1: 0 < len(question.question) <= 500 AND there exists i SUCH THAT !question.question.charAt(i).isWhitespace() 
+		
+		// INV n° 1: 0 < len(question.question) <= 500 AND there exists i SUCH THAT !Character.isWhitespace(question.question.charAt(i)) 
 		boolean inv1part3 = false;
 		for (int i = 0; i < question.length() && !inv1part3; i++) {
 			if (!Character.isWhitespace(question.charAt(i))) {
 				inv1part3 = true;
 			}
 		}
-		boolean inv1 = (question.length() > 0) && (question.length() <= 500) && inv1part3;
-		if (!inv1){
+		boolean invariant1 = (question.length() > 0) && (question.length() <= 500) && inv1part3;
+		if (!invariant1){
 			errors ++;
 		}
+		
+		// INV n°2: FOR ALL k from 0 up to len(question.answers), 0 <len(question.answers[k]) <= 500 AND there exists i such that !Character.isWhitespace(question.answer[k].charAt(i))
+		for (int k = 0; k < answers.size(); k++) {
+			boolean inv2Kpart3 = false;
+			String answerK = answers.get(k);
+			for (int i = 0; i < answerK.length() && !inv2Kpart3; i++) {
+				if (!Character.isWhitespace(answerK.charAt(i))) {
+					inv2Kpart3 = true;
+				}
+			}
+			boolean invariant2K = (answerK.length() > 0) && (answerK.length() <= 500) && inv2Kpart3;
+			if (!invariant2K){
+				errors ++;
+			}
+		}
+		
+		// INV N°3: 2 <= len(question.answers) <= 10
+		boolean invariant3 = (answers.size() >= 2) && (answers.size() <= 10);
+		if (invariant3){
+			errors++;
+		}
+		
+		//INV N°4: there exists i such that isMarkedCorrect(question.answers[i])
+		boolean invariant4 = (solutionIndex >= 0) && (solutionIndex < answers.size());
+		if (invariant4){
+			errors++;
+		}
+		
+		//INV N°5: 1 <= len(question.tags) <= 20
+		boolean invariant5 = true;
+		if (invariant5){
+			errors++;
+		}
+		
+		//INV N°6: FOR ALL k from 0 up to len(question.tags), 0 <len(question.tags[k]) <= 20 AND there exists i such that !Character.isWhitespace(question.answers[k].charAt(i))
+		// (String[])  cast is permitted because we have Set<String>
+		String[] tagArray = (String[]) tags.toArray();
+		for (int k = 0; k < tagArray.length; k++) {
+			boolean inv6Kpart3 = false;
+			String tagK = tagArray[k];
+			for (int i = 0; i < tagK.length() && !inv6Kpart3; i++) {
+				if (!Character.isWhitespace(tagK.charAt(i))) {
+					inv6Kpart3 = true;
+				}
+			}
+			boolean invariant6K = (tagK.length() > 0) && (tagK.length() <= 20) && inv6Kpart3;
+			if (!invariant6K){
+				errors ++;
+			}
+		}
+		
 		return errors;
 	}
 
