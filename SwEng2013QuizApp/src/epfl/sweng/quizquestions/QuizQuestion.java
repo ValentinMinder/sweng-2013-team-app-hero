@@ -117,6 +117,16 @@ public class QuizQuestion {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
+	
+	/**
+	 * HW4: 2.2.2 audit method.
+	 * @return
+	 */
+	public int auditErrors() {
+		// TODO: to check the importance of the numbers of errors returned...
+		int errors = 0;
+		return errors;
+	}
 
 	/**
 	 * Formats the question in a JSON object.
