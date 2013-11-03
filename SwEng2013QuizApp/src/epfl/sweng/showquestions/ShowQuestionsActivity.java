@@ -44,7 +44,7 @@ public class ShowQuestionsActivity extends Activity {
 	private QuizQuestion question = null;
 
 	/**
-	 * Method who is called if error occured
+	 * Method who is called if error occurred
 	 */
 	private void errorDisplayQuestion() {
 		Toast.makeText(getBaseContext(),
@@ -120,7 +120,7 @@ public class ShowQuestionsActivity extends Activity {
 			if (possibleAnswers != null) {
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 						android.R.layout.simple_list_item_1,
-						question.getAnswer());
+						question.getAnswers());
 
 				possibleAnswers.setAdapter(adapter);
 				TestCoordinator.check(TTChecks.QUESTION_SHOWN);

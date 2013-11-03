@@ -39,28 +39,30 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /**
  * 
- * @author xhanto This class is used to submit a new question to the server.
+ * @author xhanto
+ *  This class is used to submit a new question to the server.
  * 
  */
 public class EditQuestionActivity extends Activity {
 
 	private final static int SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL = 201;
-	
+
 	private final int correctCst = 0;
 	private final int removeCst = 1000;
 	private final int answerCst = 2000;
 	private final int gridCst = 3000;
-
+	private QuizQuestion question;
 	private int correctIndex;
 	private int removeIndex;
 	private int answerIndex;
 	private int gridIndex;
 	private LinearLayout container;
 	private EditText questionField;
+	private EditText tagsText;
 	private int idIndex = 0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
-	
+
 	/**
 	 * Method who is called if error occurred on submit
 	 */
@@ -85,7 +87,7 @@ public class EditQuestionActivity extends Activity {
 
 
 		initUI();
-		 	
+
 		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 
 	}
@@ -105,13 +107,146 @@ public class EditQuestionActivity extends Activity {
 		}
 	}
 
+	private int auditEditTexts() {
+		int editErrors=0;
+
+		//Bullet 1: The widget where the user can enter the question exists.
+		//It has its hint set to “Type in the question’s text body”. 
+		//The widget has its visibility property set to VISIBLE.
+
+		// != 0 because VISIBLE = 0
+		if (questionField == null || questionField.getVisibility() != 0 
+				|| !(questionField.getHint().equals(R.string.type_question))) {
+			editErrors++;
+		}
+
+		//Bullet 2: There exist zero or more EditText widgets to enter answers. 
+		//These have their hint set to “Type in the answer”. 
+		//Their visibility properties are set to VISIBLE.
+		boolean  zeroOrMore = answerIndex>=answerCst;
+
+		if (answerIndex != answerCst) { // if answerIndex == answerCst, no answer text so don't need to check
+			for (int i=answerCst; i<=answerIndex; i++) {
+				EditText editCheck = (EditText) findViewById(i);
+				if (!zeroOrMore || !editCheck.getHint().equals(R.string.type_answer) 
+						|| editCheck.getVisibility() != 0) {
+					editErrors++;
+				}
+			}
+		}
+
+		//Bullet 3: The widget where the user can enter tags exists. 
+		//This widget has its hint set to “Type in the question’s tags”. 
+		//The widget has its visibility property set to VISIBLE.
+
+		// != 0 because VISIBLE = 0
+		if (tagsText == null || tagsText.getVisibility() != 0 
+				|| !(tagsText.getHint().equals(R.string.type_tags))) {
+			editErrors++;
+		}
+		return editErrors;
+	}
+
+	private int auditButtons() {
+		int buttonErrors = 0;
+		Button addButton = (Button) findViewById(R.id.add);
+
+		//Bullet 1: A button exists to add a new answer. 
+		//It has its text set to “+”, and its visibility set to VISIBLE.
+
+		if (addButton == null || addButton.getVisibility() != 0 
+				|| !(addButton.getText().equals("\u002B"))) {
+			buttonErrors++;
+		}
+
+		//Bullet 2: A button exists to submit the queston. 
+		// It has its text set to “Submit”, and its visibility set to VISIBLE.
+		if (submit != null || submit.getVisibility() != 0 
+				|| !(submit.getText().equals(R.string.submit_question))) {
+			buttonErrors++;
+		}
+
+		//Bullet 3: For every answer, there is a button to remove that answer. 
+		//This button has its text set to “-”, and its visibility set to VISIBLE.
+		boolean  remToAns = removeIndex-removeCst == answerIndex-answerCst;
+
+		if (removeCst!= removeIndex) {
+			for (int i=removeCst; i<=removeIndex; i++) {
+				Button removeCheck = (Button) findViewById(i);
+				if (!remToAns || !removeCheck.getText().equals("\u002D") || removeCheck.getVisibility() != 0) {
+					buttonErrors++;
+				}
+			}
+		}
+		//Bullet 4: For every answer, there is a button to toggle its correctness. 
+		//This button has its text set to “✘” or “✔”, and its visibility set to VISIBLE.
+		boolean  togToAns = correctIndex-correctCst == answerIndex-answerCst;
+		if (correctCst != correctIndex) {
+			for (int i=correctCst; i<=correctIndex; i++) {
+				Button correctCheck = (Button) findViewById(i);
+				if (!togToAns 
+						|| !((correctCheck.getText().equals("\u2714"))  // correct
+								|| (correctCheck.getText().equals("\u2718"))) // wrong
+								|| correctCheck.getVisibility() != 0) {
+					buttonErrors++;
+				}
+			}
+		}
+
+
+		return buttonErrors;
+	}
+
+	private int auditAnswers() {
+		int answerErrors=0;
+		int correctCount = 0;
+		// Bullet 1: There is at most one correct answer 
+		//(that is, at most one correctness button has its text set to “✔”).
+		for (int i = 0; i < idList.size(); i++) {
+			Button correctCheck = (Button) findViewById(idList.get(i));			
+			if (correctCheck.getText().equals("\u2714")) {
+				correctCount++;
+			}
+		}
+		if (correctCount != 1) {
+			answerErrors++;
+		}
+
+		return answerErrors;
+	}
+
+	private int auditSubmitButton() {
+		
+//ok avec ce que j avais deja fait, mais tient pas compte du hind de la consigne
+		if (audit() == 0) {
+			return 0;
+		} else {
+			return 1;
+		}
+		
+		// changement a faire dans l'architecture pour que ça marche
+	/*	if(auditAnswers() != 0 || question.auditErrors() != 0) {
+			return 1;
+		} else {
+			return 0;
+		}
+		*/
+	}
+	
+	public int auditErrors() {
+		
+		return auditAnswers()+auditButtons()+auditEditTexts()+auditSubmitButton();
+		
+	}
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.edit_question, menu);
 		return true;
 	}
-	
+
 	public void initUI() {
 		correctIndex = correctCst;
 		removeIndex = removeCst;
@@ -121,7 +256,7 @@ public class EditQuestionActivity extends Activity {
 
 		container = (LinearLayout) findViewById(R.id.container);
 		container.removeAllViews();
-		
+
 		submit = (Button) findViewById(R.id.submit_question);
 
 		questionField = (EditText) findViewById(R.id.type_question);
@@ -129,7 +264,7 @@ public class EditQuestionActivity extends Activity {
 		questionField.setText("");
 		questionField.addTextChangedListener(textListener);
 		// julien tracking change
-		EditText tagsText = (EditText) findViewById(R.id.tags);
+		tagsText = (EditText) findViewById(R.id.tags);
 		tagsText.removeTextChangedListener(textListener);
 		tagsText.setText("");
 		tagsText.addTextChangedListener(textListener);
@@ -142,7 +277,7 @@ public class EditQuestionActivity extends Activity {
 		Button remove = new Button(this);
 
 		grid.setId(gridIndex);
-		
+
 		answer.removeTextChangedListener(textListener);
 		answer.setId(answerIndex);
 		answer.setHint(R.string.type_answer);
@@ -189,7 +324,7 @@ public class EditQuestionActivity extends Activity {
 			}
 
 			((Button) findViewById(view.getId()))
-					.setText(R.string.right_answer);
+			.setText(R.string.right_answer);
 			submitControler(submit);
 			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 
@@ -293,12 +428,12 @@ public class EditQuestionActivity extends Activity {
 	// View a faire
 	public void submitQuestion(View view) {
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
-		EditText tagsText = (EditText) findViewById(R.id.tags);
+		EditText tagText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
 
 		int solutionIndex = -1;
 		String questionBody = editQuestion.getText().toString();
-		String tagString = tagsText.getText().toString();
+		String tagString = tagText.getText().toString();
 
 		Set<String> tags = new HashSet<String>(Arrays.asList(tagString
 				.split("\\W+")));
@@ -313,8 +448,8 @@ public class EditQuestionActivity extends Activity {
 				solutionIndex = i;
 			}
 		}
-        
-        QuizQuestion question = new QuizQuestion(questionBody, answers,
+
+		question = new QuizQuestion(questionBody, answers,
 				solutionIndex, tags, 0, "OWNER");
 		/*QuizQuestion question = new QuizQuestion(0, questionBody, answers,
 				solutionIndex, tags);*/
@@ -335,7 +470,7 @@ public class EditQuestionActivity extends Activity {
 		int checkErrors = 0;
 		boolean oneTrue = false;
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
-		String question = editQuestion.getText().toString();
+		String questionText = editQuestion.getText().toString();
 
 		EditText editTags = (EditText) findViewById(R.id.tags);
 		String tagsToString = editTags.getText().toString();
@@ -343,7 +478,7 @@ public class EditQuestionActivity extends Activity {
 			checkErrors++;
 		}
 
-		if (idList.size() < 2 || question.trim().length() == 0) {
+		if (idList.size() < 2 || questionText.trim().length() == 0) {
 			checkErrors++;
 		}
 
@@ -417,13 +552,13 @@ public class EditQuestionActivity extends Activity {
 					"Tequila "
 							+ StoreCredential.getInstance().getSessionId(
 									getApplicationContext()));
-			
+
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 
 				HttpResponse response = SwengHttpClientFactory
 						.getInstance().execute(post);
-				
+
 				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL)
 				{
 					return EntityUtils.toString(response.getEntity());
@@ -457,7 +592,7 @@ public class EditQuestionActivity extends Activity {
 		}
 
 	}
-	
-	
+
+
 
 }

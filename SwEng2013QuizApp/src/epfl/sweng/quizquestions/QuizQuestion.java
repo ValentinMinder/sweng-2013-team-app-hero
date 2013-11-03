@@ -158,19 +158,19 @@ public class QuizQuestion {
 		
 		// INV N°3: 2 <= len(question.answers) <= 10
 		boolean invariant3 = (answers.size() >= 2) && (answers.size() <= 10);
-		if (invariant3){
+		if (!invariant3){
 			errors++;
 		}
 		
 		//INV N°4: there exists i such that isMarkedCorrect(question.answers[i])
 		boolean invariant4 = (solutionIndex >= 0) && (solutionIndex < answers.size());
-		if (invariant4){
+		if (!invariant4){
 			errors++;
 		}
 		
 		//INV N°5: 1 <= len(question.tags) <= 20
-		boolean invariant5 = true;
-		if (invariant5){
+		boolean invariant5 = (tags.size() >= 1) && (tags.size() <= 20);
+		if (!invariant5){
 			errors++;
 		}
 		
