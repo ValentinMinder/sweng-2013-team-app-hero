@@ -173,7 +173,8 @@ public class EditQuestionActivity extends Activity {
 		if (removeCst!= removeIndex) {
 			for (int i=removeCst; i<=removeIndex; i++) {
 				Button removeCheck = (Button) findViewById(i);
-				if (!remToAns || !removeCheck.getText().equals("\u002D") || removeCheck.getVisibility() != View.VISIBLE) {
+				if (!remToAns || !removeCheck.getText().equals("\u002D") ||
+						removeCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
 				}
 			}
