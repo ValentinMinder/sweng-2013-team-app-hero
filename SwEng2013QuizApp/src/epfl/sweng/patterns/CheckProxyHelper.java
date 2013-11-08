@@ -1,11 +1,13 @@
 package epfl.sweng.patterns;
 
+import epfl.sweng.servercomm.SwengHttpClientFactory;
+
 public class CheckProxyHelper implements ICheckProxyHelper {
 
 	@Override
 	public Class<?> getServerCommunicationClass() {
 		// TODO Auto-generated method stub
-		return null;
+		return SwengHttpClientFactory.getInstance().getClass();
 	}
 
 	@Override
