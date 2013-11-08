@@ -59,10 +59,18 @@ public class MainActivity extends Activity {
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
 		Boolean modeAppOffline = ProxyHttpClient.getOfflineStatus();
 		offline.setChecked(modeAppOffline);
+		
 		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
+				boolean previousState = ProxyHttpClient.getOfflineStatus();
+
+				if (!previousState && isChecked) {
+					//going from offline to online
+					//thus send the cache content to the server
+				}
+				
 				ProxyHttpClient.setOfflineStatus(isChecked);
 			}
 		});
