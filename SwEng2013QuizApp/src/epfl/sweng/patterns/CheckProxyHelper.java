@@ -11,7 +11,7 @@ public class CheckProxyHelper implements ICheckProxyHelper {
 	@Override
 	public Class<?> getProxyClass() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.getClass();
 	}
 
 }
