@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
@@ -37,7 +38,7 @@ public class MainActivity extends Activity {
 		buttonLog.setText(R.string.log_in_tekila);
 		
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
-		offline.setEnabled(false);
+		offline.setVisibility(View.GONE);
 	}
 	
 	@Override
@@ -50,6 +51,16 @@ public class MainActivity extends Activity {
 		if (session.equals("")) {
 			modifyButtonIfNotAuthenticated();
 		}
+		
+		CheckBox offline = (CheckBox) findViewById(R.id.offline);
+		Boolean modeAppOffline = StoreCredential.getInstance().getModeAppOffline(getApplicationContext());
+		offline.setChecked(modeAppOffline);
+		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		   @Override
+		   public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+			   StoreCredential.getInstance().setModeAppOffline(getApplicationContext(), isChecked);
+		   }
+		});
 		
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
