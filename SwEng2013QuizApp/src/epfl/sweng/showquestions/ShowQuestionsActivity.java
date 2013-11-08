@@ -29,7 +29,7 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -196,7 +196,7 @@ public class ShowQuestionsActivity extends Activity {
 									getApplicationContext()));
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return SwengHttpClientFactory.getInstance().execute(
+				return ProxyHttpClientFactory.getInstance().execute(
 						firstRandom, firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();

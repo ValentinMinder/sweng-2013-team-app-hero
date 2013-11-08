@@ -15,6 +15,7 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -33,7 +34,7 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -557,7 +558,7 @@ public class EditQuestionActivity extends Activity {
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 
-				HttpResponse response = SwengHttpClientFactory
+				HttpResponse response = ProxyHttpClientFactory
 						.getInstance().execute(post);
 
 				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL)

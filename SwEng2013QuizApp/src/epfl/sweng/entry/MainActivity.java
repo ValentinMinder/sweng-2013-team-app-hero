@@ -12,6 +12,7 @@ import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -56,15 +57,13 @@ public class MainActivity extends Activity {
 		}
 
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
-		Boolean modeAppOffline = StoreCredential.getInstance()
-				.getModeAppOffline(getApplicationContext());
+		Boolean modeAppOffline = ProxyHttpClient.getOfflineStatus();
 		offline.setChecked(modeAppOffline);
 		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				StoreCredential.getInstance().setModeAppOffline(
-						getApplicationContext(), isChecked);
+				ProxyHttpClient.setOfflineStatus(isChecked);
 			}
 		});
 
