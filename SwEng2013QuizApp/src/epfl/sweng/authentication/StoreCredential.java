@@ -46,14 +46,13 @@ public class StoreCredential {
 	
 	public Boolean getModeAppOffline(Context context) {
 		SharedPreferences preferences = context.getSharedPreferences(NAME_PREFERENCE_SESSION, Context.MODE_PRIVATE);
-		Boolean mode_app = VALUE_DEFAULT_MODE_APP;
+		Boolean modeApp = VALUE_DEFAULT_MODE_APP;
 		if (!preferences.contains(NAME_VARIABLE_MODE_APP_OFFLINE)) {
 			setModeAppOffline(context, VALUE_DEFAULT_MODE_APP);
-		}
-		else {
-			mode_app = preferences.getBoolean(NAME_VARIABLE_MODE_APP_OFFLINE, VALUE_DEFAULT_MODE_APP);
+		} else {
+			modeApp = preferences.getBoolean(NAME_VARIABLE_MODE_APP_OFFLINE, VALUE_DEFAULT_MODE_APP);
 		}
 		
-		return mode_app;
+		return modeApp;
 	}
 }

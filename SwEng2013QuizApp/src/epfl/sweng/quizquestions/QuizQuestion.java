@@ -74,48 +74,48 @@ public class QuizQuestion {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setId(int idQ) {
+		this.id = idQ;
 	}
 
 	public String getQuestion() {
 		return question;
 	}
 
-	public void setQuestion(String question) {
-		this.question = question;
+	public void setQuestion(String questionS) {
+		this.question = questionS;
 	}
 
 	public List<String> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(List<String> answers) {
-		this.answers = answers;
+	public void setAnswers(List<String> answersS) {
+		this.answers = answersS;
 	}
 
 	public int getSolutionIndex() {
 		return solutionIndex;
 	}
 
-	public void setSolutionIndex(int solutionIndex) {
-		this.solutionIndex = solutionIndex;
+	public void setSolutionIndex(int solutionIndexS) {
+		this.solutionIndex = solutionIndexS;
 	}
 
 	public Set<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<String> tags) {
-		this.tags = tags;
+	public void setTags(Set<String> tagsS) {
+		this.tags = tagsS;
 	}
 
 	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
+	public void setOwner(String ownerS) {
+		this.owner = ownerS;
 	}
 	
 	/**
