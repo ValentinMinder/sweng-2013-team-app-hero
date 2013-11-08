@@ -1,25 +1,33 @@
 package epfl.sweng.patterns;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.RequestLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
+import android.preference.PreferenceActivity.Header;
+
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 public class ProxyHttpClient implements HttpClient {
 	private static boolean offline = false;
+	private ArrayList<QuizQuestion> cache;
 
 	public ProxyHttpClient() {
-
+		this.cache = new ArrayList();
 	}
 
 	/**
@@ -48,7 +56,20 @@ public class ProxyHttpClient implements HttpClient {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(request);
 		}
-		// Traiter le cas offline
+		// TODO Traiter le cas offline
+		/*
+		 * Julien : Je ne sais pas vraiment comment faire pour récupérer le
+		 * contenu du post pour pouvoir extraire la quizquestion et donc
+		 * l'ajouter au cache (ArrayList) Si quelqu'un a une idée plus clean
+		 * c'est volontiers ! (je suis p-e a coté de la plaque)
+		 */
+		String method = request.getMethod();
+		if (method.equals("POST")) {
+			HttpPost post = (HttpPost) request;
+			String content = EntityUtils.toString(post.getEntity());
+			//extraire et ajouter au cache
+			System.out.println(content);
+		}
 		return null;
 	}
 

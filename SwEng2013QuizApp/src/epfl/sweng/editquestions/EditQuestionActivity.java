@@ -456,10 +456,6 @@ public class EditQuestionActivity extends Activity {
 		/*QuizQuestion question = new QuizQuestion(0, questionBody, answers,
 				solutionIndex, tags);*/
 		submitQuestion(question.toPostEntity());
-		// Valou: why did i do this f*ck*ng useless toast!
-		// Toast.makeText(this, "submitting question...", Toast.LENGTH_SHORT)
-		//		.show();
-
 	}
 
 	/**
