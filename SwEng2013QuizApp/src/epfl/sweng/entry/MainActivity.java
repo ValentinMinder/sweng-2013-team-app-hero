@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
@@ -34,6 +35,9 @@ public class MainActivity extends Activity {
 		
 		Button buttonLog = (Button) findViewById(R.id.button_log);
 		buttonLog.setText(R.string.log_in_tekila);
+		
+		CheckBox offline = (CheckBox) findViewById(R.id.offline);
+		offline.setEnabled(false);
 	}
 	
 	@Override

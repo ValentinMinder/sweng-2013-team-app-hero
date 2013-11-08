@@ -35,4 +35,10 @@
         android:onClick="logInOut"
         android:text="@string/log_out" />
 
+    <CheckBox
+        android:id="@+id/offline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/offline" />
+
 </LinearLayout>
