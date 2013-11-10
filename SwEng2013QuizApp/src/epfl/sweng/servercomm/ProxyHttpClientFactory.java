@@ -13,7 +13,7 @@ public class ProxyHttpClientFactory {
 	
 	public static synchronized HttpClient getInstance() {
 		if (httpClient == null) {
-			httpClient = new ProxyHttpClient();
+			httpClient = ProxyHttpClient.getInstance();
 		}
 
 		return httpClient;
