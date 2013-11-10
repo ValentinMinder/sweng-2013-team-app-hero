@@ -258,11 +258,11 @@ public class ProxyHttpClient implements HttpClient {
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
 				if (statusCode.compareTo(new Integer(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
-					cache.remove(questionElement[0]);
-					displaySuccessSend();
-				} else {
 					offline = true;
 					displayErrorSend();
+				} else {
+					cache.remove(questionElement[0]);
+					displaySuccessSend();
 				}
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
