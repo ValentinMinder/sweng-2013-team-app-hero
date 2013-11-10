@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpHost;
+import org.apache.http.HttpMessage;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.RequestLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -16,18 +16,31 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-
-import android.preference.PreferenceActivity.Header;
+import org.json.JSONException;
 
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 public class ProxyHttpClient implements HttpClient {
 	private static boolean offline = false;
+	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cache;
 
-	public ProxyHttpClient() {
-		this.cache = new ArrayList();
+	private ProxyHttpClient() {
+		this.cache = new ArrayList<QuizQuestion>();
+	}
+	
+	public static ProxyHttpClient getInstance() {
+		if (instance == null) {
+			instance = new ProxyHttpClient();
+		}
+		return instance;
+	}
+	
+	private void sendCacheContent() {
+		for (HttpMessage message : cache.values()) {
+			
+		}
 	}
 
 	/**
@@ -36,16 +49,24 @@ public class ProxyHttpClient implements HttpClient {
 	 * @param status
 	 *            True represent offline.
 	 */
-	public static void setOfflineStatus(boolean status) {
+	public void setOfflineStatus(boolean status) {
+		boolean previousState = offline;
 		offline = status;
+		
+		if (previousState && !offline) {
+			//going from offline to online
+			sendCacheContent();
+		}
 	}
+
+
 
 	/**
 	 * get offline parameter. True represent offline.
 	 * 
 	 * @return
 	 */
-	public static boolean getOfflineStatus() {
+	public boolean getOfflineStatus() {
 		return offline;
 	}
 
@@ -66,9 +87,16 @@ public class ProxyHttpClient implements HttpClient {
 		String method = request.getMethod();
 		if (method.equals("POST")) {
 			HttpPost post = (HttpPost) request;
-			String content = EntityUtils.toString(post.getEntity());
-			//extraire et ajouter au cache
-			System.out.println(content);
+			String jsonContent = EntityUtils.toString(post.getEntity());
+			//extract and add to the cache
+			QuizQuestion question;
+			try {
+				question = new QuizQuestion(jsonContent);
+				cache.add(question);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -170,4 +198,5 @@ public class ProxyHttpClient implements HttpClient {
 		// Traiter le cas offline
 		return null;
 	}
+
 }
