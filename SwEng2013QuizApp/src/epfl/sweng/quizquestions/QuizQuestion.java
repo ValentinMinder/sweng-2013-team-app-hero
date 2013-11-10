@@ -221,7 +221,9 @@ public class QuizQuestion {
 	 */
 	public String toPostEntity() {
 		StringBuffer entity = new StringBuffer();
-		entity.append("{" + " \"question\": \"" + question + "\","
+		entity.append("{\n");
+		entity.append("\"id\": " + id + ",\n");
+		entity.append("\"question\": \"" + question + "\","
 				+ " \"answers\": [");
 		entity.append(" \"" + answers.get(0) + "\"");
 		for (int i = 1; i < answers.size(); i++) {
@@ -239,7 +241,9 @@ public class QuizQuestion {
 				entity.append("\"" + tag + "\"");
 			}
 		}
-		entity.append(" ] }");
+		entity.append(" ],");
+		entity.append("\n\"owner\": \"" + owner + "\"");
+		entity.append("\n}");
 		return entity.toString();
 	}
 

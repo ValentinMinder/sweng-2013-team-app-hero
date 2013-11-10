@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
@@ -559,7 +560,13 @@ public class EditQuestionActivity extends Activity {
 
 				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL)
 				{
-					return EntityUtils.toString(response.getEntity());
+					HttpEntity result = response.getEntity();
+					if (result != null) {
+						return EntityUtils.toString(result);
+					} else {
+						//TODO to fix, just for the test and eventually finding the bug
+						return " ";
+					}
 				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();

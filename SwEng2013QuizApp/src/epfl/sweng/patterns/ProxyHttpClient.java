@@ -10,6 +10,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
@@ -18,13 +19,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
 import android.os.AsyncTask;
+import android.widget.Toast;
 
+import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.ProxyHttpClientFactory;
@@ -51,24 +56,9 @@ public class ProxyHttpClient implements HttpClient {
 	}
 	
 	private void sendCacheContent() {
-		for (QuizQuestion question : cache) {
-			AsyncTask<QuizQuestion, Void, Integer> submitTask = new SubmitQuestionTask().execute(question);
-			Integer status;
-			try {
-				status = submitTask.get();
-				if (status.compareTo(new Integer(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) != 0) {
-					cache.remove(question);
-				} else {
-					offline = true;
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+		for (int i = 0; i < cache.size(); ++i) {
+			QuizQuestion question = cache.get(i);
+			new SubmitQuestionTask().execute(question);
 		}
 	}
 
@@ -81,8 +71,9 @@ public class ProxyHttpClient implements HttpClient {
 	public void setOfflineStatus(boolean status) {
 		boolean previousState = offline;
 		offline = status;
-		
+		System.out.println("Chagning");
 		if (previousState && !offline) {
+			System.out.println("offline to online");
 			//going from offline to online
 			sendCacheContent();
 		}
@@ -133,7 +124,9 @@ public class ProxyHttpClient implements HttpClient {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		//TODO gérer le retour (solution improvisée)
+		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 2, 1), 
+				201, "reponse from local"));
 	}
 
 	@Override
@@ -264,6 +257,13 @@ public class ProxyHttpClient implements HttpClient {
 						.getInstance().execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode.compareTo(new Integer(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
+					cache.remove(questionElement[0]);
+					displaySuccessSend();
+				} else {
+					offline = true;
+					displayErrorSend();
+				}
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -278,9 +278,17 @@ public class ProxyHttpClient implements HttpClient {
 			return 0;
 		}
 
-		protected void onPostExecute(String result) {
-			
+		protected void onPostExecute(Integer result) {
+
 		}
 
+	}
+	
+	public void displaySuccessSend() {
+		System.out.println("Submit successful offline");
+	}
+	
+	public void displayErrorSend() {
+		System.out.println("Submit unsuccessful offline");
 	}
 }
