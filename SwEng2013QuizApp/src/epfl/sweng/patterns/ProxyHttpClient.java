@@ -71,9 +71,7 @@ public class ProxyHttpClient implements HttpClient {
 	public void setOfflineStatus(boolean status) {
 		boolean previousState = offline;
 		offline = status;
-		System.out.println("Chagning");
 		if (previousState && !offline) {
-			System.out.println("offline to online");
 			//going from offline to online
 			sendCacheContent();
 		}
@@ -259,10 +257,8 @@ public class ProxyHttpClient implements HttpClient {
 				Integer statusCode = response.getStatusLine().getStatusCode();
 				if (statusCode.compareTo(new Integer(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
 					offline = true;
-					displayErrorSend();
 				} else {
 					cache.remove(questionElement[0]);
-					displaySuccessSend();
 				}
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
@@ -282,13 +278,5 @@ public class ProxyHttpClient implements HttpClient {
 
 		}
 
-	}
-	
-	public void displaySuccessSend() {
-		System.out.println("Submit successful offline");
-	}
-	
-	public void displayErrorSend() {
-		System.out.println("Submit unsuccessful offline");
 	}
 }
