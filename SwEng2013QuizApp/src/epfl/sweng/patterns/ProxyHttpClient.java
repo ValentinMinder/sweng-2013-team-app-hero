@@ -3,11 +3,9 @@ package epfl.sweng.patterns;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpMessage;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -27,18 +25,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
-
-import epfl.sweng.R;
-import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
-import epfl.sweng.testing.TestCoordinator;
-import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-public class ProxyHttpClient implements HttpClient {
+public final class ProxyHttpClient implements HttpClient {
 	private static final int SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE = 500;
+	private static final int SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS = 201;
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cache;
@@ -124,12 +117,12 @@ public class ProxyHttpClient implements HttpClient {
 		}
 		//TODO gérer le retour (solution improvisée)
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 2, 1), 
-				201, "reponse from local"));
+				SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS, "reponse from local"));
 	}
 
 	@Override
 	public HttpResponse execute(HttpUriRequest request, HttpContext context)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(request,
 					context);
@@ -140,7 +133,7 @@ public class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public HttpResponse execute(HttpHost target, HttpRequest request)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance()
 					.execute(target, request);
@@ -151,7 +144,7 @@ public class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1);
@@ -173,8 +166,8 @@ public class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public <T> T execute(HttpUriRequest arg0,
-			ResponseHandler<? extends T> arg1, HttpContext arg2)
-			throws IOException, ClientProtocolException {
+		ResponseHandler<? extends T> arg1, HttpContext arg2)
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
 					arg2);
@@ -197,8 +190,8 @@ public class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public <T> T execute(HttpHost arg0, HttpRequest arg1,
-			ResponseHandler<? extends T> arg2, HttpContext arg3)
-			throws IOException, ClientProtocolException {
+		ResponseHandler<? extends T> arg2, HttpContext arg3)
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
 					arg2, arg3);
@@ -255,7 +248,7 @@ public class ProxyHttpClient implements HttpClient {
 						.getInstance().execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
-				if (statusCode.compareTo(new Integer(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
+				if (statusCode.compareTo(Integer.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
 					offline = true;
 				} else {
 					cache.remove(questionElement[0]);
