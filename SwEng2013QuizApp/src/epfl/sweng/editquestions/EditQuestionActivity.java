@@ -118,7 +118,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (questionField == null || questionField.getVisibility() != View.VISIBLE 
-				|| questionField.getHint() == null || !(questionField.getHint().equals(R.string.type_question))) {
+				|| !(questionField.getHint().equals(R.string.type_question))) {
 			editErrors++;
 		}
 
@@ -126,13 +126,12 @@ public class EditQuestionActivity extends Activity {
 		//These have their hint set to “Type in the answer”. 
 		//Their visibility properties are set to VISIBLE.
 		boolean  zeroOrMore = answerIndex>=answerCst;
-		//TODO julien check si les tests sur getHint == ou != null sont corrects 
+
 		if (answerIndex != answerCst) { // if answerIndex == answerCst, no answer text so don't need to check
 			for (int i = answerCst; i <= answerIndex; i++) {
 				EditText editCheck = (EditText) findViewById(i);
-				if (editCheck != null && editCheck.getHint() == null && 
-						(!zeroOrMore || !editCheck.getHint().equals(R.string.type_answer) 
-						|| editCheck.getVisibility() != View.VISIBLE)) {
+				if (!zeroOrMore || !editCheck.getHint().equals(R.string.type_answer) 
+						|| editCheck.getVisibility() != View.VISIBLE) {
 					editErrors++;
 				}
 			}
@@ -144,7 +143,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
-				|| tagsText.getHint() == null || !(tagsText.getHint().equals(R.string.type_tags))) {
+				|| !(tagsText.getHint().equals(R.string.type_tags))) {
 			editErrors++;
 		}
 		return editErrors;
@@ -158,14 +157,14 @@ public class EditQuestionActivity extends Activity {
 		//It has its text set to “+”, and its visibility set to VISIBLE.
 
 		if (addButton == null || addButton.getVisibility() != View.VISIBLE
-				|| addButton.getText() == null || !(addButton.getText().equals("\u002B"))) {
+				|| !(addButton.getText().equals("\u002B"))) {
 			buttonErrors++;
 		}
 
 		//Bullet 2: A button exists to submit the queston. 
 		// It has its text set to “Submit”, and its visibility set to VISIBLE.
 		if (submit != null || submit.getVisibility() != View.VISIBLE
-				|| submit.getText() == null || !(submit.getText().equals(R.string.submit_question))) {
+				|| !(submit.getText().equals(R.string.submit_question))) {
 			buttonErrors++;
 		}
 
@@ -176,8 +175,7 @@ public class EditQuestionActivity extends Activity {
 		if (removeCst!= removeIndex) {
 			for (int i=removeCst; i<=removeIndex; i++) {
 				Button removeCheck = (Button) findViewById(i);
-				if (!remToAns || removeCheck == null || removeCheck.getText() == null 
-						|| !removeCheck.getText().equals("\u002D") ||
+				if (!remToAns || !removeCheck.getText().equals("\u002D") ||
 						removeCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
 				}
@@ -189,7 +187,7 @@ public class EditQuestionActivity extends Activity {
 		if (correctCst != correctIndex) {
 			for (int i=correctCst; i<=correctIndex; i++) {
 				Button correctCheck = (Button) findViewById(i);
-				if (!togToAns || correctCheck == null || correctCheck.getText() == null  
+				if (!togToAns 
 						|| !((correctCheck.getText().equals("\u2714"))  // correct
 								|| (correctCheck.getText().equals("\u2718"))) // wrong
 								|| correctCheck.getVisibility() != View.VISIBLE) {
@@ -209,8 +207,7 @@ public class EditQuestionActivity extends Activity {
 		//(that is, at most one correctness button has its text set to “✔”).
 		for (int i = 0; i < idList.size(); i++) {
 			Button correctCheck = (Button) findViewById(idList.get(i));			
-			if (correctCheck != null || correctCheck.getText() != null 
-					|| correctCheck.getText().equals("\u2714")) {
+			if (correctCheck.getText().equals("\u2714")) {
 				correctCount++;
 			}
 		}
