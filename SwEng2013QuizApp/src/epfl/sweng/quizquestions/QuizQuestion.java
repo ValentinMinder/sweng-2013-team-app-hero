@@ -190,10 +190,10 @@ public class QuizQuestion {
 		// <len(question.tags[k]) <= 20 AND there exists i such that
 		// !Character.isWhitespace(question.answers[k].charAt(i))
 		// (String[]) cast is permitted because we have Set<String>
-		String[] tagArray = (String[]) tags.toArray();
+		Object[] tagArray = tags.toArray();
 		for (int k = 0; k < tagArray.length; k++) {
 			boolean inv6Kpart3 = false;
-			String tagK = tagArray[k];
+			String tagK = (String) tagArray[k];
 			for (int i = 0; i < tagK.length() && !inv6Kpart3; i++) {
 				if (!Character.isWhitespace(tagK.charAt(i))) {
 					inv6Kpart3 = true;
