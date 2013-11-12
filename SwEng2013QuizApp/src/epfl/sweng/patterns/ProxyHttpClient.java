@@ -95,6 +95,8 @@ public final class ProxyHttpClient implements HttpClient {
 		 * contenu du post pour pouvoir extraire la quizquestion et donc
 		 * l'ajouter au cache (ArrayList) Si quelqu'un a une idée plus clean
 		 * c'est volontiers ! (je suis p-e a coté de la plaque)
+		 * Valou > Julien: est-ce que c'est regle now? Moi la recup de la question me semble okay,
+		 * c'est sur les return (n° http/message) et l'authentification que je dois encore travailler.
 		 */
 		String method = request.getMethod();
 		if (method.equals("POST")) {
@@ -103,10 +105,10 @@ public final class ProxyHttpClient implements HttpClient {
 			if (headers.length >= 1) {
 				sessionID = headers[0].getValue();
 			}
-			// TODO: check authenfication dans le proxy (moyen a preciser... pas tres sur comment faire le valou)
+			// TODO: check authenfication dans le proxy (moyen a preciser... Valou pas tres sur comment faire )
 			boolean authentificationValidated = true;
 			if (!authentificationValidated) {
-				//TODO: change n° retrun (301) + exact return message
+				//TODO: valou: change n° retrun (304 UNAUTHORIZED?) + exact return message
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
 						"Non-authorized"));
@@ -115,7 +117,7 @@ public final class ProxyHttpClient implements HttpClient {
 			// extract and add to the cache
 			QuizQuestion question;
 			try {
-				//TODO: check owner/id (empty sended by client, but needed to construct quizquestion)
+				//TODO: Valou: check owner/id (empty sended by client, but needed to construct quizquestion)
 				question = new QuizQuestion(jsonContent);
 				cacheToSend.add(question);
 				cache.add(question);
@@ -124,17 +126,18 @@ public final class ProxyHttpClient implements HttpClient {
 					sendCacheContent();
 				}
 				// if proxy accepted the question, reply okay (201) and return the question as json to confirm
-				// TODO: check owner/id...
+				// TODO: Valou check owner/id... (should be set now)
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS,
 						question.toPostEntity()));
 			} catch (JSONException e) {
+				// TODO: Valou check n° return + exact message from specifications
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
 						"Message: malformed question"));
 			}
 		}
-		// TODO return BAD METHOD ONLY POST ACCEPTED ( +check error n°)
+		// TODO Valou return BAD METHOD ONLY POST ACCEPTED ( +check error n°/message)
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 				"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
 				"error message to check"));
@@ -198,6 +201,7 @@ public final class ProxyHttpClient implements HttpClient {
 					QuizQuestion question;
 					question = new QuizQuestion(response);
 					//TODO Verifier si l'id de la question existe déjà dans la liste ?
+					// warning: c'est le serveur qui donne les id, pas le proxy... bien gerer ce souci.
 					cache.add(question);
 					return (T) response;
 				}
@@ -283,11 +287,14 @@ public final class ProxyHttpClient implements HttpClient {
 			try {
 				post.setEntity(new StringEntity(questionElement[0]
 						.toPostEntity()));
-
+				// TODO: Valou: why, why , why.... "ProxyHttpClientFactory" has been copy-paste no? 
+				// should be the actual server no?!? SwengHttpClientFactory.getInstance() ???
 				HttpResponse response = ProxyHttpClientFactory.getInstance()
 						.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
+				// TODO: Valou: je checkerais plutot que dès que c'est pas 201 c'est offline  et pas submit non?
+				// le serveur peut refuser l'authentification (304) ou avoir un autre souci
 				if (statusCode.compareTo(Integer
 						.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
 					offline = true;
@@ -304,12 +311,12 @@ public final class ProxyHttpClient implements HttpClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			// TODO Valou: retourner ici le status code
 			return 0;
 		}
 
 		protected void onPostExecute(Integer result) {
-
+			//TODO: valou: faire ici la verif du status code. si c'est 201, on enlève la question du cache, sinon on passe offline
 		}
 
 	}
@@ -333,6 +340,8 @@ public final class ProxyHttpClient implements HttpClient {
 							+ sessionID);
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
+				// TODO: Valou: why, why , why.... "ProxyHttpClientFactory" has been copy-paste no? 
+				// should be the actual server no?!? SwengHttpClientFactory.getInstance() ???
 				return ProxyHttpClientFactory.getInstance().execute(
 						firstRandom, firstHandler);
 			} catch (ClientProtocolException e) {
@@ -354,6 +363,8 @@ public final class ProxyHttpClient implements HttpClient {
 					setOfflineStatus(false);
 				} else {
 					JSONObject jsonQuestion = new JSONObject(result);
+					// TODO: Valou: plutot que check le message... check le n° http retourné
+					// (je sais, c'est un ctrl-c-v de ce que j'avais fait avant... mais c'est pas top je troube
 					if (jsonQuestion.has("message")) {
 						setOfflineStatus(false);
 					} else {
