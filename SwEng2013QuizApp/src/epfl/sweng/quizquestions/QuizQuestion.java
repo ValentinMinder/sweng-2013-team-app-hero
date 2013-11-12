@@ -65,6 +65,7 @@ public class QuizQuestion {
 		tags = JSONUtils.convertJSONArraySetString(jsonQuestion
 				.getJSONArray("tags"));
 		owner = jsonQuestion.getString("owner");
+		//TODO: to check: une question pas encore envoyee au serveur n'a pas de owner ni id...
 	}
 
 	public QuizQuestion(final String question, final List<String> answers,

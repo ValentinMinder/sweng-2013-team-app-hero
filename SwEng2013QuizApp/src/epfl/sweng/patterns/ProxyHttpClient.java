@@ -99,30 +99,45 @@ public final class ProxyHttpClient implements HttpClient {
 		String method = request.getMethod();
 		if (method.equals("POST")) {
 			HttpPost post = (HttpPost) request;
+			Header[] headers = post.getHeaders("Authorization");
+			if (headers.length >= 1) {
+				sessionID = headers[0].getValue();
+			}
+			// TODO: check authenfication dans le proxy (moyen a preciser... pas tres sur comment faire le valou)
+			boolean authentificationValidated = true;
+			if (!authentificationValidated) {
+				//TODO: change n° retrun (301) + exact return message
+				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
+						"Non-authorized"));
+			}
 			String jsonContent = EntityUtils.toString(post.getEntity());
 			// extract and add to the cache
 			QuizQuestion question;
 			try {
+				//TODO: check owner/id (empty sended by client, but needed to construct quizquestion)
 				question = new QuizQuestion(jsonContent);
 				cacheToSend.add(question);
 				cache.add(question);
-				Header[] headers = post.getHeaders("Authorization");
-				if (headers.length >= 1) {
-					sessionID = headers[0].getValue();
-				}
 				
 				if (!offline) {
 					sendCacheContent();
 				}
+				// if proxy accepted the question, reply okay (201) and return the question as json to confirm
+				// TODO: check owner/id...
+				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS,
+						question.toPostEntity()));
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
+						"Message: malformed question"));
 			}
 		}
-		// TODO gérer le retour (solution improvisée)
+		// TODO return BAD METHOD ONLY POST ACCEPTED ( +check error n°)
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-				"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS,
-				"reponse from local"));
+				"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
+				"error message to check"));
 	}
 
 	@Override
