@@ -35,19 +35,21 @@ public final class ProxyHttpClient implements HttpClient {
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cacheToSend;
+	private ArrayList<QuizQuestion> cache;
 	private String sessionID = null;
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
+		this.cache = new ArrayList<QuizQuestion>();
 	}
-	
+
 	public static ProxyHttpClient getInstance() {
 		if (instance == null) {
 			instance = new ProxyHttpClient();
 		}
 		return instance;
 	}
-	
+
 	private void sendCacheContent() {
 		for (int i = 0; i < cacheToSend.size(); ++i) {
 			QuizQuestion question = cacheToSend.get(i);
@@ -65,12 +67,10 @@ public final class ProxyHttpClient implements HttpClient {
 		boolean previousState = offline;
 		offline = status;
 		if (previousState && !offline) {
-			//going from offline to online
+			// going from offline to online
 			sendCacheContent();
 		}
 	}
-
-
 
 	/**
 	 * get offline parameter. True represent offline.
@@ -99,30 +99,29 @@ public final class ProxyHttpClient implements HttpClient {
 		if (method.equals("POST")) {
 			HttpPost post = (HttpPost) request;
 			String jsonContent = EntityUtils.toString(post.getEntity());
-			//extract and add to the cache
+			// extract and add to the cache
 			QuizQuestion question;
 			try {
 				question = new QuizQuestion(jsonContent);
 				cacheToSend.add(question);
-				if (sessionID == null) {
-					Header[] headers = post.getHeaders("Authorization");
-					if (headers.length >= 1) {
-						sessionID = headers[0].getValue();
-					}
+				Header[] headers = post.getHeaders("Authorization");
+				if (headers.length >= 1) {
+					sessionID = headers[0].getValue();
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		//TODO gérer le retour (solution improvisée)
-		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 2, 1), 
-				SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS, "reponse from local"));
+		// TODO gérer le retour (solution improvisée)
+		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+				"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS,
+				"reponse from local"));
 	}
 
 	@Override
 	public HttpResponse execute(HttpUriRequest request, HttpContext context)
-		throws IOException, ClientProtocolException {
+			throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(request,
 					context);
@@ -133,7 +132,7 @@ public final class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public HttpResponse execute(HttpHost target, HttpRequest request)
-		throws IOException, ClientProtocolException {
+			throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance()
 					.execute(target, request);
@@ -143,14 +142,17 @@ public final class ProxyHttpClient implements HttpClient {
 	}
 
 	@Override
-	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-		throws IOException, ClientProtocolException {
+	public String execute(HttpUriRequest arg0, ResponseHandler<String> arg1)
+			throws IOException, ClientProtocolException {
 
 		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(arg0, arg1);
+			String response = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
+			return response;
 		}
-		// Traiter le cas offline
-		return null;
+		
+		int size = cache.size();
+		int index = (int) (Math.random()*(size-1));
+		return cache.get(index).toPostEntity();
 	}
 
 	@Override
@@ -166,8 +168,8 @@ public final class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public <T> T execute(HttpUriRequest arg0,
-		ResponseHandler<? extends T> arg1, HttpContext arg2)
-		throws IOException, ClientProtocolException {
+			ResponseHandler<? extends T> arg1, HttpContext arg2)
+			throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
 					arg2);
@@ -190,8 +192,8 @@ public final class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public <T> T execute(HttpHost arg0, HttpRequest arg1,
-		ResponseHandler<? extends T> arg2, HttpContext arg3)
-		throws IOException, ClientProtocolException {
+			ResponseHandler<? extends T> arg2, HttpContext arg3)
+			throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
 					arg2, arg3);
@@ -225,9 +227,8 @@ public final class ProxyHttpClient implements HttpClient {
 	 * @author Julien
 	 * 
 	 */
-	private class SubmitQuestionTask extends AsyncTask<QuizQuestion, Void, Integer> {
-
-		
+	private class SubmitQuestionTask extends
+			AsyncTask<QuizQuestion, Void, Integer> {
 
 		/**
 		 * Execute and retrieve the answer from the website.
@@ -237,18 +238,18 @@ public final class ProxyHttpClient implements HttpClient {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 			post.setHeader("Content-type", "application/json");
-			post.setHeader(
-					"Authorization",
-					sessionID);
+			post.setHeader("Authorization", sessionID);
 
 			try {
-				post.setEntity(new StringEntity(questionElement[0].toPostEntity()));
+				post.setEntity(new StringEntity(questionElement[0]
+						.toPostEntity()));
 
-				HttpResponse response = ProxyHttpClientFactory
-						.getInstance().execute(post);
+				HttpResponse response = ProxyHttpClientFactory.getInstance()
+						.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
-				if (statusCode.compareTo(Integer.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
+				if (statusCode.compareTo(Integer
+						.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
 					offline = true;
 				} else {
 					cacheToSend.remove(questionElement[0]);
