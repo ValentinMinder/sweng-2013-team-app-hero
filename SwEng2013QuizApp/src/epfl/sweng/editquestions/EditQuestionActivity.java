@@ -86,8 +86,7 @@ public class EditQuestionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
-
-
+		
 		initUI();
 
 		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);

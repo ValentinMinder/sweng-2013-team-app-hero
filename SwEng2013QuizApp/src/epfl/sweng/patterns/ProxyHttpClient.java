@@ -3,6 +3,7 @@ package epfl.sweng.patterns;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -13,16 +14,19 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -85,9 +89,6 @@ public final class ProxyHttpClient implements HttpClient {
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
 
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(request);
-		}
 		// TODO Traiter le cas offline
 		/*
 		 * Julien : Je ne sais pas vraiment comment faire pour récupérer le
@@ -104,9 +105,14 @@ public final class ProxyHttpClient implements HttpClient {
 			try {
 				question = new QuizQuestion(jsonContent);
 				cacheToSend.add(question);
+				cache.add(question);
 				Header[] headers = post.getHeaders("Authorization");
 				if (headers.length >= 1) {
 					sessionID = headers[0].getValue();
+				}
+				
+				if (!offline) {
+					sendCacheContent();
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -142,20 +148,6 @@ public final class ProxyHttpClient implements HttpClient {
 	}
 
 	@Override
-	public String execute(HttpUriRequest arg0, ResponseHandler<String> arg1)
-			throws IOException, ClientProtocolException {
-
-		if (!offline) {
-			String response = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
-			return response;
-		}
-		
-		int size = cache.size();
-		int index = (int) (Math.random()*(size-1));
-		return cache.get(index).toPostEntity();
-	}
-
-	@Override
 	public HttpResponse execute(HttpHost target, HttpRequest request,
 			HttpContext context) throws IOException, ClientProtocolException {
 		if (!offline) {
@@ -176,6 +168,39 @@ public final class ProxyHttpClient implements HttpClient {
 		}
 		// Traiter le cas offline
 		return null;
+	}
+	
+	@Override
+	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
+			throws IOException, ClientProtocolException {
+		ResponseHandler<String> rh = (ResponseHandler<String>) arg1;
+		if (!offline) {
+			String response;
+			try {
+				//TODO a tester pas sur que ça soit fonctionnel
+				response = new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+				if (!offline) {
+					QuizQuestion question;
+					question = new QuizQuestion(response);
+					//TODO Verifier si l'id de la question existe déjà dans la liste ?
+					cache.add(question);
+					return (T) response;
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		int size = cache.size();
+		int index = (int) (Math.random()*(size-1));
+		return (T) cache.get(index).toPostEntity();
 	}
 
 	@Override
@@ -270,6 +295,60 @@ public final class ProxyHttpClient implements HttpClient {
 
 		protected void onPostExecute(Integer result) {
 
+		}
+
+	}
+	
+	
+	/**
+	 * Class who is use to get the question from the server
+	 * 
+	 * @author juniors
+	 * 
+	 */
+	private class GetQuestionTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... urls) {
+			//TODO faire attention car sessionID == null non traité (à corriger)
+			HttpGet firstRandom = new HttpGet(urls[0]);
+			firstRandom.setHeader(
+					"Authorization",
+					"Tequila "
+							+ sessionID);
+			ResponseHandler<String> firstHandler = new BasicResponseHandler();
+			try {
+				return ProxyHttpClientFactory.getInstance().execute(
+						firstRandom, firstHandler);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		/**
+		 * Method who is gonna take the result of an URL request and parse it in
+		 * a QuizQuestion Object. and after display it.
+		 */
+		protected void onPostExecute(String result) {
+			try {
+				if (result == null) {
+					setOfflineStatus(false);
+				} else {
+					JSONObject jsonQuestion = new JSONObject(result);
+					if (jsonQuestion.has("message")) {
+						setOfflineStatus(false);
+					} else {
+						super.onPostExecute(result);
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+				setOfflineStatus(false);
+			}
 		}
 
 	}
