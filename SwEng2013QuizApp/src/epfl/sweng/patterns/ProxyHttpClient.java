@@ -34,11 +34,11 @@ public final class ProxyHttpClient implements HttpClient {
 	private static final int SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS = 201;
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
-	private ArrayList<QuizQuestion> cache;
+	private ArrayList<QuizQuestion> cacheToSend;
 	private String sessionID = null;
 
 	private ProxyHttpClient() {
-		this.cache = new ArrayList<QuizQuestion>();
+		this.cacheToSend = new ArrayList<QuizQuestion>();
 	}
 	
 	public static ProxyHttpClient getInstance() {
@@ -49,8 +49,8 @@ public final class ProxyHttpClient implements HttpClient {
 	}
 	
 	private void sendCacheContent() {
-		for (int i = 0; i < cache.size(); ++i) {
-			QuizQuestion question = cache.get(i);
+		for (int i = 0; i < cacheToSend.size(); ++i) {
+			QuizQuestion question = cacheToSend.get(i);
 			new SubmitQuestionTask().execute(question);
 		}
 	}
@@ -103,7 +103,7 @@ public final class ProxyHttpClient implements HttpClient {
 			QuizQuestion question;
 			try {
 				question = new QuizQuestion(jsonContent);
-				cache.add(question);
+				cacheToSend.add(question);
 				if (sessionID == null) {
 					Header[] headers = post.getHeaders("Authorization");
 					if (headers.length >= 1) {
@@ -251,7 +251,7 @@ public final class ProxyHttpClient implements HttpClient {
 				if (statusCode.compareTo(Integer.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
 					offline = true;
 				} else {
-					cache.remove(questionElement[0]);
+					cacheToSend.remove(questionElement[0]);
 				}
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
