@@ -13,7 +13,6 @@ import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.patterns.ProxyHttpClient;
-import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -42,7 +41,7 @@ public class MainActivity extends Activity {
 		buttonLog.setText(R.string.log_in_tekila);
 
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
-		offline.setVisibility(View.GONE);		
+		offline.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class MainActivity extends Activity {
 
 		String session = StoreCredential.getInstance().getSessionId(
 				getApplicationContext());
-		
+
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
 
 		if (session.equals("")) {
@@ -88,7 +87,7 @@ public class MainActivity extends Activity {
 					getApplicationContext());
 
 			modifyButtonIfNotAuthenticated();
-			
+
 			TestCoordinator.check(TTChecks.LOGGED_OUT);
 		} else {
 			this.finish();
@@ -107,10 +106,16 @@ public class MainActivity extends Activity {
 	}
 
 	public void submitQuestion(View view) {
-
 		Intent editQuestionIntent = new Intent(this, EditQuestionActivity.class);
-
 		startActivity(editQuestionIntent);
+	}
+
+	@Override
+	public void onResume() {
+		// Function calls when the activity gets the focus
+		super.onResume();
+		CheckBox offline = (CheckBox) findViewById(R.id.offline);
+		offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 	}
 
 	@Override
@@ -119,6 +124,5 @@ public class MainActivity extends Activity {
 		super.onStart();
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
-	
-	
+
 }

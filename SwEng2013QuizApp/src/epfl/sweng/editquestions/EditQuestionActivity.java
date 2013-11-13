@@ -19,9 +19,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -63,16 +60,6 @@ public class EditQuestionActivity extends Activity {
 	private int idIndex = 0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
-
-	
-	/**
-	 * 
-	 */
-	private void afficheMoiCeMessageDeDebug(String myString) {
-		Toast.makeText(getBaseContext(),
-				myString, Toast.LENGTH_SHORT)
-				.show();
-	}
 	
 	/**
 	 * Method who is called if error occurred on submit
@@ -533,21 +520,12 @@ public class EditQuestionActivity extends Activity {
 	 *            question already formatted as entity
 	 */
 	private void submitQuestion(String questionAsEntity) {
-		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-		// Test network connection
-		if (networkInfo != null && networkInfo.isConnected()) {
-			try {
-				new SubmitQuestionTask().execute(questionAsEntity).get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		} else {
-			Toast.makeText(getBaseContext(), R.string.no_network,
-					Toast.LENGTH_LONG).show();
+		try {
+			new SubmitQuestionTask().execute(questionAsEntity).get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 	}
 
