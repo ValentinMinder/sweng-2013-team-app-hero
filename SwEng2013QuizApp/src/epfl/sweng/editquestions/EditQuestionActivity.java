@@ -36,6 +36,7 @@ import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.ProxyHttpClientFactory;
+import epfl.sweng.servercomm.UtilsHttpResponse;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -46,8 +47,6 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  * 
  */
 public class EditQuestionActivity extends Activity {
-
-	private final static int SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL = 201;
 
 	private final int correctCst = 0;
 	private final int removeCst = 1000;
@@ -557,7 +556,7 @@ public class EditQuestionActivity extends Activity {
 				HttpResponse response = ProxyHttpClientFactory
 						.getInstance().execute(post);
 
-				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESSFUL)
+				if (response.getStatusLine().getStatusCode() == UtilsHttpResponse.CREATED)
 				{
 					HttpEntity result = response.getEntity();
 					if (result != null) {

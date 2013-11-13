@@ -32,10 +32,9 @@ import android.os.AsyncTask;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.servercomm.UtilsHttpResponse;
 
 public final class ProxyHttpClient implements HttpClient {
-	private static final int SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE = 500;
-	private static final int SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS = 201;
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cacheToSend;
@@ -110,7 +109,7 @@ public final class ProxyHttpClient implements HttpClient {
 			if (!authentificationValidated) {
 				//TODO: valou: change n° retrun (304 UNAUTHORIZED?) + exact return message
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
+						"HTTP", 2, 1), UtilsHttpResponse.UNAUTHORIZED,
 						"Non-authorized"));
 			}
 			String jsonContent = EntityUtils.toString(post.getEntity());
@@ -128,18 +127,18 @@ public final class ProxyHttpClient implements HttpClient {
 				// if proxy accepted the question, reply okay (201) and return the question as json to confirm
 				// TODO: Valou check owner/id... (should be set now)
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS,
+						"HTTP", 2, 1), UtilsHttpResponse.CREATED,
 						question.toPostEntity()));
 			} catch (JSONException e) {
 				// TODO: Valou check n° return + exact message from specifications
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-						"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
+						"HTTP", 2, 1), UtilsHttpResponse.INTERNAL_SERVER_ERROR,
 						"Message: malformed question"));
 			}
 		}
 		// TODO Valou return BAD METHOD ONLY POST ACCEPTED ( +check error n°/message)
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-				"HTTP", 2, 1), SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE,
+				"HTTP", 2, 1), UtilsHttpResponse.METHOD_NOT_ALLOWED,
 				"error message to check"));
 	}
 
@@ -309,7 +308,7 @@ public final class ProxyHttpClient implements HttpClient {
 				e.printStackTrace();
 			}
 			// Valou: en cas d'exeption en local, on lance la failure
-			return SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE;
+			return UtilsHttpResponse.INTERNAL_SERVER_ERROR;
 		}
 
 		/**
@@ -320,7 +319,7 @@ public final class ProxyHttpClient implements HttpClient {
 			// Valou: je prefere check le status et enlever la question APRES avoir submit, 
 			// mais peut-etre que ca fait de la merde au niveau des threads...
 			if (result.compareTo(Integer
-					.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS)) == 0) {
+					.valueOf(UtilsHttpResponse.CREATED)) == 0) {
 				cacheToSend.remove(myQuestion);
 			} else {
 				offline = true;
@@ -355,6 +354,7 @@ public final class ProxyHttpClient implements HttpClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			// check le n° 200 en retour
 			//Valou: qqch a changer ici.
 			return null;
 		}
