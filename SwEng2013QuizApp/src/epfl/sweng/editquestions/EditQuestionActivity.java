@@ -127,8 +127,8 @@ public class EditQuestionActivity extends Activity {
 		if (questionField == null || questionField.getVisibility() != View.VISIBLE 
 				|| !(questionField.getHint().equals("Type in the question’s text body"))) {
 			editErrors++;
-			System.out.println("bu1_edit " + questionField.getVisibility());
-			System.out.println("bu1_edit " + questionField.getHint());
+			System.out.println("bu1_editt");
+
 		}
 
 		//Bullet 2: There exist zero or more EditText widgets to enter answers. 
@@ -142,9 +142,7 @@ public class EditQuestionActivity extends Activity {
 				if (!zeroOrMore || !editCheck.getHint().equals("Type in the answer") 
 						|| editCheck.getVisibility() != View.VISIBLE) {
 					editErrors++;
-					System.out.println("bu2_edit " + zeroOrMore);
-					System.out.println("bu2_edit " + editCheck.getVisibility());
-					System.out.println("bu2_edit " + editCheck.getHint());
+					System.out.println("bu2_editt");
 				}
 			}
 		}
@@ -157,9 +155,8 @@ public class EditQuestionActivity extends Activity {
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
 				|| !(tagsText.getHint().equals("Type in the question’s tags"))) {
 			editErrors++;
-			System.out.println("bu3_edit " + zeroOrMore);
-			System.out.println("bu3_edit " + tagsText.getVisibility());
-			System.out.println("bu3_edit " + tagsText.getHint());
+			System.out.println("bu3_editt");
+
 		}
 		return editErrors;
 	}
@@ -174,8 +171,8 @@ public class EditQuestionActivity extends Activity {
 		if (addButton == null || addButton.getVisibility() != View.VISIBLE
 				|| !(addButton.getText().equals("\u002B"))) {
 			buttonErrors++;
-			System.out.println("bu1_butt " + addButton.getVisibility());
-			System.out.println("bu1_butt " + addButton.getHint());
+			System.out.println("bu1_butt");
+
 		}
 
 		//Bullet 2: A button exists to submit the queston. 
@@ -183,8 +180,8 @@ public class EditQuestionActivity extends Activity {
 		if (submit != null || submit.getVisibility() != View.VISIBLE
 				|| !(submit.getText().equals(R.string.submit_question))) {
 			buttonErrors++;
-			System.out.println("bu2_butt " + submit.getVisibility());
-			System.out.println("bu2_butt " + submit.getHint());
+			System.out.println("bu2_butt");
+
 		}
 
 		//Bullet 3: For every answer, there is a button to remove that answer. 
@@ -197,9 +194,8 @@ public class EditQuestionActivity extends Activity {
 				if (!remToAns || !removeCheck.getText().equals("\u002D") ||
 						removeCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
-					System.out.println("bu3_butt " + remToAns);
-					System.out.println("bu3_butt " + removeCheck.getText());
-					System.out.println("bu3_butt " + removeCheck.getVisibility());
+					System.out.println("bu3_butt");
+
 				}
 			}
 		}
@@ -214,9 +210,8 @@ public class EditQuestionActivity extends Activity {
 								|| (correctCheck.getText().equals("\u2718"))) // wrong
 								|| correctCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
-					System.out.println("bu2_edit " + togToAns);
-					System.out.println("bu2_edit " + correctCheck.getVisibility());
-					System.out.println("bu2_edit " + correctCheck.getText());
+					System.out.println("bu4_butt");
+
 				}
 			}
 		}
@@ -238,6 +233,7 @@ public class EditQuestionActivity extends Activity {
 		}
 		if (correctCount > 1) {
 			answerErrors++;
+			System.out.println("bu1_ans");
 
 		}
 
@@ -249,7 +245,7 @@ public class EditQuestionActivity extends Activity {
 		if (auditAnswers()+auditButtons()+auditEditTexts() == 0) {
 			return 0;
 		} else {
-			System.out.println("subbbb " + auditAnswers()+auditButtons()+auditEditTexts());
+			System.out.println("err_sub");
 			return 1;
 		}
 		
