@@ -125,7 +125,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (questionField == null || questionField.getVisibility() != View.VISIBLE 
-				|| !(questionField.getHint().equals(R.string.type_question))) {
+				|| !(questionField.getHint().equals("Type in the question’s text body"))) {
 			editErrors++;
 			System.out.println("bu1_editt");
 
@@ -139,7 +139,7 @@ public class EditQuestionActivity extends Activity {
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
 				EditText editCheck = (EditText) findViewById(idList.get(i) + answerCst);
-				if (!zeroOrMore || !editCheck.getHint().equals(R.string.type_answer) 
+				if (!zeroOrMore || !editCheck.getHint().equals("Type in the answer") 
 						|| editCheck.getVisibility() != View.VISIBLE) {
 					editErrors++;
 					System.out.println("bu2_editt");
@@ -153,7 +153,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
-				|| !(tagsText.getHint().equals(R.string.type_tags))) {
+				|| !(tagsText.getHint().equals("Type in the question’s tags"))) {
 			editErrors++;
 			System.out.println("bu3_editt");
 
@@ -231,7 +231,7 @@ public class EditQuestionActivity extends Activity {
 				correctCount++;
 			}
 		}
-		if (correctCount != 1) {
+		if (correctCount > 1) {
 			answerErrors++;
 			System.out.println("bu1_ans");
 
@@ -242,11 +242,10 @@ public class EditQuestionActivity extends Activity {
 
 	private int auditSubmitButton() {
 		
-		if (audit() == 0) {
+		if (auditAnswers()+auditButtons()+auditEditTexts() == 0) {
 			return 0;
 		} else {
 			System.out.println("err_sub");
-
 			return 1;
 		}
 		
