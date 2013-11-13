@@ -7,6 +7,8 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.text.Editable;
+
 import epfl.sweng.utils.JSONUtils;
 
 /**
@@ -141,7 +143,7 @@ public class QuizQuestion {
 	public int auditErrors() {
 		int errors = 0;
 
-		// INV n° 1: 0 < len(question.question) <= 500 AND there exists i SUCH
+		// INV n�� 1: 0 < len(question.question) <= 500 AND there exists i SUCH
 		// THAT !Character.isWhitespace(question.question.charAt(i))
 		boolean inv1part3 = false;
 		for (int i = 0; i < question.length() && !inv1part3; i++) {
@@ -155,7 +157,7 @@ public class QuizQuestion {
 			errors++;
 		}
 
-		// INV n°2: FOR ALL k from 0 up to len(question.answers), 0
+		// INV n��2: FOR ALL k from 0 up to len(question.answers), 0
 		// <len(question.answers[k]) <= 500 AND there exists i such that
 		// !Character.isWhitespace(question.answer[k].charAt(i))
 		for (int k = 0; k < answers.size(); k++) {
@@ -173,13 +175,13 @@ public class QuizQuestion {
 			}
 		}
 
-		// INV N°3: 2 <= len(question.answers) <= 10
+		// INV N��3: 2 <= len(question.answers) <= 10
 		boolean invariant3 = (answers.size() >= 2) && (answers.size() <= ANSWERS_SIZE);
 		if (!invariant3) {
 			errors++;
 		}
 
-		// INV N°4: there exists i such that
+		// INV N��4: there exists i such that
 		// isMarkedCorrect(question.answers[i])
 		boolean invariant4 = (solutionIndex >= 0)
 				&& (solutionIndex < answers.size());
@@ -187,13 +189,13 @@ public class QuizQuestion {
 			errors++;
 		}
 
-		// INV N°5: 1 <= len(question.tags) <= 20
+		// INV N��5: 1 <= len(question.tags) <= 20
 		boolean invariant5 = (tags.size() >= 1) && (tags.size() <= TAGS_SIZE);
 		if (!invariant5) {
 			errors++;
 		}
 
-		// INV N°6: FOR ALL k from 0 up to len(question.tags), 0
+		// INV N��6: FOR ALL k from 0 up to len(question.tags), 0
 		// <len(question.tags[k]) <= 20 AND there exists i such that
 		// !Character.isWhitespace(question.answers[k].charAt(i))
 		// (String[]) cast is permitted because we have Set<String>

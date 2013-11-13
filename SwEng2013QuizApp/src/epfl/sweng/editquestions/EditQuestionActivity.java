@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
@@ -111,7 +110,7 @@ public class EditQuestionActivity extends Activity {
 	 *            returns 0.
 	 */
 	private void submitControler(Button sub) {
-		if (audit() == 0) {
+		if (auditErrors() == 0) {
 			sub.setEnabled(true);
 		} else {
 			sub.setEnabled(false);
@@ -229,20 +228,13 @@ public class EditQuestionActivity extends Activity {
 
 	private int auditSubmitButton() {
 		
-//ok avec ce que j avais deja fait, mais tient pas compte du hind de la consigne
 		if (audit() == 0) {
 			return 0;
 		} else {
 			return 1;
 		}
 		
-		// changement a faire dans l'architecture pour que ça marche
-	/*	if(auditAnswers() != 0 || question.auditErrors() != 0) {
-			return 1;
-		} else {
-			return 0;
-		}
-		*/
+		
 	}
 	
 	public int auditErrors() {
@@ -570,7 +562,7 @@ public class EditQuestionActivity extends Activity {
 				//afficheMoiCeMessageDeDebug("status: " + response.getStatusLine().getStatusCode());
 				//afficheMoiCeMessageDeDebug("msg: " + response.getStatusLine().getReasonPhrase());
 
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+				if (response.getStatusLine().getStatusCode() == UtilsHttpResponse.CREATED) {
 					HttpEntity result = response.getEntity();
 					if (result != null) {
 						return EntityUtils.toString(result);
