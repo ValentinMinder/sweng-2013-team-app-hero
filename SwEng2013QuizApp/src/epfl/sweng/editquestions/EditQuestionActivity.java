@@ -64,6 +64,16 @@ public class EditQuestionActivity extends Activity {
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
 
+	
+	/**
+	 * 
+	 */
+	private void afficheMoiCeMessageDeDebug(String myString) {
+		Toast.makeText(getBaseContext(),
+				myString, Toast.LENGTH_SHORT)
+				.show();
+	}
+	
 	/**
 	 * Method who is called if error occurred on submit
 	 */
@@ -556,8 +566,10 @@ public class EditQuestionActivity extends Activity {
 				HttpResponse response = ProxyHttpClientFactory
 						.getInstance().execute(post);
 
-				if (response.getStatusLine().getStatusCode() == UtilsHttpResponse.CREATED)
-				{
+				//afficheMoiCeMessageDeDebug("status: " + response.getStatusLine().getStatusCode());
+				//afficheMoiCeMessageDeDebug("msg: " + response.getStatusLine().getReasonPhrase());
+
+				if (response.getStatusLine().getStatusCode() == UtilsHttpResponse.CREATED) {
 					HttpEntity result = response.getEntity();
 					if (result != null) {
 						return EntityUtils.toString(result);

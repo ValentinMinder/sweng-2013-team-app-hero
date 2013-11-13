@@ -27,7 +27,7 @@ public class QuizQuestion {
 	/**
 	 * Question id
 	 */
-	private int id;
+	private long id;
 
 	/**
 	 * Question field
@@ -57,15 +57,21 @@ public class QuizQuestion {
 	public QuizQuestion(final String jsonInput) throws JSONException {
 		JSONObject jsonQuestion = new JSONObject(jsonInput);
 
-		id = jsonQuestion.getInt("id");
+		// une question pas encore envoyee au serveur n'a pas de owner ni id
+		try {
+			id = jsonQuestion.getLong("id");
+			owner = jsonQuestion.getString("owner");
+		} catch (JSONException e) {
+			id = -1;
+			owner = "";
+		}
+		
 		question = jsonQuestion.getString("question");
 		answers = JSONUtils.convertJSONArrayToArrayListString(jsonQuestion
 				.getJSONArray("answers"));
 		solutionIndex = jsonQuestion.getInt("solutionIndex");
 		tags = JSONUtils.convertJSONArraySetString(jsonQuestion
 				.getJSONArray("tags"));
-		owner = jsonQuestion.getString("owner");
-		//TODO: to check: une question pas encore envoyee au serveur n'a pas de owner ni id...
 	}
 
 	public QuizQuestion(final String question, final List<String> answers,
@@ -79,7 +85,7 @@ public class QuizQuestion {
 		this.owner = owner;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 

@@ -3,6 +3,7 @@ package epfl.sweng.patterns;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
@@ -30,7 +31,6 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.servercomm.UtilsHttpResponse;
 
@@ -39,11 +39,16 @@ public final class ProxyHttpClient implements HttpClient {
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cacheToSend;
 	private ArrayList<QuizQuestion> cache;
-	private String sessionID = null;
+	private String tequilaWordWithSessionID = null;
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.cache = new ArrayList<QuizQuestion>();
+		ArrayList<String> answers = new ArrayList<String>();
+		answers.add("1");		answers.add("1");
+		HashSet<String> tags = new HashSet<String>();
+		tags.add("tag");
+		cache.add(new QuizQuestion("hye", answers, 0, tags, 0, "me"));
 	}
 
 	public static ProxyHttpClient getInstance() {
@@ -102,7 +107,7 @@ public final class ProxyHttpClient implements HttpClient {
 			HttpPost post = (HttpPost) request;
 			Header[] headers = post.getHeaders("Authorization");
 			if (headers.length >= 1) {
-				sessionID = headers[0].getValue();
+				tequilaWordWithSessionID = headers[0].getValue();
 			}
 			// TODO: check authenfication dans le proxy (moyen a preciser... Valou pas tres sur comment faire )
 			boolean authentificationValidated = true;
@@ -116,30 +121,30 @@ public final class ProxyHttpClient implements HttpClient {
 			// extract and add to the cache
 			QuizQuestion question;
 			try {
-				//TODO: Valou: check owner/id (empty sended by client, but needed to construct quizquestion)
+				// owner/id are needed to construct quizquestion and set as default values
 				question = new QuizQuestion(jsonContent);
 				cacheToSend.add(question);
 				cache.add(question);
-				
+				System.out.println("offline status" + offline);
+				System.out.println("Recieved" + question);
 				if (!offline) {
 					sendCacheContent();
 				}
 				// if proxy accepted the question, reply okay (201) and return the question as json to confirm
-				// TODO: Valou check owner/id... (should be set now)
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), UtilsHttpResponse.CREATED,
 						question.toPostEntity()));
 			} catch (JSONException e) {
-				// TODO: Valou check n° return + exact message from specifications
+				// if the question is malformed, we send a 500 error code
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), UtilsHttpResponse.INTERNAL_SERVER_ERROR,
-						"Message: malformed question"));
+						UtilsHttpResponse.INTERNAL_SERVER_ERROR_MSG));
 			}
 		}
-		// TODO Valou return BAD METHOD ONLY POST ACCEPTED ( +check error n°/message)
+		// only post method is accepted here, so return Method Not Allowed Error
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 				"HTTP", 2, 1), UtilsHttpResponse.METHOD_NOT_ALLOWED,
-				"error message to check"));
+				UtilsHttpResponse.METHOD_NOT_ALLOWED_MSG));
 	}
 
 	@Override
@@ -217,7 +222,8 @@ public final class ProxyHttpClient implements HttpClient {
 		}
 		
 		int size = cache.size();
-		int index = (int) (Math.random()*(size-1));
+		// Valou > Julien... faut pas faire -1!!!
+		int index = (int) (Math.random()*(size));
 		return (T) cache.get(index).toPostEntity();
 	}
 
@@ -282,7 +288,7 @@ public final class ProxyHttpClient implements HttpClient {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 			post.setHeader("Content-type", "application/json");
-			post.setHeader("Authorization",	"Tequila " + sessionID);
+			post.setHeader("Authorization",	tequilaWordWithSessionID);
 
 			try {
 				myQuestion = questionElement[0];
@@ -341,10 +347,8 @@ public final class ProxyHttpClient implements HttpClient {
 		protected String doInBackground(String... urls) {
 			//TODO faire attention car sessionID == null non traité (à corriger)
 			HttpGet firstRandom = new HttpGet(urls[0]);
-			firstRandom.setHeader(
-					"Authorization",
-					"Tequila "
-							+ sessionID);
+			firstRandom.setHeader("Authorization", tequilaWordWithSessionID);
+
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
 				return SwengHttpClientFactory.getInstance().execute(
