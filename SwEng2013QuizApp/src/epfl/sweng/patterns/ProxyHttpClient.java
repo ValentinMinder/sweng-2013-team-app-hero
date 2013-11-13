@@ -62,6 +62,11 @@ public final class ProxyHttpClient implements HttpClient {
 	}
 
 	private void sendCacheContent() {
+		if (cacheToSend.size() == 0) {
+			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+			offline = false;
+		}
+		
 		for (int i = 0; i < cacheToSend.size(); ++i) {
 			QuizQuestion question = cacheToSend.get(i);
 			new SubmitQuestionTask().execute(question);
