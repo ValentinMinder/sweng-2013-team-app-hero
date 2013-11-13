@@ -287,9 +287,7 @@ public final class ProxyHttpClient implements HttpClient {
 			try {
 				post.setEntity(new StringEntity(questionElement[0]
 						.toPostEntity()));
-				// TODO: Valou: why, why , why.... "ProxyHttpClientFactory" has been copy-paste no? 
-				// should be the actual server no?!? SwengHttpClientFactory.getInstance() ???
-				HttpResponse response = ProxyHttpClientFactory.getInstance()
+				HttpResponse response = SwengHttpClientFactory.getInstance()
 						.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
@@ -340,9 +338,7 @@ public final class ProxyHttpClient implements HttpClient {
 							+ sessionID);
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				// TODO: Valou: why, why , why.... "ProxyHttpClientFactory" has been copy-paste no? 
-				// should be the actual server no?!? SwengHttpClientFactory.getInstance() ???
-				return ProxyHttpClientFactory.getInstance().execute(
+				return SwengHttpClientFactory.getInstance().execute(
 						firstRandom, firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
