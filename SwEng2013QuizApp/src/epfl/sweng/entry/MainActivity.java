@@ -42,9 +42,7 @@ public class MainActivity extends Activity {
 		buttonLog.setText(R.string.log_in_tekila);
 
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
-		offline.setVisibility(View.GONE);
-		offline.setEnabled(false);
-		
+		offline.setVisibility(View.GONE);		
 	}
 
 	@Override
@@ -60,7 +58,6 @@ public class MainActivity extends Activity {
 		if (session.equals("")) {
 			modifyButtonIfNotAuthenticated();
 		} else {
-			offline.setEnabled(true);
 			offline.setVisibility(View.VISIBLE);
 			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 		}
