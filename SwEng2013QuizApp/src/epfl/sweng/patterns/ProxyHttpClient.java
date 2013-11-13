@@ -30,7 +30,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.widget.Toast;
+import epfl.sweng.R;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.servercomm.UtilsHttpResponse;
@@ -45,11 +50,13 @@ public final class ProxyHttpClient implements HttpClient {
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.cache = new ArrayList<QuizQuestion>();
+		//TODO: obviously this is for tests and we have to delete!
+		// pour éviter le problème de cache vie et faciliter les tests.
 		ArrayList<String> answers = new ArrayList<String>();
-		answers.add("1");		answers.add("1");
+		answers.add("delete me!");		answers.add("delete me and shotgun the guy who wrote this shit");
 		HashSet<String> tags = new HashSet<String>();
-		tags.add("tag");
-		cache.add(new QuizQuestion("hye", answers, 0, tags, 0, "me"));
+		tags.add("test only. TODO = delete");
+		cache.add(new QuizQuestion("This is the not empty cache...", answers, 1, tags, 0, "valou"));
 	}
 
 	public static ProxyHttpClient getInstance() {
@@ -195,31 +202,59 @@ public final class ProxyHttpClient implements HttpClient {
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
 			throws IOException, ClientProtocolException {
-		ResponseHandler<String> rh = (ResponseHandler<String>) arg1;
+		
+		// TODO: Valou method (works, but bypassing the async task)
+		// this execute is called from an async task in showquestions
+		// are we allowed to fetch DIRECTLY from server?
 		if (!offline) {
-			String response;
+			T t = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
 			try {
-				//TODO a tester pas sur que ça soit fonctionnel
-				response = new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
-				if (!offline) {
-					QuizQuestion question;
-					question = new QuizQuestion(response);
-					//TODO Verifier si l'id de la question existe déjà dans la liste ?
-					// warning: c'est le serveur qui donne les id, pas le proxy... bien gerer ce souci.
-					cache.add(question);
-					return (T) response;
+				if (t == null || t.getClass() != String.class) {
+					setOfflineStatus(false);
+				} else {
+					JSONObject jsonQuestion = new JSONObject((String) t);
+					if (jsonQuestion.has("message")) {
+						setOfflineStatus(false);
+					} else {
+						// si la question est mal formee ou que c'est pas un questions > exception > offline
+						QuizQuestion q = new QuizQuestion((String) t);
+//						//TODO Verifier si l'id de la question existe déjà dans la liste ?
+						cache.add(q);
+						return t;
+					}
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				setOfflineStatus(false);
 			}
 		}
+		
+		// TODO previous: Antoine version (should be okay, but doesn't work)
+		ResponseHandler<String> rh = (ResponseHandler<String>) arg1;
+        if (!offline) {
+                String response;
+                try {
+                        //TODO a tester pas sur que ça soit fonctionnel
+                        response = new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+                        if (!offline) {
+                                QuizQuestion question;
+                                question = new QuizQuestion(response);
+                                //TODO Verifier si l'id de la question existe déjà dans la liste ?
+                                // warning: c'est le serveur qui donne les id, pas le proxy... bien gerer ce souci.
+                                cache.add(question);
+                                return (T) response;
+                        }
+                } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                } catch (ExecutionException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
 		
 		// offline on cherche dans le cache
 		if (!cache.isEmpty()) {
@@ -352,7 +387,8 @@ public final class ProxyHttpClient implements HttpClient {
 		protected String doInBackground(String... urls) {
 			//TODO faire attention car sessionID == null non traité (à corriger)
 			HttpGet firstRandom = new HttpGet(urls[0]);
-			firstRandom.setHeader("Authorization", tequilaWordWithSessionID);
+			//TODO restablish this
+			// firstRandom.setHeader("Authorization", tequilaWordWithSessionID);
 
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
@@ -365,7 +401,7 @@ public final class ProxyHttpClient implements HttpClient {
 			}
 			// check le n° 200 en retour
 			//Valou: qqch a changer ici.
-			return null;
+			return "";
 		}
 
 		/**
