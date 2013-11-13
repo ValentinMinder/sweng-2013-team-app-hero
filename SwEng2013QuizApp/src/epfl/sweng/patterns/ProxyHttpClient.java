@@ -282,7 +282,7 @@ public final class ProxyHttpClient implements HttpClient {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 			post.setHeader("Content-type", "application/json");
-			post.setHeader("Authorization", sessionID);
+			post.setHeader("Authorization",	"Tequila " + sessionID);
 
 			try {
 				myQuestion = questionElement[0];
