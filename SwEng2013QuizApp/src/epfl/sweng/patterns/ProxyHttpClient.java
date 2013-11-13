@@ -203,7 +203,7 @@ public final class ProxyHttpClient implements HttpClient {
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
 			throws IOException, ClientProtocolException {
 		
-		// TODO: Valou method (works, but bypassing the async task)
+		//  Valou method (works, but bypassing the async task)
 		// this execute is called from an async task in showquestions
 		// are we allowed to fetch DIRECTLY from server?
 		if (!offline) {
@@ -229,32 +229,32 @@ public final class ProxyHttpClient implements HttpClient {
 			}
 		}
 		
-		// TODO previous: Antoine version (should be okay, but doesn't work)
-		ResponseHandler<String> rh = (ResponseHandler<String>) arg1;
-        if (!offline) {
-                String response;
-                try {
-                        //TODO a tester pas sur que ça soit fonctionnel
-                        response = new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
-                        if (!offline) {
-                                QuizQuestion question;
-                                question = new QuizQuestion(response);
-                                //TODO Verifier si l'id de la question existe déjà dans la liste ?
-                                // warning: c'est le serveur qui donne les id, pas le proxy... bien gerer ce souci.
-                                cache.add(question);
-                                return (T) response;
-                        }
-                } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                } catch (ExecutionException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
-        }
+		//  previous: Antoine version (should be okay, but doesn't work)
+//		ResponseHandler<String> rh = (ResponseHandler<String>) arg1;
+//        if (!offline) {
+//                String response;
+//                try {
+//                        //TODO a tester pas sur que ça soit fonctionnel
+//                        response = new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+//                        if (!offline) {
+//                                QuizQuestion question;
+//                                question = new QuizQuestion(response);
+//                                //TODO Verifier si l'id de la question existe déjà dans la liste ?
+//                                // warning: c'est le serveur qui donne les id, pas le proxy... bien gerer ce souci.
+//                                cache.add(question);
+//                                return (T) response;
+//                        }
+//                } catch (JSONException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                } catch (InterruptedException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                } catch (ExecutionException e) {
+//                        // TODO Auto-generated catch block
+//                        e.printStackTrace();
+//                }
+//        }
 		
 		// offline on cherche dans le cache
 		if (!cache.isEmpty()) {
