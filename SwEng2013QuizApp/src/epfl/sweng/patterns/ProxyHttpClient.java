@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -16,12 +15,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
@@ -30,15 +27,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.widget.Toast;
-import epfl.sweng.R;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
-import epfl.sweng.servercomm.UtilsHttpResponse;
 
 public final class ProxyHttpClient implements HttpClient {
 	private static boolean offline = false;
@@ -50,10 +41,12 @@ public final class ProxyHttpClient implements HttpClient {
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.cache = new ArrayList<QuizQuestion>();
-		//TODO: obviously this is for tests and we have to delete!
-		// pour éviter le problème de cache vie et faciliter les tests.
+		
+		// obviously this is for tests and we have to delete!
+		// pour éviter le problème de cache vide et surtout faciliter les tests.
 		ArrayList<String> answers = new ArrayList<String>();
-		answers.add("delete me!");		answers.add("delete me and shotgun the guy who wrote this shit");
+		answers.add("delete me!");		
+		answers.add("delete me and shotgun the guy who wrote this shit");
 		HashSet<String> tags = new HashSet<String>();
 		tags.add("test only. TODO = delete");
 		cache.add(new QuizQuestion("This is the not empty cache...", answers, 1, tags, 0, "valou"));
@@ -122,7 +115,7 @@ public final class ProxyHttpClient implements HttpClient {
 			if (!authentificationValidated) {
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), HttpStatus.SC_UNAUTHORIZED,
-						UtilsHttpResponse.UNAUTHORIZED_MSG));
+						"UNAUTHORIZED"));
 			}
 			String jsonContent = EntityUtils.toString(post.getEntity());
 			// extract and add to the cache
@@ -145,13 +138,13 @@ public final class ProxyHttpClient implements HttpClient {
 				// if the question is malformed, we send a 500 error code
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), HttpStatus.SC_INTERNAL_SERVER_ERROR,
-						UtilsHttpResponse.INTERNAL_SERVER_ERROR_MSG));
+						"INTERNAL SERVER ERROR"));
 			}
 		}
 		// only post method is accepted here, so return Method Not Allowed Error
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
-				UtilsHttpResponse.METHOD_NOT_ALLOWED_MSG));
+				"METHOD NOT ALLOWED"));
 	}
 
 	@Override
@@ -375,58 +368,58 @@ public final class ProxyHttpClient implements HttpClient {
 	}
 	
 	
-	/**
-	 * Class who is use to get the question from the server
-	 * 
-	 * @author juniors
-	 * 
-	 */
-	private class GetQuestionTask extends AsyncTask<String, Void, String> {
-
-		@Override
-		protected String doInBackground(String... urls) {
-			//TODO faire attention car sessionID == null non traité (à corriger)
-			HttpGet firstRandom = new HttpGet(urls[0]);
-			//TODO restablish this
-			// firstRandom.setHeader("Authorization", tequilaWordWithSessionID);
-
-			ResponseHandler<String> firstHandler = new BasicResponseHandler();
-			try {
-				return SwengHttpClientFactory.getInstance().execute(
-						firstRandom, firstHandler);
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// check le n° 200 en retour
-			//Valou: qqch a changer ici.
-			return "";
-		}
-
-		/**
-		 * Method who is gonna take the result of an URL request and parse it in
-		 * a QuizQuestion Object. and after display it.
-		 */
-		protected void onPostExecute(String result) {
-			try {
-				if (result == null) {
-					setOfflineStatus(false);
-				} else {
-					JSONObject jsonQuestion = new JSONObject(result);
-					// TODO: Valou: plutot que check le message... check le n° http retourné
-					// (je sais, c'est un ctrl-c-v de ce que j'avais fait avant... mais c'est pas top je troube
-					if (jsonQuestion.has("message")) {
-						setOfflineStatus(false);
-					} else {
-						super.onPostExecute(result);
-					}
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-				setOfflineStatus(false);
-			}
-		}
-
-	}
+//	/**
+//	 * Class who is use to get the question from the server
+//	 * ONLY USED BY ANTOINE'S METHOD
+//	 * @author juniors
+//	 * 
+//	 */
+//	private class GetQuestionTask extends AsyncTask<String, Void, String> {
+//
+//		@Override
+//		protected String doInBackground(String... urls) {
+//			//TODO faire attention car sessionID == null non traité (à corriger)
+//			HttpGet firstRandom = new HttpGet(urls[0]);
+//			//TODO restablish this
+//			// firstRandom.setHeader("Authorization", tequilaWordWithSessionID);
+//
+//			ResponseHandler<String> firstHandler = new BasicResponseHandler();
+//			try {
+//				return SwengHttpClientFactory.getInstance().execute(
+//						firstRandom, firstHandler);
+//			} catch (ClientProtocolException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			// check le n° 200 en retour
+//			//Valou: qqch a changer ici.
+//			return "";
+//		}
+//
+//		/**
+//		 * Method who is gonna take the result of an URL request and parse it in
+//		 * a QuizQuestion Object. and after display it.
+//		 */
+//		protected void onPostExecute(String result) {
+//			try {
+//				if (result == null) {
+//					setOfflineStatus(false);
+//				} else {
+//					JSONObject jsonQuestion = new JSONObject(result);
+//					// TODO: Valou: plutot que check le message... check le n° http retourné
+//					// (je sais, c'est un ctrl-c-v de ce que j'avais fait avant... mais c'est pas top je troube
+//					if (jsonQuestion.has("message")) {
+//						setOfflineStatus(false);
+//					} else {
+//						super.onPostExecute(result);
+//					}
+//				}
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//				setOfflineStatus(false);
+//			}
+//		}
+//
+//	}
 }
