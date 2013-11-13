@@ -135,9 +135,9 @@ public class EditQuestionActivity extends Activity {
 		//Their visibility properties are set to VISIBLE.
 		boolean  zeroOrMore = answerIndex>=answerCst;
 
-		if (answerIndex != answerCst) { // if answerIndex == answerCst, no answer text so don't need to check
-			for (int i = answerCst; i <= answerIndex; i++) {
-				EditText editCheck = (EditText) findViewById(i);
+		if (idList.size() != 0) {
+			for (int i = 0; i < idList.size(); i++) {
+				EditText editCheck = (EditText) findViewById(idList.get(i) + answerCst);
 				if (!zeroOrMore || !editCheck.getHint().equals(R.string.type_answer) 
 						|| editCheck.getVisibility() != View.VISIBLE) {
 					editErrors++;
@@ -180,9 +180,9 @@ public class EditQuestionActivity extends Activity {
 		//This button has its text set to “-”, and its visibility set to VISIBLE.
 		boolean  remToAns = removeIndex-removeCst == answerIndex-answerCst;
 
-		if (removeCst!= removeIndex) {
-			for (int i=removeCst; i<=removeIndex; i++) {
-				Button removeCheck = (Button) findViewById(i);
+		if (idList.size() != 0) {
+			for (int i = 0; i < idList.size(); i++) {
+				Button removeCheck = (Button) findViewById(idList.get(i) + removeCst);
 				if (!remToAns || !removeCheck.getText().equals("\u002D") ||
 						removeCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
@@ -192,9 +192,9 @@ public class EditQuestionActivity extends Activity {
 		//Bullet 4: For every answer, there is a button to toggle its correctness. 
 		//This button has its text set to “✘” or “✔”, and its visibility set to VISIBLE.
 		boolean  togToAns = correctIndex-correctCst == answerIndex-answerCst;
-		if (correctCst != correctIndex) {
-			for (int i=correctCst; i<=correctIndex; i++) {
-				Button correctCheck = (Button) findViewById(i);
+		if (idList.size() != 0) {
+			for (int i = 0; i < idList.size(); i++) {
+				Button correctCheck = (Button) findViewById(idList.get(i));
 				if (!togToAns 
 						|| !((correctCheck.getText().equals("\u2714"))  // correct
 								|| (correctCheck.getText().equals("\u2718"))) // wrong
