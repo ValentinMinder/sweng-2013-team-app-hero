@@ -274,6 +274,7 @@ public final class ProxyHttpClient implements HttpClient {
 	private class SubmitQuestionTask extends
 			AsyncTask<QuizQuestion, Void, Integer> {
 
+		private QuizQuestion myQuestion = null;
 		/**
 		 * Execute and retrieve the answer from the website.
 		 */
@@ -285,20 +286,18 @@ public final class ProxyHttpClient implements HttpClient {
 			post.setHeader("Authorization", sessionID);
 
 			try {
-				post.setEntity(new StringEntity(questionElement[0]
-						.toPostEntity()));
+				myQuestion = questionElement[0];
+				post.setEntity(new StringEntity(myQuestion.toPostEntity()));
 				HttpResponse response = SwengHttpClientFactory.getInstance()
 						.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
-				// TODO: Valou: je checkerais plutot que dès que c'est pas 201 c'est offline  et pas submit non?
-				// le serveur peut refuser l'authentification (304) ou avoir un autre souci
-				if (statusCode.compareTo(Integer
-						.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE)) == 0) {
-					offline = true;
-				} else {
-					cacheToSend.remove(questionElement[0]);
-				}
+//				if (statusCode.compareTo(Integer
+//						.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS)) == 0) {
+//					cacheToSend.remove(myQuestion);
+//				} else {
+//					offline = true;
+//				}
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -309,12 +308,23 @@ public final class ProxyHttpClient implements HttpClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			// TODO Valou: retourner ici le status code
-			return 0;
+			// Valou: en cas d'exeption en local, on lance la failure
+			return SWENG_QUIZ_APP_SUBMIT_QUESTION_FAILURE;
 		}
 
+		/**
+		 * result is the http status code given by server.
+		 */
+		@Override
 		protected void onPostExecute(Integer result) {
-			//TODO: valou: faire ici la verif du status code. si c'est 201, on enlève la question du cache, sinon on passe offline
+			// Valou: je prefere check le status et enlever la question APRES avoir submit, 
+			// mais peut-etre que ca fait de la merde au niveau des threads...
+			if (result.compareTo(Integer
+					.valueOf(SWENG_QUIZ_APP_SUBMIT_QUESTION_SUCCESS)) == 0) {
+				cacheToSend.remove(myQuestion);
+			} else {
+				offline = true;
+			}
 		}
 
 	}
@@ -345,7 +355,7 @@ public final class ProxyHttpClient implements HttpClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			//Valou: qqch a changer ici.
 			return null;
 		}
 
