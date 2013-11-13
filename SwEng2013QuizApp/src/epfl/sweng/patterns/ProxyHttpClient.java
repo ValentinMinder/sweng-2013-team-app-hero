@@ -10,6 +10,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -113,7 +114,7 @@ public final class ProxyHttpClient implements HttpClient {
 			boolean authentificationValidated = true;
 			if (!authentificationValidated) {
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-						"HTTP", 2, 1), UtilsHttpResponse.UNAUTHORIZED,
+						"HTTP", 2, 1), HttpStatus.SC_UNAUTHORIZED,
 						UtilsHttpResponse.UNAUTHORIZED_MSG));
 			}
 			String jsonContent = EntityUtils.toString(post.getEntity());
@@ -131,18 +132,18 @@ public final class ProxyHttpClient implements HttpClient {
 				}
 				// if proxy accepted the question, reply okay (201) and return the question as json to confirm
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-						"HTTP", 2, 1), UtilsHttpResponse.CREATED,
+						"HTTP", 2, 1), HttpStatus.SC_CREATED,
 						question.toPostEntity()));
 			} catch (JSONException e) {
 				// if the question is malformed, we send a 500 error code
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-						"HTTP", 2, 1), UtilsHttpResponse.INTERNAL_SERVER_ERROR,
+						"HTTP", 2, 1), HttpStatus.SC_INTERNAL_SERVER_ERROR,
 						UtilsHttpResponse.INTERNAL_SERVER_ERROR_MSG));
 			}
 		}
 		// only post method is accepted here, so return Method Not Allowed Error
 		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-				"HTTP", 2, 1), UtilsHttpResponse.METHOD_NOT_ALLOWED,
+				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
 				UtilsHttpResponse.METHOD_NOT_ALLOWED_MSG));
 	}
 
@@ -318,7 +319,7 @@ public final class ProxyHttpClient implements HttpClient {
 				e.printStackTrace();
 			}
 			// Valou: en cas d'exeption en local, on lance la failure
-			return UtilsHttpResponse.INTERNAL_SERVER_ERROR;
+			return HttpStatus.SC_INTERNAL_SERVER_ERROR;
 		}
 
 		/**
@@ -329,7 +330,7 @@ public final class ProxyHttpClient implements HttpClient {
 			// Valou: je prefere check le status et enlever la question APRES avoir submit, 
 			// mais peut-etre que ca fait de la merde au niveau des threads...
 			if (result.compareTo(Integer
-					.valueOf(UtilsHttpResponse.CREATED)) == 0) {
+					.valueOf(HttpStatus.SC_CREATED)) == 0) {
 				cacheToSend.remove(myQuestion);
 			} else {
 				offline = true;

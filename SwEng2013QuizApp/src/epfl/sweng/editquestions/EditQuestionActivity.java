@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
@@ -569,7 +570,7 @@ public class EditQuestionActivity extends Activity {
 				//afficheMoiCeMessageDeDebug("status: " + response.getStatusLine().getStatusCode());
 				//afficheMoiCeMessageDeDebug("msg: " + response.getStatusLine().getReasonPhrase());
 
-				if (response.getStatusLine().getStatusCode() == UtilsHttpResponse.CREATED) {
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 					HttpEntity result = response.getEntity();
 					if (result != null) {
 						return EntityUtils.toString(result);
