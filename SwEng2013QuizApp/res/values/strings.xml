@@ -9,12 +9,12 @@
     <string name="submit_quiz_question">Submit a quiz question</string>
     <string name="title_activity_show_question">ShowQuestionActivity</string>
     <string name="title_activity_edit_question">EditQuestionActivity</string>
-    <string name="type_question">"Type in the question's text body."</string>
-    <string name="type_answer">"Type in the answer."</string>
+    <string name="type_question">Type in the question\’s text body</string>
+    <string name="type_answer">Type in the answer</string>
     <string name="next_question">Next question</string>
     <string name="right_answer">\u2714</string>
     <string name="wrong_answer">\u2718</string>
-    <string name="type_tags">Type in the question\'s tags.</string>
+    <string name="type_tags">Type in the question\'s tags</string>
     <string name="plus">\u002B</string>
     <string name="minus">\u002D</string>
     <string name="submit_question">Submit</string>
