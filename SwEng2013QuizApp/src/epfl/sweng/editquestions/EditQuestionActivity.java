@@ -125,7 +125,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (questionField == null || questionField.getVisibility() != View.VISIBLE 
-				|| !(questionField.getHint().equals("Type in the question’s text body"))) {
+				|| !(questionField.getHint().equals("Type in the question's text body"))) {
 			editErrors++;
 			System.out.println("bu1_editt" + questionField.getVisibility());
 			System.out.println("bu1_editt" + questionField.getHint());
@@ -156,7 +156,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
-				|| !(tagsText.getHint().equals("Type in the question’s tags"))) {
+				|| !(tagsText.getHint().equals("Type in the question's tags"))) {
 			editErrors++;
 			System.out.println("bu3_editt" + tagsText.getVisibility());
 			System.out.println("bu3_editt" + tagsText.getHint());
