@@ -112,10 +112,9 @@ public final class ProxyHttpClient implements HttpClient {
 			// TODO: check authenfication dans le proxy (moyen a preciser... Valou pas tres sur comment faire )
 			boolean authentificationValidated = true;
 			if (!authentificationValidated) {
-				//TODO: valou: change n° retrun (304 UNAUTHORIZED?) + exact return message
 				return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 						"HTTP", 2, 1), UtilsHttpResponse.UNAUTHORIZED,
-						"Non-authorized"));
+						UtilsHttpResponse.UNAUTHORIZED_MSG));
 			}
 			String jsonContent = EntityUtils.toString(post.getEntity());
 			// extract and add to the cache
@@ -221,10 +220,15 @@ public final class ProxyHttpClient implements HttpClient {
 			}
 		}
 		
-		int size = cache.size();
-		// Valou > Julien... faut pas faire -1!!!
-		int index = (int) (Math.random()*(size));
-		return (T) cache.get(index).toPostEntity();
+		// offline on cherche dans le cache
+		if (!cache.isEmpty()) {
+			int size = cache.size();
+			// Valou > Julien... faut pas faire -1!!!
+			int index = (int) (Math.random()*(size));
+			return (T) cache.get(index).toPostEntity();
+		}
+		// offline et cache vide
+		return null;
 	}
 
 	@Override

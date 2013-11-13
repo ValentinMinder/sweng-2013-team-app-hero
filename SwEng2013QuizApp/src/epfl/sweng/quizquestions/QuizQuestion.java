@@ -63,7 +63,7 @@ public class QuizQuestion {
 			owner = jsonQuestion.getString("owner");
 		} catch (JSONException e) {
 			id = -1;
-			owner = "";
+			owner = "anonymous";
 		}
 		
 		question = jsonQuestion.getString("question");
