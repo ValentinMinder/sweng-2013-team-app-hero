@@ -30,6 +30,8 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public final class ProxyHttpClient implements HttpClient {
 	private static boolean offline = false;
@@ -75,6 +77,11 @@ public final class ProxyHttpClient implements HttpClient {
 	public void setOfflineStatus(boolean status) {
 		boolean previousState = offline;
 		offline = status;
+		if (!previousState && offline) {
+			//going from online to offline
+			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+		}
+		
 		if (previousState && !offline) {
 			// going from offline to online
 			sendCacheContent();
@@ -362,8 +369,11 @@ public final class ProxyHttpClient implements HttpClient {
 				cacheToSend.remove(myQuestion);
 				if (cacheToSend.size() == 0) {
 					offline = false;
+					TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 				}
-			} 
+			} else {
+				TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+			}
 		}
 
 	}

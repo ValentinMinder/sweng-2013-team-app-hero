@@ -70,7 +70,6 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
 	@Override
@@ -113,4 +112,13 @@ public class MainActivity extends Activity {
 
 		startActivity(editQuestionIntent);
 	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+	}
+	
+	
 }
