@@ -185,7 +185,7 @@ public class EditQuestionActivity extends Activity {
 				|| !(submit.getText().equals(R.string.submit_question))) {
 			buttonErrors++;
 			System.out.println("bu2_butt" + submit.getVisibility());
-			System.out.println("bu2_butt" + submit.getHint());
+			System.out.println("bu2_butt" + submit.getText());
 		}
 
 		//Bullet 3: For every answer, there is a button to remove that answer. 
