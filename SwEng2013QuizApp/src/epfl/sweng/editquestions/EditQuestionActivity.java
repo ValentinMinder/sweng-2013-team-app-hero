@@ -181,8 +181,8 @@ public class EditQuestionActivity extends Activity {
 
 		//Bullet 2: A button exists to submit the queston. 
 		// It has its text set to “Submit”, and its visibility set to VISIBLE.
-		if (submit != null || submit.getVisibility() != View.VISIBLE
-				|| !(submit.getText().equals(R.string.submit_question))) {
+		if (submit == null || submit.getVisibility() != View.VISIBLE
+				|| !(submit.getText().equals("Submit"))) {
 			buttonErrors++;
 			System.out.println("bu2_butt" + submit.getVisibility());
 			System.out.println("bu2_butt" + submit.getText());
