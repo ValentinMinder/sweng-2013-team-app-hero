@@ -13,6 +13,7 @@ import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.patterns.ProxyHttpClient;
+import epfl.sweng.servercomm.ProxyHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -42,6 +43,8 @@ public class MainActivity extends Activity {
 
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
 		offline.setVisibility(View.GONE);
+		offline.setEnabled(false);
+		
 	}
 
 	@Override
@@ -56,9 +59,10 @@ public class MainActivity extends Activity {
 
 		if (session.equals("")) {
 			modifyButtonIfNotAuthenticated();
-			offline.setEnabled(false);
 		} else {
 			offline.setEnabled(true);
+			offline.setVisibility(View.VISIBLE);
+			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 		}
 
 		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -88,7 +92,7 @@ public class MainActivity extends Activity {
 					getApplicationContext());
 
 			modifyButtonIfNotAuthenticated();
-
+			
 			TestCoordinator.check(TTChecks.LOGGED_OUT);
 		} else {
 			this.finish();
