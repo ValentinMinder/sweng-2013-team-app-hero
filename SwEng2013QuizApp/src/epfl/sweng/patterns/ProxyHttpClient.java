@@ -360,9 +360,10 @@ public final class ProxyHttpClient implements HttpClient {
 			if (result.compareTo(Integer
 					.valueOf(HttpStatus.SC_CREATED)) == 0) {
 				cacheToSend.remove(myQuestion);
-			} else {
-				offline = true;
-			}
+				if (cacheToSend.size() == 0) {
+					offline = false;
+				}
+			} 
 		}
 
 	}
