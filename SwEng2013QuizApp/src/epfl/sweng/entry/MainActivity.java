@@ -51,15 +51,16 @@ public class MainActivity extends Activity {
 
 		String session = StoreCredential.getInstance().getSessionId(
 				getApplicationContext());
+		
+		CheckBox offline = (CheckBox) findViewById(R.id.offline);
 
 		if (session.equals("")) {
 			modifyButtonIfNotAuthenticated();
+			offline.setEnabled(false);
+		} else {
+			offline.setEnabled(true);
 		}
 
-		CheckBox offline = (CheckBox) findViewById(R.id.offline);
-		Boolean modeAppOffline = ProxyHttpClient.getInstance().getOfflineStatus();
-		offline.setChecked(modeAppOffline);
-		
 		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
