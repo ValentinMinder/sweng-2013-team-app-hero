@@ -82,19 +82,13 @@ public final class ProxyHttpClient implements HttpClient {
 	 */
 	public void setOfflineStatus(boolean status) {
 		boolean previousState = offline;
-		// Car utilisé dans submitQuestion l'application passe 
-		// en mode offline que si un problème donc je pense pas 
-		// que ça pose pas de soucis (et d'après le sujet il faut
-		// rappeller le TestCoordinator si une erreur intervient
-		// même si on était encore hors ligne car on attendait 
-		// d'avoir envoyé tout le cache pour passer en "online"
-		//if (!previousState && offline) {
-		if (status) {
+		
+		if (!previousState && status) {
 			// going from online to offline
 			offline = status;
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		}
-		// is previous state useful?
+		
 		if (previousState && !status) {
 			// going from offline to online
 			sendCacheContent();
