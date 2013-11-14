@@ -10,10 +10,11 @@ import junit.framework.TestCase;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 public class TestQuizQuestions extends TestCase {
+	
 	private QuizQuestion createNewQuizQuestion() {
 		String question = "Coucou";
 		ArrayList<String> answers = new ArrayList<String>();
-		int solutionIndex = -1;
+		int solutionIndex = 1;
 		String tags = "tags glkjd";
 		String owner = "owner";
 		int id = 1000;
@@ -138,5 +139,10 @@ public class TestQuizQuestions extends TestCase {
 			}
 		}
 		assertTrue(true);
+	}
+	
+	public void testAudit() {
+		QuizQuestion q = createNewQuizQuestion();
+		assertTrue(q.auditErrors() == 0);
 	}
 }

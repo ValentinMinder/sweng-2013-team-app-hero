@@ -8,13 +8,15 @@ import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
+import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
 
 public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2<AuthenticationActivity> {
 	private Solo solo;
-
+	private String token = "917c2be62cb949b6b47022123b4d0f8e";
+	
 	public AuthenticationActivityTest() {
 		super(AuthenticationActivity.class);
 	}
@@ -35,6 +37,10 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		Button authentication = (Button) solo.getView(R.id.log_in_tekila);
 		solo.clickOnView(authentication);
 	}
+	
+
+	
+	
 
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
