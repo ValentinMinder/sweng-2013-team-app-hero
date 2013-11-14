@@ -12,7 +12,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -27,8 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
-import android.widget.CheckBox;
-import epfl.sweng.R;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
@@ -85,7 +82,6 @@ public final class ProxyHttpClient implements HttpClient {
 	 */
 	public void setOfflineStatus(boolean status) {
 		boolean previousState = offline;
-		offline = status;
 		// Car utilisé dans submitQuestion l'application passe 
 		// en mode offline que si un problème donc je pense pas 
 		// que ça pose pas de soucis (et d'après le sujet il faut
@@ -93,12 +89,13 @@ public final class ProxyHttpClient implements HttpClient {
 		// même si on était encore hors ligne car on attendait 
 		// d'avoir envoyé tout le cache pour passer en "online"
 		//if (!previousState && offline) {
-		if (offline) {
+		if (status) {
 			// going from online to offline
+			offline = status;
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		}
-
-		if (previousState && !offline) {
+		// is previous state useful?
+		if (previousState && !status) {
 			// going from offline to online
 			sendCacheContent();
 		}
@@ -246,6 +243,7 @@ public final class ProxyHttpClient implements HttpClient {
 						return t;
 					}
 				}
+				// check the behavior of online unsucessful exception
 			} catch (JSONException e) {
 				e.printStackTrace();
 				setOfflineStatus(true);
@@ -341,15 +339,15 @@ public final class ProxyHttpClient implements HttpClient {
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
-			} catch (HttpResponseException e) {
-				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
+				return HttpStatus.SC_INTERNAL_SERVER_ERROR;
 			} catch (IOException e) {
 				e.printStackTrace();
+				return HttpStatus.SC_INTERNAL_SERVER_ERROR;
 			}
 			// Valou: en cas d'exeption en local, on lance la failure
-			return HttpStatus.SC_INTERNAL_SERVER_ERROR;
+			return HttpStatus.SC_SERVICE_UNAVAILABLE;
 		}
 
 		/**
@@ -359,11 +357,12 @@ public final class ProxyHttpClient implements HttpClient {
 		protected void onPostExecute(Integer result) {
 			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
 				cacheToSend.remove(myQuestion);
+				// passer online a la premiere envoye succes, ou quand toutes envoyées
 				if (cacheToSend.size() == 0) {
 					offline = false;
 					TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 				}
-			} else {
+			} else if (!offline && result.compareTo(Integer	.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
 				setOfflineStatus(true);
 			}
 		}
