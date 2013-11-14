@@ -52,14 +52,15 @@ public class MainActivity extends Activity {
 		String session = StoreCredential.getInstance().getSessionId(
 				getApplicationContext());
 
+		CheckBox offline = (CheckBox) findViewById(R.id.offline);
+
 		if (session.equals("")) {
 			modifyButtonIfNotAuthenticated();
+		} else {
+			offline.setVisibility(View.VISIBLE);
+			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 		}
 
-		CheckBox offline = (CheckBox) findViewById(R.id.offline);
-		Boolean modeAppOffline = ProxyHttpClient.getInstance().getOfflineStatus();
-		offline.setChecked(modeAppOffline);
-		
 		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
@@ -68,7 +69,6 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
 	@Override
@@ -106,9 +106,23 @@ public class MainActivity extends Activity {
 	}
 
 	public void submitQuestion(View view) {
-
 		Intent editQuestionIntent = new Intent(this, EditQuestionActivity.class);
-
 		startActivity(editQuestionIntent);
 	}
+
+	@Override
+	public void onResume() {
+		// Function calls when the activity gets the focus
+		super.onResume();
+		CheckBox offline = (CheckBox) findViewById(R.id.offline);
+		offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+	}
+
 }

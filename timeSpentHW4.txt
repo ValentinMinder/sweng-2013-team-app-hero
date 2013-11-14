@@ -1,5 +1,5 @@
 preexam fixing
-A: ?
+A: 2h
 V: 2h+2h. 4h tot
 
 AppHero/HW4
@@ -7,4 +7,4 @@ J:
 AF: 
 S: 
 V: 
-AW: 
+AW: 4h30

@@ -19,9 +19,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -63,16 +60,6 @@ public class EditQuestionActivity extends Activity {
 	private int idIndex = 0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
-
-	
-	/**
-	 * 
-	 */
-	private void afficheMoiCeMessageDeDebug(String myString) {
-		Toast.makeText(getBaseContext(),
-				myString, Toast.LENGTH_SHORT)
-				.show();
-	}
 	
 	/**
 	 * Method who is called if error occurred on submit
@@ -125,7 +112,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (questionField == null || questionField.getVisibility() != View.VISIBLE 
-				|| !(questionField.getHint().equals("Type in the question’s text body"))) {
+				|| !(questionField.getHint().equals("Type in the question's text body"))) {
 			editErrors++;
 			System.out.println("bu1_editt" + questionField.getVisibility());
 			System.out.println("bu1_editt" + questionField.getHint());
@@ -156,7 +143,7 @@ public class EditQuestionActivity extends Activity {
 
 		// != 0 because VISIBLE = 0
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
-				|| !(tagsText.getHint().equals("Type in the question’s tags"))) {
+				|| !(tagsText.getHint().equals("Type in the question's tags"))) {
 			editErrors++;
 			System.out.println("bu3_editt" + tagsText.getVisibility());
 			System.out.println("bu3_editt" + tagsText.getHint());
@@ -181,8 +168,8 @@ public class EditQuestionActivity extends Activity {
 
 		//Bullet 2: A button exists to submit the queston. 
 		// It has its text set to “Submit”, and its visibility set to VISIBLE.
-		if (submit != null || submit.getVisibility() != View.VISIBLE
-				|| !(submit.getText().equals(R.string.submit_question))) {
+		if (submit == null || submit.getVisibility() != View.VISIBLE
+				|| !(submit.getText().equals("Submit"))) {
 			buttonErrors++;
 			System.out.println("bu2_butt" + submit.getVisibility());
 			System.out.println("bu2_butt" + submit.getText());
@@ -533,21 +520,12 @@ public class EditQuestionActivity extends Activity {
 	 *            question already formatted as entity
 	 */
 	private void submitQuestion(String questionAsEntity) {
-		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-		// Test network connection
-		if (networkInfo != null && networkInfo.isConnected()) {
-			try {
-				new SubmitQuestionTask().execute(questionAsEntity).get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		} else {
-			Toast.makeText(getBaseContext(), R.string.no_network,
-					Toast.LENGTH_LONG).show();
+		try {
+			new SubmitQuestionTask().execute(questionAsEntity).get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 	}
 

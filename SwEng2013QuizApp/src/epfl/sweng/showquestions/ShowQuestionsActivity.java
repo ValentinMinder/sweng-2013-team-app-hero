@@ -12,9 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -61,21 +58,12 @@ public class ShowQuestionsActivity extends Activity {
 	 * This is going to ask an asynchronous task to do this.
 	 */
 	private void fetchQuestion() {
-		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-		// Test network connection
-		if (networkInfo != null && networkInfo.isConnected()) {
-			try {
-				new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		} else {
-			Toast.makeText(getBaseContext(), R.string.no_network,
-					Toast.LENGTH_LONG).show();
+		try {
+			new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 	}
 
