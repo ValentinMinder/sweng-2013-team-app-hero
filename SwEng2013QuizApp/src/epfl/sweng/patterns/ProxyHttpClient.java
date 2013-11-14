@@ -38,7 +38,7 @@ public final class ProxyHttpClient implements HttpClient, Network {
 	private ArrayList<QuizQuestion> cacheToSend;
 	private ArrayList<QuizQuestion> cache;
 	private String tequilaWordWithSessionID = null;
-	private HttpClientByPassNetwork myClient = null;
+	private Network myClient = null;
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
