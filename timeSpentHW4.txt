@@ -5,6 +5,6 @@ V: 2h+2h. 4h tot
 AppHero/HW4
 J: 
 AF: 
-S: 
+S: 3h00 
 V: 
 AW: 4h30
