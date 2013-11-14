@@ -231,11 +231,11 @@ public final class ProxyHttpClient implements HttpClient {
 			try {
 				T t = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
 				if (t == null || t.getClass() != String.class) {
-					setOfflineStatus(false);
+					setOfflineStatus(true);
 				} else {
 					JSONObject jsonQuestion = new JSONObject((String) t);
 					if (jsonQuestion.has("message")) {
-						setOfflineStatus(false);
+						setOfflineStatus(true);
 					} else {
 						// si la question est mal formee ou que c'est pas un
 						// questions > exception > offline
@@ -248,10 +248,10 @@ public final class ProxyHttpClient implements HttpClient {
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
-				setOfflineStatus(false);
+				setOfflineStatus(true);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
-				setOfflineStatus(false);
+				setOfflineStatus(true);
 			}
 		}
 
