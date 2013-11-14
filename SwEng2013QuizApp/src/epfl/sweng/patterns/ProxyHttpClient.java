@@ -38,6 +38,7 @@ public final class ProxyHttpClient implements HttpClient, Network {
 	private ArrayList<QuizQuestion> cacheToSend;
 	private ArrayList<QuizQuestion> cache;
 	private String tequilaWordWithSessionID = null;
+	private HttpClientByPassNetwork myClient = new HttpClientByPassNetwork();
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
@@ -228,7 +229,7 @@ public final class ProxyHttpClient implements HttpClient, Network {
 		// online, we fetch from server
 		if (!offline) {
 			try {
-				T t = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
+				T t = myClient.execute(arg0, arg1);
 				if (t == null || t.getClass() != String.class) {
 					setOfflineStatus(true);
 				} else {
@@ -332,8 +333,7 @@ public final class ProxyHttpClient implements HttpClient, Network {
 			try {
 				myQuestion = questionElement[0];
 				post.setEntity(new StringEntity(myQuestion.toPostEntity()));
-				HttpResponse response = SwengHttpClientFactory.getInstance()
-						.execute(post);
+				HttpResponse response = myClient.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
 				
