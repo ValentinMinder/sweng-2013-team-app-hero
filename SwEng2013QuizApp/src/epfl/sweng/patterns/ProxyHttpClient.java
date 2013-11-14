@@ -38,12 +38,12 @@ public final class ProxyHttpClient implements HttpClient, Network {
 	private ArrayList<QuizQuestion> cacheToSend;
 	private ArrayList<QuizQuestion> cache;
 	private String tequilaWordWithSessionID = null;
-	private HttpClientByPassNetwork myClient = new HttpClientByPassNetwork();
+	private HttpClientByPassNetwork myClient = null;
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.cache = new ArrayList<QuizQuestion>();
-
+		myClient = new HttpClientByPassNetwork();
 		// obviously this is for tests and we have to delete!
 		// pour éviter le problème de cache vide et surtout faciliter les tests.
 		/*
