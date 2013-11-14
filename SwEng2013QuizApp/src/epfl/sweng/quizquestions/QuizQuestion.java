@@ -108,6 +108,11 @@ public class QuizQuestion {
 	public void setAnswers(List<String> answersS) {
 		this.answers = answersS;
 	}
+	
+	public void setAnswers(List<String> answers, int solutionIndex) {
+		this.answers = answers;
+		this.solutionIndex = solutionIndex;
+	}
 
 	public int getSolutionIndex() {
 		return solutionIndex;
