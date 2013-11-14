@@ -114,16 +114,6 @@ public final class ProxyHttpClient implements HttpClient {
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
 
-		// TODO Traiter le cas offline
-		/*
-		 * Julien : Je ne sais pas vraiment comment faire pour récupérer le
-		 * contenu du post pour pouvoir extraire la quizquestion et donc
-		 * l'ajouter au cache (ArrayList) Si quelqu'un a une idée plus clean
-		 * c'est volontiers ! (je suis p-e a coté de la plaque) Valou > Julien:
-		 * est-ce que c'est regle now? Moi la recup de la question me semble
-		 * okay, c'est sur les return (n° http/message) et l'authentification
-		 * que je dois encore travailler.
-		 */
 		String method = request.getMethod();
 		if (method.equals("POST")) {
 			HttpPost post = (HttpPost) request;
@@ -131,7 +121,7 @@ public final class ProxyHttpClient implements HttpClient {
 			if (headers.length >= 1) {
 				tequilaWordWithSessionID = headers[0].getValue();
 			}
-			// TODO: check authenfication dans le proxy (moyen a preciser...
+			// check authenfication dans le proxy (moyen a preciser...
 			// Valou pas tres sur comment faire )
 			boolean authentificationValidated = true;
 			if (!authentificationValidated) {
@@ -174,7 +164,7 @@ public final class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public HttpResponse execute(HttpUriRequest request, HttpContext context)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(request,
 					context);
@@ -185,7 +175,7 @@ public final class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public HttpResponse execute(HttpHost target, HttpRequest request)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance()
 					.execute(target, request);
@@ -208,7 +198,7 @@ public final class ProxyHttpClient implements HttpClient {
 	@Override
 	public <T> T execute(HttpUriRequest arg0,
 			ResponseHandler<? extends T> arg1, HttpContext arg2)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
 					arg2);
@@ -219,7 +209,7 @@ public final class ProxyHttpClient implements HttpClient {
 
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 
 		// Valou method (works, but bypassing the async task)
 		// this execute is called from an async task in showquestions
@@ -279,7 +269,7 @@ public final class ProxyHttpClient implements HttpClient {
 	@Override
 	public <T> T execute(HttpHost arg0, HttpRequest arg1,
 			ResponseHandler<? extends T> arg2, HttpContext arg3)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!offline) {
 			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
 					arg2, arg3);
@@ -362,7 +352,9 @@ public final class ProxyHttpClient implements HttpClient {
 					offline = false;
 					TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 				}
-			} else if (!offline && result.compareTo(Integer	.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
+			} else if (!offline
+					&& result.compareTo(Integer
+							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
 				setOfflineStatus(true);
 			}
 		}
