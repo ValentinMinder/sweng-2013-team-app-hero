@@ -109,7 +109,7 @@ public class EditQuestionActivity extends Activity {
 	 *            returns 0.
 	 */
 	private void submitControler(Button sub) {
-		if (auditErrors() == 0) {
+		if (auditErrors()+audit() == 0) {
 			sub.setEnabled(true);
 		} else {
 			sub.setEnabled(false);
@@ -176,7 +176,7 @@ public class EditQuestionActivity extends Activity {
 				|| !(addButton.getText().equals("\u002B"))) {
 			buttonErrors++;
 			System.out.println("bu1_butt" + addButton.getVisibility());
-			System.out.println("bu1_butt" + addButton.getHint());
+			System.out.println("bu1_butt" + addButton.getText());
 		}
 
 		//Bullet 2: A button exists to submit the queston. 
@@ -185,7 +185,7 @@ public class EditQuestionActivity extends Activity {
 				|| !(submit.getText().equals(R.string.submit_question))) {
 			buttonErrors++;
 			System.out.println("bu2_butt" + submit.getVisibility());
-			System.out.println("bu2_butt" + submit.getHint());
+			System.out.println("bu2_butt" + submit.getText());
 		}
 
 		//Bullet 3: For every answer, there is a button to remove that answer. 
