@@ -109,6 +109,29 @@ public final class ProxyHttpClient implements HttpClient {
 	public boolean getOfflineStatus() {
 		return offline;
 	}
+	
+	/**
+	 * Basic method that check if the sessionID is consistent.
+	 * @param authToken session id to test.
+	 * @return true if it's consistent.
+	 */
+	private boolean checkBasicAuthentificationSpecification(String authToken) {
+		if (authToken == null) {
+			return false;
+		}
+		if (!authToken.startsWith("Tequila ")) {
+			return false;
+		}
+		int specifiedLength = "Tequila dvoon4y2wp1r2biq052dppkxghyrob14".length();
+		if (authToken.length() != specifiedLength) {
+			return false;
+		}
+//		String token = authToken.substring("tequila ".length()+1);
+//		if (!token.matches("a-z0-9")){
+//			return false;
+//		}
+		return true;
+	}
 
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
@@ -117,43 +140,40 @@ public final class ProxyHttpClient implements HttpClient {
 		String method = request.getMethod();
 		if (method.equals("POST")) {
 			HttpPost post = (HttpPost) request;
+			// checks that the auth is consistent.
 			Header[] headers = post.getHeaders("Authorization");
-			if (headers.length >= 1) {
-				tequilaWordWithSessionID = headers[0].getValue();
-			}
-			// check authenfication dans le proxy (moyen a preciser...
-			// Valou pas tres sur comment faire )
-			boolean authentificationValidated = true;
-			if (!authentificationValidated) {
+			if (headers.length != 1 || !checkBasicAuthentificationSpecification(headers[0].getValue())) {
 				return new BasicHttpResponse(new BasicStatusLine(
 						new ProtocolVersion("HTTP", 2, 1),
 						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
-			}
-			String jsonContent = EntityUtils.toString(post.getEntity());
-			// extract and add to the cache
-			QuizQuestion question;
-			try {
-				// owner/id are needed to construct quizquestion and set as
-				// default values
-				question = new QuizQuestion(jsonContent);
-				cacheToSend.add(question);
-				cache.add(question);
-				System.out.println("offline status" + offline);
-				System.out.println("Recieved" + question);
-				if (!offline) {
-					sendCacheContent();
+			} else {
+				tequilaWordWithSessionID = headers[0].getValue();
+				// extract and add to the cache
+				String jsonContent = EntityUtils.toString(post.getEntity());
+				QuizQuestion question;
+				try {
+					// owner/id are needed to construct quizquestion and set as
+					// default values
+					question = new QuizQuestion(jsonContent);
+					cacheToSend.add(question);
+					cache.add(question);
+					System.out.println("offline status" + offline);
+					System.out.println("Recieved" + question);
+					if (!offline) {
+						sendCacheContent();
+					}
+					// if proxy accepted the question, reply okay (201) and return
+					// the question as json to confirm
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_CREATED, question.toPostEntity()));
+				} catch (JSONException e) {
+					// if the question is malformed, we send a 500 error code
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_INTERNAL_SERVER_ERROR,
+							"INTERNAL SERVER ERROR"));
 				}
-				// if proxy accepted the question, reply okay (201) and return
-				// the question as json to confirm
-				return new BasicHttpResponse(new BasicStatusLine(
-						new ProtocolVersion("HTTP", 2, 1),
-						HttpStatus.SC_CREATED, question.toPostEntity()));
-			} catch (JSONException e) {
-				// if the question is malformed, we send a 500 error code
-				return new BasicHttpResponse(new BasicStatusLine(
-						new ProtocolVersion("HTTP", 2, 1),
-						HttpStatus.SC_INTERNAL_SERVER_ERROR,
-						"INTERNAL SERVER ERROR"));
 			}
 		}
 		// only post method is accepted here, so return Method Not Allowed Error
@@ -210,10 +230,7 @@ public final class ProxyHttpClient implements HttpClient {
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
 		throws IOException, ClientProtocolException {
-
-		// Valou method (works, but bypassing the async task)
-		// this execute is called from an async task in showquestions
-		// are we allowed to fetch DIRECTLY from server?
+		// online, we fetch from server
 		if (!offline) {
 			try {
 				T t = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
@@ -227,8 +244,8 @@ public final class ProxyHttpClient implements HttpClient {
 						// si la question est mal formee ou que c'est pas un
 						// questions > exception > offline
 						QuizQuestion q = new QuizQuestion((String) t);
-						// //TODO Verifier si l'id de la question existe déjà
-						// dans la liste ?
+						// pour l'instant, on ne verifie pas si l'id de la question 
+						// existe déjà dans la liste. Utiliser Set pour cela.
 						cache.add(q);
 						return t;
 					}
@@ -246,7 +263,6 @@ public final class ProxyHttpClient implements HttpClient {
 		// offline on cherche dans le cache
 		if (!cache.isEmpty()) {
 			int size = cache.size();
-			// Valou > Julien... faut pas faire -1!!!
 			int index = (int) (Math.random() * size);
 			return (T) cache.get(index).toPostEntity();
 		}
