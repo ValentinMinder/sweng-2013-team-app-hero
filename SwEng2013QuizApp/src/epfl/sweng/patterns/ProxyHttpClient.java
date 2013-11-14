@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -32,18 +31,17 @@ import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-public final class ProxyHttpClient implements HttpClient, Network {
+public final class ProxyHttpClient implements HttpClient {
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cacheToSend;
 	private ArrayList<QuizQuestion> cache;
 	private String tequilaWordWithSessionID = null;
-	private HttpClientByPassNetwork myClient = null;
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.cache = new ArrayList<QuizQuestion>();
-		myClient = new HttpClientByPassNetwork();
+
 		// obviously this is for tests and we have to delete!
 		// pour éviter le problème de cache vide et surtout faciliter les tests.
 		/*
@@ -229,7 +227,7 @@ public final class ProxyHttpClient implements HttpClient, Network {
 		// online, we fetch from server
 		if (!offline) {
 			try {
-				T t = myClient.execute(arg0, arg1);
+				T t = SwengHttpClientFactory.getInstance().execute(arg0, arg1);
 				if (t == null || t.getClass() != String.class) {
 					setOfflineStatus(true);
 				} else {
@@ -333,7 +331,8 @@ public final class ProxyHttpClient implements HttpClient, Network {
 			try {
 				myQuestion = questionElement[0];
 				post.setEntity(new StringEntity(myQuestion.toPostEntity()));
-				HttpResponse response = myClient.execute(post);
+				HttpResponse response = SwengHttpClientFactory.getInstance()
+						.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
 				
