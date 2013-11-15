@@ -29,6 +29,8 @@ public final class CacheHttpClient implements IHttpClient {
 	private IHttpClient myRealHttpClient = null;
 	private ArrayList<QuizQuestion> cache;
 	private ArrayList<QuizQuestion> toSendBox;
+	private ArrayList<QuizQuestion> failBox;
+
 
 	/**
 	 * Private constructor of the singleton.
@@ -37,6 +39,7 @@ public final class CacheHttpClient implements IHttpClient {
 			IHttpClient myRealHttpClient) {
 		this.cache = new ArrayList<QuizQuestion>();
 		this.toSendBox = new ArrayList<QuizQuestion>();
+		this.failBox = new ArrayList<QuizQuestion>();
 		this.myProxyHttpClient = myProxyHttpClient;
 		this.myRealHttpClient = myRealHttpClient;
 	}
@@ -109,14 +112,21 @@ public final class CacheHttpClient implements IHttpClient {
 	 * @return
 	 */
 	public boolean sendToSendBox() {
-		if (toSendBox.size() == 0) {
+		if (toSendBox.size() == 0 && failBox.size() == 0) {
 			myProxyHttpClient.goOnlineDefinitely();
+		} else {
+			int k = toSendBox.size();
+			for (int i = 0; i < k; ++i) {
+				QuizQuestion question = toSendBox.get(0);
+				System.out.println("trying to submit " + question.toPostEntity());
+				new SubmitQuestionTask().execute(question);
+			}
+			failBox.addAll(toSendBox);
+			toSendBox = new ArrayList<QuizQuestion>();
+			toSendBox.addAll(failBox);
+			failBox = new ArrayList<QuizQuestion>();
 		}
 
-		for (int i = 0; i < toSendBox.size(); ++i) {
-			QuizQuestion question = toSendBox.get(i);
-			new SubmitQuestionTask().execute(question);
-		}
 		return false;
 	}
 
@@ -170,17 +180,21 @@ public final class CacheHttpClient implements IHttpClient {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
-				toSendBox.remove(myQuestion);
-				// passer online a la premiere envoye succes, ou quand toutes
-				// envoyées
-				if (toSendBox.size() == 0) {
-					myProxyHttpClient.goOnlineDefinitely();
-				}
+				failBox.remove(myQuestion);
 			} else if (!myProxyHttpClient.getOfflineStatus()
 					&& result.compareTo(Integer
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
 				myProxyHttpClient.goOffLine();
-
+				failBox.add(myQuestion);
+			} else {
+				failBox.add(myQuestion);
+			}
+			System.out.println("trying to submit " + myQuestion.toPostEntity());
+			toSendBox.remove(myQuestion);
+			// passer online a la premiere envoye succes, ou quand toutes
+			// envoyées
+			if (toSendBox.size() == 0 && failBox.size() == 0) {
+				myProxyHttpClient.goOnlineDefinitely();
 			}
 		}
 
