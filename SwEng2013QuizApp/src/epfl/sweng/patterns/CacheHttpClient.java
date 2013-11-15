@@ -131,10 +131,10 @@ public final class CacheHttpClient implements IHttpClient {
 		return false;
 	}
 
-	public void aSyncCounter (){
+	public void aSyncCounter() {
 		System.out.println("my async counter" + aSyncCounter);
-		aSyncCounter --;
-		if (aSyncCounter == 0){ // && toSendBox.size() == 0 && failBox.size() == 0) {
+		aSyncCounter--;
+		if (aSyncCounter == 0 && toSendBox.size() == 0 && failBox.size() == 0) {
 			myProxyHttpClient.goOnlineDefinitely();
 		}
 	}
@@ -169,10 +169,8 @@ public final class CacheHttpClient implements IHttpClient {
 				HttpResponse response = myRealHttpClient.execute(post);
 				System.out.println("executded");
 				Integer statusCode = response.getStatusLine().getStatusCode();
-//				response.getEntity().consumeContent();
+				response.getEntity().consumeContent();
 				System.out.println(statusCode);
-				aSyncCounter();
-
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();

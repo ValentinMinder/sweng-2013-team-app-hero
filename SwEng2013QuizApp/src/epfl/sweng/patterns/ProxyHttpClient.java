@@ -35,6 +35,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	private String tequilaWordWithSessionID = null;
 	private IHttpClient realHttpClient = null;
 	private CacheHttpClient cacheHttpClient = null;
+	private MyASyncTask myCheckBoxTask = null;
 //	private Semaphore semaphore = null;
 
 	/**
@@ -97,9 +98,12 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * WARNING: DON'T CALL THIS! CALL GO ONLINE WHICH HANDLE ALL!
 	 */
 	protected void goOnlineDefinitely() {
+		System.out.println("go online def");
 		if (offline) {
 			offline = false;
+			myCheckBoxTask.setCheck(false);
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+			
 		}
 //		System.out.println("releasing proxy");
 //		semaphore.release();
@@ -249,6 +253,10 @@ public final class ProxyHttpClient implements IHttpClient {
 
 		// if offline, or server disconnected, we fetch the cache
 		return cacheHttpClient.execute(arg0, arg1);
+	}
+
+	public void setCheckBoxTask(MyASyncTask myCheckBoxTask) {
+		this.myCheckBoxTask = myCheckBoxTask;		
 	}
 	
 //	public void setSemaphore(Semaphore sem) {
