@@ -70,8 +70,13 @@ public final class ProxyHttpClient implements IHttpClient {
 		
 		if (previousState && !status) {
 			// going from offline to online
+			System.out.println("I was " + previousState + " and i want to go " + status);
 			cacheHttpClient.sendTemporaryCache();
 		}
+	}
+	
+	public void goingOnline (){
+		offline = false;
 	}
 
 	/**
