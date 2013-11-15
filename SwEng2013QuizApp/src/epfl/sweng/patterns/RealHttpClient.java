@@ -12,23 +12,25 @@ import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 /**
  * RealHttpClient represent the real subject in the proxy design pattern.
+ * 
  * @author valentin
- *
+ * 
  */
 public final class RealHttpClient implements IHttpClient {
-	
+
 	private static RealHttpClient instance = null;
 	private AbstractHttpClient swengServer = null;
-	
+
 	/**
 	 * Private constructor of the singleton.
 	 */
 	private RealHttpClient() {
 		swengServer = SwengHttpClientFactory.getInstance();
 	}
-	
+
 	/**
 	 * Retrieve the instance of the singleton.
+	 * 
 	 * @return the instance of the singleton.
 	 */
 	public static synchronized RealHttpClient getInstance() {
@@ -43,16 +45,16 @@ public final class RealHttpClient implements IHttpClient {
 	 */
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
-	ClientProtocolException {
+			ClientProtocolException {
 		return swengServer.execute(request);
 	}
-	
+
 	/**
 	 * Execute a request to the SwEng server (fetch, and get the response).
 	 */
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-		throws IOException, ClientProtocolException {
+			throws IOException, ClientProtocolException {
 		return swengServer.execute(arg0, arg1);
 	}
 }

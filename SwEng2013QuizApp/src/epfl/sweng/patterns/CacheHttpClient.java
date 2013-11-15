@@ -13,16 +13,14 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 
 import android.os.AsyncTask;
-
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.testing.TestCoordinator;
-import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /**
- * CacheHttpClient is the cache in the proxy design pattern.
- * It stores a cache of all question already fetched and question to be submitted.
+ * CacheHttpClient is the cache in the proxy design pattern. It stores a cache
+ * of all question already fetched and question to be submitted.
+ * 
  * @author valentin
- *
+ * 
  */
 public final class CacheHttpClient implements IHttpClient {
 
@@ -30,7 +28,7 @@ public final class CacheHttpClient implements IHttpClient {
 	private ProxyHttpClient myProxyHttpClient = null;
 	private IHttpClient myRealHttpClient = null;
 	private ArrayList<QuizQuestion> cache;
-	private ArrayList<QuizQuestion> cacheToSend;
+	private ArrayList<QuizQuestion> toSendBox;
 
 	/**
 	 * Private constructor of the singleton.
@@ -38,13 +36,14 @@ public final class CacheHttpClient implements IHttpClient {
 	private CacheHttpClient(ProxyHttpClient myProxyHttpClient,
 			IHttpClient myRealHttpClient) {
 		this.cache = new ArrayList<QuizQuestion>();
-		this.cacheToSend = new ArrayList<QuizQuestion>();
+		this.toSendBox = new ArrayList<QuizQuestion>();
 		this.myProxyHttpClient = myProxyHttpClient;
 		this.myRealHttpClient = myRealHttpClient;
 	}
 
 	/**
 	 * Retrieve the instance of the singleton.
+	 * 
 	 * @return the instance of the singleton.
 	 */
 	public static synchronized CacheHttpClient getInstance(
@@ -55,6 +54,11 @@ public final class CacheHttpClient implements IHttpClient {
 		return instance;
 	}
 
+	/**
+	 * Execute a request to submit a question.
+	 * <p>
+	 * WARNING: DOES NOTHING NOW (BUT WORKS PERFECTLY).
+	 */
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
@@ -62,9 +66,12 @@ public final class CacheHttpClient implements IHttpClient {
 		return null;
 	}
 
+	/**
+	 * Execute a request to fetch a question from the cache.
+	 */
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-		throws IOException, ClientProtocolException {
+			throws IOException, ClientProtocolException {
 		if (!cache.isEmpty()) {
 			int size = cache.size();
 			int index = (int) (Math.random() * size);
@@ -74,21 +81,40 @@ public final class CacheHttpClient implements IHttpClient {
 		return null;
 	}
 
+	/**
+	 * Add a question to the cache.
+	 * 
+	 * @param myQuizQuestion
+	 *            QuizQuestion to add
+	 * @return
+	 */
 	public boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
 		return cache.add(myQuizQuestion);
 	}
 
-	public boolean addQuestionToTemporaryCache(QuizQuestion myQuizQuestion) {
-		return cacheToSend.add(myQuizQuestion);
+	/**
+	 * Add a question to the sendBox.
+	 * 
+	 * @param myQuizQuestion
+	 *            QuizQuestion to add
+	 * @return
+	 */
+	public boolean addQuestionToSendBox(QuizQuestion myQuizQuestion) {
+		return toSendBox.add(myQuizQuestion);
 	}
 
-	public boolean sendTemporaryCache() {
-		if (cacheToSend.size() == 0) {
+	/**
+	 * Send the toSendBox to the real subject.
+	 * 
+	 * @return
+	 */
+	public boolean sendToSendBox() {
+		if (toSendBox.size() == 0) {
 			myProxyHttpClient.goOnlineDefinitely();
 		}
 
-		for (int i = 0; i < cacheToSend.size(); ++i) {
-			QuizQuestion question = cacheToSend.get(i);
+		for (int i = 0; i < toSendBox.size(); ++i) {
+			QuizQuestion question = toSendBox.get(i);
 			new SubmitQuestionTask().execute(question);
 		}
 		return false;
@@ -144,10 +170,10 @@ public final class CacheHttpClient implements IHttpClient {
 		@Override
 		protected void onPostExecute(Integer result) {
 			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
-				cacheToSend.remove(myQuestion);
+				toSendBox.remove(myQuestion);
 				// passer online a la premiere envoye succes, ou quand toutes
 				// envoyées
-				if (cacheToSend.size() == 0) {
+				if (toSendBox.size() == 0) {
 					myProxyHttpClient.goOnlineDefinitely();
 				}
 			} else if (!myProxyHttpClient.getOfflineStatus()
