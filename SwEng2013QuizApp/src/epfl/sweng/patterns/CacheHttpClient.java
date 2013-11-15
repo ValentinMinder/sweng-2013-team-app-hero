@@ -18,6 +18,12 @@ import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
+/**
+ * CacheHttpClient is the cache in the proxy design pattern.
+ * It stores a cache of all question already fetched and question to be submitted.
+ * @author valentin
+ *
+ */
 public final class CacheHttpClient implements IHttpClient {
 
 	private static CacheHttpClient instance = null;
@@ -26,6 +32,9 @@ public final class CacheHttpClient implements IHttpClient {
 	private ArrayList<QuizQuestion> cache;
 	private ArrayList<QuizQuestion> cacheToSend;
 
+	/**
+	 * Private constructor of the singleton.
+	 */
 	private CacheHttpClient(ProxyHttpClient myProxyHttpClient,
 			IHttpClient myRealHttpClient) {
 		this.cache = new ArrayList<QuizQuestion>();
@@ -34,6 +43,10 @@ public final class CacheHttpClient implements IHttpClient {
 		this.myRealHttpClient = myRealHttpClient;
 	}
 
+	/**
+	 * Retrieve the instance of the singleton.
+	 * @return the instance of the singleton.
+	 */
 	public static synchronized CacheHttpClient getInstance(
 			ProxyHttpClient myProxyHttpClient, IHttpClient myRealHttpClient) {
 		if (instance == null) {

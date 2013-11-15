@@ -21,6 +21,12 @@ import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
+/**
+ * ProxyHttpClient is the proxy in the proxy design pattern.
+ * It decides whether the request should be sent to the real subject of to the cache.
+ * @author valentin
+ *
+ */
 public final class ProxyHttpClient implements IHttpClient {
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
@@ -29,52 +35,29 @@ public final class ProxyHttpClient implements IHttpClient {
 	private IHttpClient realHttpClient = null;
 	private CacheHttpClient cacheHttpClient = null;
 
+	/**
+	 * Private constructor of the singleton.
+	 */
 	private ProxyHttpClient() {
 		this.realHttpClient = RealHttpClient.getInstance();
 		this.cacheHttpClient = CacheHttpClient.getInstance(this, realHttpClient);
-		// obviously this is for tests and we have to delete!
-		// pour éviter le problème de cache vide et surtout faciliter les tests.
-		/*
-		 * ArrayList<String> answers = new ArrayList<String>();
-		 * answers.add("delete me!");
-		 * answers.add("delete me and shotgun the guy who wrote this shit");
-		 * HashSet<String> tags = new HashSet<String>();
-		 * tags.add("test only. TODO = delete"); cache.add(new
-		 * QuizQuestion("This is the not empty cache...", answers, 1, tags, 0,
-		 * "valou"));
-		 */
 	}
 
+	/**
+	 * Retrieve the instance of the singleton.
+	 * @return the instance of the singleton.
+	 */
 	public static ProxyHttpClient getInstance() {
 		if (instance == null) {
 			instance = new ProxyHttpClient();
 		}
 		return instance;
 	}
-
-
-//	/**
-//	 * Set offline parameter.
-//	 * 
-//	 * @param status
-//	 *            True represent offline.
-//	 */
-//	public void setOfflineStatus(boolean status) {
-//		boolean previousState = offline;
-//		
-//		if (!previousState && status) {
-//			// going from online to offline
-//			offline = status;
-//			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
-//		}
-//		
-//		if (previousState && !status) {
-//			// going from offline to online
-//			System.out.println("I was " + previousState + " and i want to go " + status);
-//			
-//		}
-//	}
 	
+	/**
+	 * Set boolean offline to true, only if it was false before,
+	 * and calls the corresponding TTChecks.
+	 */
 	public void goOffLine() {
 		if (!offline){
 			offline = true;
@@ -82,13 +65,26 @@ public final class ProxyHttpClient implements IHttpClient {
 		}
 	}
 	
+	/**
+	 * Tries to go online. 
+	 * <p>
+	 * If the cache is empty, goes immediately online.
+	 * If the cache is not empty, tries to sync completely with the server, 
+	 * and if so goes online by calling the goOnlineDefinitely method.
+	 */
 	public void goOnline(){
 		if (offline) {
 			cacheHttpClient.sendTemporaryCache();
 		}
 	}
 	
-	public void goOnlineDefinitely() {
+	/**
+	 * Set boolean offline to false, only if it was true before, 
+	 * and calls the corresponding TTChecks.
+	 * <p>
+	 * WARNING: DON'T CALL THIS! CALL GO ONLINE WHICH HANDLE ALL!
+	 */
+	protected void goOnlineDefinitely() {
 		if (offline) {
 			offline = false;
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
@@ -96,9 +92,8 @@ public final class ProxyHttpClient implements IHttpClient {
 	}
 
 	/**
-	 * get offline parameter. True represent offline.
-	 * 
-	 * @return
+	 * Get offline boolean parameter.  
+	 * @return true represent offline.
 	 */
 	public boolean getOfflineStatus() {
 		return offline;
@@ -127,6 +122,10 @@ public final class ProxyHttpClient implements IHttpClient {
 		return true;
 	}
 	
+	/**
+	 * Get the tequila header.
+	 * @return the tequila header.
+	 */
 	public String getTequilaWordWithSessionID() {
 		return tequilaWordWithSessionID;
 	}
