@@ -7,7 +7,7 @@ public class CheckProxyHelper implements ICheckProxyHelper {
 	@Override
 	public Class<?> getServerCommunicationClass() {
 //		return SwengHttpClientFactory.getInstance().getClass();
-		return (new HttpClientByPassNetwork()).getClass();
+		return (new RealHttpClient()).getClass();
 
 	}
 

@@ -9,7 +9,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 
-public class HttpClientByPassNetwork implements IHttpClient {
+public class RealHttpClient implements IHttpClient {
 
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 	ClientProtocolException {
