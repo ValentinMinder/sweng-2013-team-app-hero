@@ -35,8 +35,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	private String tequilaWordWithSessionID = null;
 	private IHttpClient realHttpClient = null;
 	private CacheHttpClient cacheHttpClient = null;
-	private MyASyncTask myCheckBoxTask = null;
-//	private Semaphore semaphore = null;
+	private ICheckBoxTask myCheckBoxTask = null;
 
 	/**
 	 * Private constructor of the singleton.
@@ -66,6 +65,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	public void goOffLine() {
 		if (!offline) {
 			offline = true;
+			myCheckBoxTask.confirmCheckBoxTask(offline);
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		}
 	}
@@ -79,14 +79,6 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	public void goOnline() {
 		if (offline) {
-//			try {
-//				System.out.println("sema aquire goonline");
-//				semaphore.acquire();
-//				System.out.println("sema dequire goonline");
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 			cacheHttpClient.sendToSendBox();
 		}
 	}
@@ -97,16 +89,16 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * <p>
 	 * WARNING: DON'T CALL THIS! CALL GO ONLINE WHICH HANDLE ALL!
 	 */
-	protected void goOnlineDefinitely() {
-		System.out.println("go online def");
+	protected void goOnlineResponse(boolean bool) {
 		if (offline) {
-			offline = false;
-			myCheckBoxTask.setCheck(false);
-			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
-			
+			if (bool) {
+				offline = false;
+				myCheckBoxTask.confirmCheckBoxTask(offline);
+				TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+			} else {
+				myCheckBoxTask.releaseGoOnlineTask();
+			}
 		}
-//		System.out.println("releasing proxy");
-//		semaphore.release();
 	}
 
 	/**
@@ -255,7 +247,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		return cacheHttpClient.execute(arg0, arg1);
 	}
 
-	public void setCheckBoxTask(MyASyncTask myCheckBoxTask) {
+	public void setCheckBoxTask(ICheckBoxTask myCheckBoxTask) {
 		this.myCheckBoxTask = myCheckBoxTask;		
 	}
 	

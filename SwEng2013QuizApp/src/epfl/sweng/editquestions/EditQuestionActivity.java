@@ -83,7 +83,6 @@ public class EditQuestionActivity extends Activity {
 		setContentView(R.layout.activity_edit_question);
 		
 		initUI();
-		System.out.println(auditErrors());
 		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 
 	}
