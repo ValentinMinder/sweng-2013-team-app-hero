@@ -2,7 +2,6 @@ package epfl.sweng.patterns;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.concurrent.Semaphore;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -36,7 +35,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	private String tequilaWordWithSessionID = null;
 	private IHttpClient realHttpClient = null;
 	private CacheHttpClient cacheHttpClient = null;
-	private Semaphore semaphore = null;
+//	private Semaphore semaphore = null;
 
 	/**
 	 * Private constructor of the singleton.
@@ -79,14 +78,14 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	public void goOnline() {
 		if (offline) {
-			try {
-				System.out.println("sema aquire goonline");
-				semaphore.acquire();
-				System.out.println("sema dequire goonline");
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				System.out.println("sema aquire goonline");
+//				semaphore.acquire();
+//				System.out.println("sema dequire goonline");
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			cacheHttpClient.sendToSendBox();
 		}
 	}
@@ -102,8 +101,8 @@ public final class ProxyHttpClient implements IHttpClient {
 			offline = false;
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 		}
-		System.out.println("releasing proxy");
-		semaphore.release();
+//		System.out.println("releasing proxy");
+//		semaphore.release();
 	}
 
 	/**
@@ -252,7 +251,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		return cacheHttpClient.execute(arg0, arg1);
 	}
 	
-	public void setSemaphore(Semaphore sem) {
-		this.semaphore = sem;
-	}
+//	public void setSemaphore(Semaphore sem) {
+//		this.semaphore = sem;
+//	}
 }

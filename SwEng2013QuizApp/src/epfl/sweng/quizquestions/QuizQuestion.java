@@ -109,9 +109,9 @@ public class QuizQuestion {
 		this.answers = answersS;
 	}
 	
-	public void setAnswers(List<String> answers, int solutionIndex) {
-		this.answers = answers;
-		this.solutionIndex = solutionIndex;
+	public void setAnswers(List<String> answersS, int solutionIndexS) {
+		this.answers = answersS;
+		this.solutionIndex = solutionIndexS;
 	}
 
 	public int getSolutionIndex() {
