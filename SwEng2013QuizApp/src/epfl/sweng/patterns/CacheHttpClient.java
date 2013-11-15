@@ -130,7 +130,7 @@ public final class CacheHttpClient implements IHttpClient {
 	public void aSyncCounter() {
 		aSyncCounter--;
 		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
-			boolean status = (failBox.size() == 0);
+			boolean status = failBox.size() == 0;
 			toSendBox.addAll(0, failBox);
 			failBox.clear();
 			myProxyHttpClient.goOnlineResponse(status);
@@ -172,14 +172,14 @@ public final class CacheHttpClient implements IHttpClient {
 				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
-				return 1001;
+				return HttpStatus.SC_BAD_GATEWAY;
 			} catch (IOException e) {
 				// en particulier si y a pas de réseau!!
 				e.printStackTrace();
-				return 1002;
+				return HttpStatus.SC_BAD_GATEWAY;
 			}
 			// to-do code de failure			
-			return 1003;
+			return HttpStatus.SC_BAD_GATEWAY;
 		}
 
 		/**

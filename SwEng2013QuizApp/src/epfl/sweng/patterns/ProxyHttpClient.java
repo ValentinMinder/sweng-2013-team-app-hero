@@ -110,6 +110,10 @@ public final class ProxyHttpClient implements IHttpClient {
 	public boolean getOfflineStatus() {
 		return offline;
 	}
+	
+	public void setCheckBoxTask(ICheckBoxTask myCheckBoxTaskT) {
+		this.myCheckBoxTask = myCheckBoxTaskT;		
+	}
 
 	/**
 	 * Basic method that check if the sessionID is consistent.
@@ -247,12 +251,4 @@ public final class ProxyHttpClient implements IHttpClient {
 		// if offline, or server disconnected, we fetch the cache
 		return cacheHttpClient.execute(arg0, arg1);
 	}
-
-	public void setCheckBoxTask(ICheckBoxTask myCheckBoxTask) {
-		this.myCheckBoxTask = myCheckBoxTask;		
-	}
-	
-//	public void setSemaphore(Semaphore sem) {
-//		this.semaphore = sem;
-//	}
 }
