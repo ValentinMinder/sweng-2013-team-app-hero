@@ -22,20 +22,21 @@ public class CacheHttpClient implements IHttpClient {
 	
 	private static CacheHttpClient instance = null;
 	private ProxyHttpClient myProxyHttpClient = null;
-	private RealHttpClient myRealHttpClient = null;
+	private IHttpClient myRealHttpClient = null;
 	private ArrayList<QuizQuestion> cache;
 	private ArrayList<QuizQuestion> cacheToSend;
 
 	
-	private CacheHttpClient () {
+	private CacheHttpClient (ProxyHttpClient myProxyHttpClient, IHttpClient myRealHttpClient) {
 		this.cache = new ArrayList<QuizQuestion>();
-		myProxyHttpClient = ProxyHttpClient.getInstance();
-		myRealHttpClient = RealHttpClient.getInstance();
+		this.cacheToSend = new ArrayList<QuizQuestion>();
+		this.myProxyHttpClient = myProxyHttpClient;
+		this.myRealHttpClient = myRealHttpClient;
 	}
 	
-	public static synchronized CacheHttpClient getInstance (){
+	public static synchronized CacheHttpClient getInstance (ProxyHttpClient myProxyHttpClient, IHttpClient myRealHttpClient){
 		if (instance == null){
-			instance = new CacheHttpClient();
+			instance = new CacheHttpClient(myProxyHttpClient, myRealHttpClient);
 		}
 		return instance;
 	}

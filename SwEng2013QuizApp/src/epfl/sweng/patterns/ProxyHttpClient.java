@@ -31,7 +31,7 @@ public final class ProxyHttpClient implements IHttpClient {
 
 	private ProxyHttpClient() {
 		this.realHttpClient = RealHttpClient.getInstance();
-		this.cacheHttpClient = CacheHttpClient.getInstance();
+		this.cacheHttpClient = CacheHttpClient.getInstance(this, realHttpClient);
 		// obviously this is for tests and we have to delete!
 		// pour éviter le problème de cache vide et surtout faciliter les tests.
 		/*
