@@ -71,8 +71,7 @@ public final class CacheHttpClient implements IHttpClient {
 
 	public boolean sendTemporaryCache() {
 		if (cacheToSend.size() == 0) {
-			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
-			myProxyHttpClient.goingOnline();
+			myProxyHttpClient.goOnlineDefinitely();
 		}
 
 		for (int i = 0; i < cacheToSend.size(); ++i) {
@@ -136,13 +135,12 @@ public final class CacheHttpClient implements IHttpClient {
 				// passer online a la premiere envoye succes, ou quand toutes
 				// envoyées
 				if (cacheToSend.size() == 0) {
-					myProxyHttpClient.goingOnline();
-					TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+					myProxyHttpClient.goOnlineDefinitely();
 				}
 			} else if (!myProxyHttpClient.getOfflineStatus()
 					&& result.compareTo(Integer
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
-				myProxyHttpClient.setOfflineStatus(true);
+				myProxyHttpClient.goOffLine();
 
 			}
 		}

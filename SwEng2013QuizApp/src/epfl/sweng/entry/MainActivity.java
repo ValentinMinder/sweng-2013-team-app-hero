@@ -65,7 +65,11 @@ public class MainActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				ProxyHttpClient.getInstance().setOfflineStatus(isChecked);
+				if (isChecked) {
+					ProxyHttpClient.getInstance().goOffLine();
+				} else {
+					ProxyHttpClient.getInstance().goOnline();
+				}
 			}
 		});
 

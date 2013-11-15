@@ -53,30 +53,46 @@ public final class ProxyHttpClient implements IHttpClient {
 	}
 
 
-	/**
-	 * Set offline parameter.
-	 * 
-	 * @param status
-	 *            True represent offline.
-	 */
-	public void setOfflineStatus(boolean status) {
-		boolean previousState = offline;
-		
-		if (!previousState && status) {
-			// going from online to offline
-			offline = status;
+//	/**
+//	 * Set offline parameter.
+//	 * 
+//	 * @param status
+//	 *            True represent offline.
+//	 */
+//	public void setOfflineStatus(boolean status) {
+//		boolean previousState = offline;
+//		
+//		if (!previousState && status) {
+//			// going from online to offline
+//			offline = status;
+//			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+//		}
+//		
+//		if (previousState && !status) {
+//			// going from offline to online
+//			System.out.println("I was " + previousState + " and i want to go " + status);
+//			
+//		}
+//	}
+	
+	public void goOffLine() {
+		if (!offline){
+			offline = true;
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		}
-		
-		if (previousState && !status) {
-			// going from offline to online
-			System.out.println("I was " + previousState + " and i want to go " + status);
+	}
+	
+	public void goOnline(){
+		if (offline) {
 			cacheHttpClient.sendTemporaryCache();
 		}
 	}
 	
-	public void goingOnline() {
-		offline = false;
+	public void goOnlineDefinitely() {
+		if (offline) {
+			offline = false;
+			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+		}
 	}
 
 	/**
@@ -170,11 +186,11 @@ public final class ProxyHttpClient implements IHttpClient {
 			try {
 				T t = realHttpClient.execute(arg0, arg1);
 				if (t == null || t.getClass() != String.class) {
-					setOfflineStatus(true);
+					goOffLine();
 				} else {
 					JSONObject jsonQuestion = new JSONObject((String) t);
 					if (jsonQuestion.has("message")) {
-						setOfflineStatus(true);
+						goOffLine();
 					} else {
 						// si la question est mal formee ou que c'est pas un
 						// questions > exception > offline
@@ -188,10 +204,10 @@ public final class ProxyHttpClient implements IHttpClient {
 				// check the behavior of online unsucessful exception
 			} catch (JSONException e) {
 				e.printStackTrace();
-				setOfflineStatus(true);
+				goOffLine();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
-				setOfflineStatus(true);
+				goOffLine();
 			}
 		}
 
