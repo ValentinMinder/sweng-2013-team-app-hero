@@ -68,7 +68,7 @@ public class SwengHttpClientFactory {
 		@Override
 		public void clear() {
 		}
-
+//essai
 		@Override
 		public boolean clearExpired(Date date) {
 			return true;
