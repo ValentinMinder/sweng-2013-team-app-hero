@@ -54,7 +54,7 @@ public final class RealHttpClient implements IHttpClient {
 	 */
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		return swengServer.execute(arg0, arg1);
 	}
 }

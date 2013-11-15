@@ -71,7 +71,7 @@ public final class CacheHttpClient implements IHttpClient {
 	 */
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!cache.isEmpty()) {
 			int size = cache.size();
 			int index = (int) (Math.random() * size);

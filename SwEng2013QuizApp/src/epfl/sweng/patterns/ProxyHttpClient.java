@@ -169,7 +169,7 @@ public final class ProxyHttpClient implements IHttpClient {
 					// default values
 					myQuizQuestion = new QuizQuestion(jsonContent);
 					cacheHttpClient.addQuestionToCache(myQuizQuestion);
-					cacheHttpClient.addQuestionToTemporaryCache(myQuizQuestion);
+					cacheHttpClient.addQuestionToSendBox(myQuizQuestion);
 					if (!offline) {
 						cacheHttpClient.sendToSendBox();
 					}
@@ -203,7 +203,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		// online, we fetch from server
 		if (!offline) {
 			try {
