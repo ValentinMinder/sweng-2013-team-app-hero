@@ -8,6 +8,19 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 
 public class CacheHttpClient implements IHttpClient {
+	
+	private static CacheHttpClient instance = null;
+	
+	private CacheHttpClient () {
+	}
+	
+	public static synchronized CacheHttpClient getInstance (){
+		if (instance == null){
+			instance = new CacheHttpClient();
+		}
+		return instance;
+	}
+
 
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
