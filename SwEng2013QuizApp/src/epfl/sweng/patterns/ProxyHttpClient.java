@@ -32,7 +32,7 @@ import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-public final class ProxyHttpClient implements HttpClient, IHttpClient {
+public final class ProxyHttpClient implements IHttpClient {
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cacheToSend;
@@ -179,51 +179,6 @@ public final class ProxyHttpClient implements HttpClient, IHttpClient {
 	}
 
 	@Override
-	public HttpResponse execute(HttpUriRequest request, HttpContext context)
-		throws IOException, ClientProtocolException {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(request,
-					context);
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
-	public HttpResponse execute(HttpHost target, HttpRequest request)
-		throws IOException, ClientProtocolException {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance()
-					.execute(target, request);
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
-	public HttpResponse execute(HttpHost target, HttpRequest request,
-			HttpContext context) throws IOException, ClientProtocolException {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(target,
-					request, context);
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
-	public <T> T execute(HttpUriRequest arg0,
-			ResponseHandler<? extends T> arg1, HttpContext arg2)
-		throws IOException, ClientProtocolException {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
-					arg2);
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
 		throws IOException, ClientProtocolException {
 		// online, we fetch from server
@@ -263,48 +218,6 @@ public final class ProxyHttpClient implements HttpClient, IHttpClient {
 			return (T) cache.get(index).toPostEntity();
 		}
 		// offline et cache vide
-		return null;
-	}
-
-	@Override
-	public <T> T execute(HttpHost arg0, HttpRequest arg1,
-			ResponseHandler<? extends T> arg2) throws IOException,
-			ClientProtocolException {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
-					arg2);
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
-	public <T> T execute(HttpHost arg0, HttpRequest arg1,
-			ResponseHandler<? extends T> arg2, HttpContext arg3)
-		throws IOException, ClientProtocolException {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().execute(arg0, arg1,
-					arg2, arg3);
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
-	public ClientConnectionManager getConnectionManager() {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().getConnectionManager();
-		}
-		// Traiter le cas offline
-		return null;
-	}
-
-	@Override
-	public HttpParams getParams() {
-		if (!offline) {
-			return SwengHttpClientFactory.getInstance().getParams();
-		}
-		// Traiter le cas offline
 		return null;
 	}
 

@@ -33,7 +33,7 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.servercomm.ProxyHttpClientFactory;
+import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -555,8 +555,7 @@ public class EditQuestionActivity extends Activity {
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
 
-				HttpResponse response = ProxyHttpClientFactory
-						.getInstance().execute(post);
+				HttpResponse response = ProxyHttpClient.getInstance().execute(post);
 
 				//afficheMoiCeMessageDeDebug("status: " + response.getStatusLine().getStatusCode());
 				//afficheMoiCeMessageDeDebug("msg: " + response.getStatusLine().getReasonPhrase());
