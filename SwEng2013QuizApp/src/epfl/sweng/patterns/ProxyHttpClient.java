@@ -32,13 +32,13 @@ import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-public final class ProxyHttpClient implements HttpClient, Network {
+public final class ProxyHttpClient implements HttpClient, IHttpClient {
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private ArrayList<QuizQuestion> cacheToSend;
 	private ArrayList<QuizQuestion> cache;
 	private String tequilaWordWithSessionID = null;
-	private Network myClient = null;
+	private IHttpClient myClient = null;
 
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();

@@ -7,7 +7,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 
-public interface Network {
+public interface IHttpClient {
 	HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException;
 
