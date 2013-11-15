@@ -1,5 +1,7 @@
 package epfl.sweng.entry;
 
+import java.util.concurrent.Semaphore;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  */
 public class MainActivity extends Activity {
 
+	private Semaphore checkboxSem = new Semaphore(100);
 	/**
 	 * Method who is called for modify each buttons when the user isn't
 	 * authenticated
@@ -60,15 +63,56 @@ public class MainActivity extends Activity {
 			offline.setVisibility(View.VISIBLE);
 			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 		}
+		ProxyHttpClient.getInstance().setSemaphore(checkboxSem);
+//		offline.setOnClickListener(new CompoundButton.OnClickListener() {
+//			@Override
+//			public void onClick(View buttonView) {
+//				if (((CheckBox) buttonView).isChecked()) {
+//					ProxyHttpClient.getInstance().goOnline();
+//					try {
+//						checkboxSem.acquire();
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					((CheckBox) buttonView).setChecked(false);
+//					checkboxSem.release();
+//				} else {
+//					System.out.println("vagin");
+//					ProxyHttpClient.getInstance().goOffLine();
+//					((CheckBox) buttonView).setChecked(true);
+//				}
+////				while(ProxyHttpClient.getInstance().getOfflineStatus())
+//			}
+//		});
 
 		offline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
+				CheckBox check = (CheckBox) findViewById(R.id.offline);
+				System.out.println("vagin");
+
 				if (isChecked) {
 					ProxyHttpClient.getInstance().goOffLine();
+					System.out.println("going offline");
 				} else {
+					System.out.println("going online");
+					check.setChecked(!isChecked);
+					
 					ProxyHttpClient.getInstance().goOnline();
+					try {
+						System.out.println("sema aquire main");
+						checkboxSem.acquire();
+						System.out.println("sema dequire main");
+
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					check.setChecked(isChecked);
+					checkboxSem.release();
+					System.out.println("we are online");
 				}
 			}
 		});

@@ -30,6 +30,7 @@ public final class CacheHttpClient implements IHttpClient {
 	private ArrayList<QuizQuestion> cache;
 	private ArrayList<QuizQuestion> toSendBox;
 	private ArrayList<QuizQuestion> failBox;
+	private int aSyncCounter = 0;
 
 
 	/**
@@ -116,18 +117,26 @@ public final class CacheHttpClient implements IHttpClient {
 			myProxyHttpClient.goOnlineDefinitely();
 		} else {
 			int k = toSendBox.size();
+			aSyncCounter = k;
 			for (int i = 0; i < k; ++i) {
 				QuizQuestion question = toSendBox.get(0);
-				System.out.println("trying to submit " + question.toPostEntity());
+				System.out.println("out of cache " + question.toPostEntity());
 				new SubmitQuestionTask().execute(question);
+				toSendBox.remove(question);
 			}
-			failBox.addAll(toSendBox);
-			toSendBox = new ArrayList<QuizQuestion>();
-			toSendBox.addAll(failBox);
-			failBox = new ArrayList<QuizQuestion>();
+			toSendBox.addAll(0, failBox);
+			System.out.println("sent all question");
 		}
 
 		return false;
+	}
+
+	public void aSyncCounter (){
+		System.out.println("my async counter" + aSyncCounter);
+		aSyncCounter --;
+		if (aSyncCounter == 0){ // && toSendBox.size() == 0 && failBox.size() == 0) {
+			myProxyHttpClient.goOnlineDefinitely();
+		}
 	}
 
 	/**
@@ -156,9 +165,13 @@ public final class CacheHttpClient implements IHttpClient {
 			try {
 				myQuestion = questionElement[0];
 				post.setEntity(new StringEntity(myQuestion.toPostEntity()));
+				System.out.println("execute");
 				HttpResponse response = myRealHttpClient.execute(post);
-
+				System.out.println("executded");
 				Integer statusCode = response.getStatusLine().getStatusCode();
+//				response.getEntity().consumeContent();
+				System.out.println(statusCode);
+				aSyncCounter();
 
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
@@ -171,6 +184,7 @@ public final class CacheHttpClient implements IHttpClient {
 				return HttpStatus.SC_INTERNAL_SERVER_ERROR;
 			}
 			// Valou: en cas d'exeption en local, on lance la failure
+			
 			return HttpStatus.SC_SERVICE_UNAVAILABLE;
 		}
 
@@ -179,23 +193,26 @@ public final class CacheHttpClient implements IHttpClient {
 		 */
 		@Override
 		protected void onPostExecute(Integer result) {
+			System.out.println("Integer status" + result);
 			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
 				failBox.remove(myQuestion);
+				System.out.println("async win " + myQuestion.toPostEntity());
+
 			} else if (!myProxyHttpClient.getOfflineStatus()
 					&& result.compareTo(Integer
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
 				myProxyHttpClient.goOffLine();
 				failBox.add(myQuestion);
+				System.out.println("async fail + offline " + myQuestion.toPostEntity());
+
 			} else {
 				failBox.add(myQuestion);
+				System.out.println("async fail " + myQuestion.toPostEntity());
+
 			}
-			System.out.println("trying to submit " + myQuestion.toPostEntity());
-			toSendBox.remove(myQuestion);
 			// passer online a la premiere envoye succes, ou quand toutes
 			// envoyées
-			if (toSendBox.size() == 0 && failBox.size() == 0) {
-				myProxyHttpClient.goOnlineDefinitely();
-			}
+			aSyncCounter();
 		}
 
 	}
