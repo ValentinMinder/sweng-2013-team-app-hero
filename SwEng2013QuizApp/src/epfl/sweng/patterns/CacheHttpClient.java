@@ -18,29 +18,29 @@ import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-public class CacheHttpClient implements IHttpClient {
-	
+public final class CacheHttpClient implements IHttpClient {
+
 	private static CacheHttpClient instance = null;
 	private ProxyHttpClient myProxyHttpClient = null;
 	private IHttpClient myRealHttpClient = null;
 	private ArrayList<QuizQuestion> cache;
 	private ArrayList<QuizQuestion> cacheToSend;
 
-	
-	private CacheHttpClient (ProxyHttpClient myProxyHttpClient, IHttpClient myRealHttpClient) {
+	private CacheHttpClient(ProxyHttpClient myProxyHttpClient,
+			IHttpClient myRealHttpClient) {
 		this.cache = new ArrayList<QuizQuestion>();
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.myProxyHttpClient = myProxyHttpClient;
 		this.myRealHttpClient = myRealHttpClient;
 	}
-	
-	public static synchronized CacheHttpClient getInstance (ProxyHttpClient myProxyHttpClient, IHttpClient myRealHttpClient){
-		if (instance == null){
+
+	public static synchronized CacheHttpClient getInstance(
+			ProxyHttpClient myProxyHttpClient, IHttpClient myRealHttpClient) {
+		if (instance == null) {
 			instance = new CacheHttpClient(myProxyHttpClient, myRealHttpClient);
 		}
 		return instance;
 	}
-
 
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
@@ -51,7 +51,7 @@ public class CacheHttpClient implements IHttpClient {
 
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+		throws IOException, ClientProtocolException {
 		if (!cache.isEmpty()) {
 			int size = cache.size();
 			int index = (int) (Math.random() * size);
@@ -60,19 +60,19 @@ public class CacheHttpClient implements IHttpClient {
 		// offline et cache vide
 		return null;
 	}
-	
-	public boolean addQuestionToCache(QuizQuestion myQuizQuestion){
+
+	public boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
 		return cache.add(myQuizQuestion);
 	}
-	
-	public boolean addQuestionToTemporaryCache(QuizQuestion myQuizQuestion){
+
+	public boolean addQuestionToTemporaryCache(QuizQuestion myQuizQuestion) {
 		return cacheToSend.add(myQuizQuestion);
 	}
-	
-	public boolean sendTemporaryCache (){
+
+	public boolean sendTemporaryCache() {
 		if (cacheToSend.size() == 0) {
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
-			myProxyHttpClient. goingOnline();
+			myProxyHttpClient.goingOnline();
 		}
 
 		for (int i = 0; i < cacheToSend.size(); ++i) {
@@ -81,7 +81,7 @@ public class CacheHttpClient implements IHttpClient {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 
 	 * Task to submit a question
@@ -102,7 +102,8 @@ public class CacheHttpClient implements IHttpClient {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 			post.setHeader("Content-type", "application/json");
-			post.setHeader("Authorization", myProxyHttpClient.getTequilaWordWithSessionID ());
+			post.setHeader("Authorization",
+					myProxyHttpClient.getTequilaWordWithSessionID());
 
 			try {
 				myQuestion = questionElement[0];
@@ -110,7 +111,7 @@ public class CacheHttpClient implements IHttpClient {
 				HttpResponse response = myRealHttpClient.execute(post);
 
 				Integer statusCode = response.getStatusLine().getStatusCode();
-				
+
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -132,9 +133,10 @@ public class CacheHttpClient implements IHttpClient {
 		protected void onPostExecute(Integer result) {
 			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
 				cacheToSend.remove(myQuestion);
-				// passer online a la premiere envoye succes, ou quand toutes envoyées
+				// passer online a la premiere envoye succes, ou quand toutes
+				// envoyées
 				if (cacheToSend.size() == 0) {
-					myProxyHttpClient. goingOnline();
+					myProxyHttpClient.goingOnline();
 					TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 				}
 			} else if (!myProxyHttpClient.getOfflineStatus()
@@ -148,4 +150,3 @@ public class CacheHttpClient implements IHttpClient {
 	}
 
 }
-

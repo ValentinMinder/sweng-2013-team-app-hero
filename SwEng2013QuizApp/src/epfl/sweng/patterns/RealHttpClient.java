@@ -10,17 +10,17 @@ import org.apache.http.impl.client.AbstractHttpClient;
 
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 
-public class RealHttpClient implements IHttpClient {
+public final class RealHttpClient implements IHttpClient {
 	
 	private static RealHttpClient instance = null;
 	private AbstractHttpClient swengServer = null;
 	
-	private RealHttpClient () {
+	private RealHttpClient() {
 		swengServer = SwengHttpClientFactory.getInstance();
 	}
 	
-	public static synchronized RealHttpClient getInstance (){
-		if (instance == null){
+	public static synchronized RealHttpClient getInstance() {
+		if (instance == null) {
 			instance = new RealHttpClient();
 		}
 		return instance;

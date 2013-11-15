@@ -75,7 +75,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		}
 	}
 	
-	public void goingOnline (){
+	public void goingOnline() {
 		offline = false;
 	}
 
@@ -111,7 +111,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		return true;
 	}
 	
-	public String getTequilaWordWithSessionID (){
+	public String getTequilaWordWithSessionID() {
 		return tequilaWordWithSessionID;
 	}
 
