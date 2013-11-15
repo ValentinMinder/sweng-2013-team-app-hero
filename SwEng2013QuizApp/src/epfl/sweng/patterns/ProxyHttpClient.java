@@ -43,7 +43,7 @@ public final class ProxyHttpClient implements HttpClient, IHttpClient {
 	private ProxyHttpClient() {
 		this.cacheToSend = new ArrayList<QuizQuestion>();
 		this.cache = new ArrayList<QuizQuestion>();
-		myClient = new RealHttpClient();
+		myClient = RealHttpClient.getInstance();
 		// obviously this is for tests and we have to delete!
 		// pour éviter le problème de cache vide et surtout faciliter les tests.
 		/*
