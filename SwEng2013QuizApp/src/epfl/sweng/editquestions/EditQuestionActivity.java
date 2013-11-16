@@ -95,7 +95,7 @@ public class EditQuestionActivity extends Activity {
 	 *            returns 0.
 	 */
 	private void submitControler(Button sub) {
-		if (auditErrors() + audit() == 0) {
+		if (auditErrors() == 0) {
 			sub.setEnabled(true);
 		} else {
 			sub.setEnabled(false);
@@ -234,7 +234,7 @@ public class EditQuestionActivity extends Activity {
 
 	private int auditSubmitButton() {
 		
-		if (auditAnswers()+auditButtons()+auditEditTexts() == 0) {
+		if (auditAnswers()+auditButtons()+auditEditTexts()+audit() == 0) {
 			return 0;
 		} else {
 			System.out.println("err_sub " + auditAnswers()+auditButtons()+auditEditTexts());
