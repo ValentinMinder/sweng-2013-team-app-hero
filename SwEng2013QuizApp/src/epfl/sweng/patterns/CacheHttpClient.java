@@ -3,6 +3,7 @@ package epfl.sweng.patterns;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -118,10 +119,21 @@ public final class CacheHttpClient implements IHttpClient {
 		} else {
 			int k = toSendBox.size();
 			aSyncCounter = k;
-			for (int i = 0; i < k; ++i) {
+			boolean flag = true;
+			for (int i = 0; flag && i < k; ++i) {
 				QuizQuestion question = toSendBox.get(0);
 				toSendBox.remove(0);
-				new SubmitQuestionTask().execute(question);
+				SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
+				mySubmitQuestionTask.execute(question);
+				try {
+					// bloquant, attend l'execution complète de l'asynctask
+					int httpStatus = mySubmitQuestionTask.get();
+					httpStatus = httpStatus + 0;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return false;
