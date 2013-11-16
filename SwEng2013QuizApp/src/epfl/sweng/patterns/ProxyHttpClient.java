@@ -1,7 +1,9 @@
 package epfl.sweng.patterns;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -11,11 +13,14 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.os.AsyncTask;
 
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
@@ -34,16 +39,18 @@ public final class ProxyHttpClient implements IHttpClient {
 
 	private String tequilaWordWithSessionID = null;
 	private IHttpClient realHttpClient = null;
-	private CacheHttpClient cacheHttpClient = null;
+	private CacheQuizQuestion myCacheQuizQuestion = null;
 	private ICheckBoxTask myCheckBoxTask = null;
+	
+	private int aSyncCounter = 0;
 
 	/**
 	 * Private constructor of the singleton.
 	 */
 	private ProxyHttpClient() {
 		this.realHttpClient = RealHttpClient.getInstance();
-		this.cacheHttpClient = CacheHttpClient
-				.getInstance(this, realHttpClient);
+		this.myCacheQuizQuestion = CacheQuizQuestion
+				.getInstance(this);
 	}
 
 	/**
@@ -79,7 +86,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	public void goOnline() {
 		if (offline) {
-			cacheHttpClient.sendToSendBox();
+			myCacheQuizQuestion.sendOutBox();
 		}
 	}
 
@@ -111,8 +118,38 @@ public final class ProxyHttpClient implements IHttpClient {
 		return offline;
 	}
 	
+	/**
+	 * Set the checkboxTask.
+	 * @param myCheckBoxTaskT
+	 */
 	public void setCheckBoxTask(ICheckBoxTask myCheckBoxTaskT) {
 		this.myCheckBoxTask = myCheckBoxTaskT;		
+	}
+	
+	/**
+	 * Basic method that check if the sessionID is consistent.
+	 * 
+	 * @param authToken
+	 *            session id to test.
+	 * @return true if it's consistent.
+	 */
+	private boolean checkBasicAuthentificationSpecification(String authToken) {
+		if (authToken == null) {
+			return false;
+		}
+		if (!authToken.startsWith("Tequila ")) {
+			return false;
+		}
+		int specifiedLength = "Tequila dvoon4y2wp1r2biq052dppkxghyrob14"
+				.length();
+		if (authToken.length() != specifiedLength) {
+			return false;
+		}
+		// String token = authToken.substring("tequila ".length()+1);
+		// if (!token.matches("a-z0-9")){
+		// return false;
+		// }
+		return true;
 	}
 
 	/**
@@ -124,8 +161,66 @@ public final class ProxyHttpClient implements IHttpClient {
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
-		// we go to the cache, which decides to send the question to the real subject
-		return cacheHttpClient.execute(request);
+		
+		String method = request.getMethod();
+		if (method.equals("POST")) {
+			HttpPost post = (HttpPost) request;
+			// checks that the auth is consistent.
+			Header[] headers = post.getHeaders("Authorization");
+			if (headers.length != 1
+					|| !checkBasicAuthentificationSpecification(headers[0]
+							.getValue())) {
+				return new BasicHttpResponse(new BasicStatusLine(
+						new ProtocolVersion("HTTP", 2, 1),
+						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
+			} else {
+				tequilaWordWithSessionID = headers[0].getValue();
+				// extract and add to the cache
+				String jsonContent = EntityUtils.toString(post.getEntity());
+				QuizQuestion myQuizQuestion;
+				try {
+					// owner/id are needed to construct quizquestion and set as
+					// default values
+					myQuizQuestion = new QuizQuestion(jsonContent);
+					myCacheQuizQuestion.addQuestionToCache(myQuizQuestion);
+					// if we are online, we 
+					// si on est online, on envoie la question au serveur
+					int status = 0;
+					if (!getOfflineStatus()) {
+						SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
+						mySubmitQuestionTask.execute(myQuizQuestion);
+						try {
+							status = mySubmitQuestionTask.get();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+					// if we are online, or if the question didn't get to get server, we add it to ToSendBox
+					if (getOfflineStatus() || status != HttpStatus.SC_ACCEPTED) {
+						myCacheQuizQuestion.addQuestionToOutBox(myQuizQuestion);
+					}
+					// if proxy accepted the question, reply okay (201) and
+					// return
+					// the question as json to confirm
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_CREATED,
+							myQuizQuestion.toPostEntity()));
+				} catch (JSONException e) {
+					// if the question is malformed, we send a 500 error code
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_INTERNAL_SERVER_ERROR,
+							"INTERNAL SERVER ERROR"));
+				}
+			}
+		}
+		// only post method is accepted here, so return Method Not Allowed Error
+		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
+				"METHOD NOT ALLOWED"));
 	}
 
 	/**
@@ -154,7 +249,7 @@ public final class ProxyHttpClient implements IHttpClient {
 								(String) t);
 						// for the moment, we dont check if the id of the
 						// question already exist in the list. Hint: SET
-						cacheHttpClient.addQuestionToCache(myQuizQuestion);
+						myCacheQuizQuestion.addQuestionToCache(myQuizQuestion);
 						return t;
 					}
 				}
@@ -168,10 +263,107 @@ public final class ProxyHttpClient implements IHttpClient {
 			}
 		} else {
 			// if offline we fetch the cache
-			return cacheHttpClient.execute(arg0, arg1);
+			return (T) myCacheQuizQuestion.getRandomQuestionFromCache();
 		}
 
 		// if server disconnected, we return null;
 		return null;
+	}
+		
+	private void aSyncCounter() {
+		aSyncCounter--;
+		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
+			goOnlineResponse(myCacheQuizQuestion.getSentStatus());
+		}
+		
+	}
+	
+	protected int sendQuestion(QuizQuestion question) {
+		SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
+		mySubmitQuestionTask.execute(question);
+		int httpStatus = -1;
+		try {
+			// bloquant, attend l'execution complète de l'asynctask
+			httpStatus = mySubmitQuestionTask.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return httpStatus;
+	}
+	
+	private void addToFailBox(QuizQuestion myQuestion) {
+		myCacheQuizQuestion.addToFailBox(myQuestion);
+	}
+	
+	protected void setASyncCounter(int k) {
+		aSyncCounter = k;
+	}
+	
+	/**
+	 * 
+	 * Task to submit a question
+	 * 
+	 * @author Valentin
+	 * 
+	 */
+	private class SubmitQuestionTask extends
+			AsyncTask<QuizQuestion, Void, Integer> {
+
+		private QuizQuestion myQuestion = null;
+
+		/**
+		 * Execute and retrieve the answer from the website.
+		 */
+		@Override
+		protected Integer doInBackground(QuizQuestion... questionElement) {
+			String serverURL = "https://sweng-quiz.appspot.com/";
+			HttpPost post = new HttpPost(serverURL + "quizquestions/");
+			post.setHeader("Content-type", "application/json");
+			post.setHeader("Authorization", tequilaWordWithSessionID);
+
+			try {
+				myQuestion = questionElement[0];
+				post.setEntity(new StringEntity(myQuestion.toPostEntity()));
+				HttpResponse response = realHttpClient.execute(post);
+				Integer statusCode = response.getStatusLine().getStatusCode();
+				response.getEntity().consumeContent();
+				return statusCode;
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+				return HttpStatus.SC_BAD_GATEWAY;
+			} catch (IOException e) {
+				// en particulier si y a pas de réseau!!
+				e.printStackTrace();
+				return HttpStatus.SC_BAD_GATEWAY;
+			}
+			// to-do code de failure			
+			return HttpStatus.SC_BAD_GATEWAY;
+		}
+
+		/**
+		 * result is the http status code given by server.
+		 */
+		@Override
+		protected void onPostExecute(Integer result) {
+			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
+				// je sais, y a rien, mais pas touche à mon if!
+			} else if (!getOfflineStatus()
+					&& result.compareTo(Integer
+							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
+				goOffLine();
+				addToFailBox(myQuestion);
+//				System.out.println("async fail + offline " + myQuestion.toPostEntity());
+
+			} else {
+				addToFailBox(myQuestion);
+//				System.out.println("async fail " + myQuestion.toPostEntity());
+
+			}
+			aSyncCounter();
+		}
 	}
 }
