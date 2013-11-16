@@ -5,13 +5,19 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 
 import android.os.AsyncTask;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -28,9 +34,11 @@ public final class CacheHttpClient implements IHttpClient {
 	private static CacheHttpClient instance = null;
 	private ProxyHttpClient myProxyHttpClient = null;
 	private IHttpClient myRealHttpClient = null;
+	
 	private ArrayList<QuizQuestion> cache;
 	private ArrayList<QuizQuestion> toSendBox;
 	private ArrayList<QuizQuestion> failBox;
+	private String tequilaWordWithSessionID = null;
 	private int aSyncCounter = 0;
 
 
@@ -67,8 +75,65 @@ public final class CacheHttpClient implements IHttpClient {
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
-		// TODO Auto-generated method stub
-		return null;
+		String method = request.getMethod();
+		if (method.equals("POST")) {
+			HttpPost post = (HttpPost) request;
+			// checks that the auth is consistent.
+			Header[] headers = post.getHeaders("Authorization");
+			if (headers.length != 1
+					|| !checkBasicAuthentificationSpecification(headers[0]
+							.getValue())) {
+				return new BasicHttpResponse(new BasicStatusLine(
+						new ProtocolVersion("HTTP", 2, 1),
+						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
+			} else {
+				tequilaWordWithSessionID = headers[0].getValue();
+				// extract and add to the cache
+				String jsonContent = EntityUtils.toString(post.getEntity());
+				QuizQuestion myQuizQuestion;
+				try {
+					// owner/id are needed to construct quizquestion and set as
+					// default values
+					myQuizQuestion = new QuizQuestion(jsonContent);
+					addQuestionToCache(myQuizQuestion);
+					// if we are online, we 
+					// si on est online, on envoie la question au serveur
+					int status = 0;
+					if (!myProxyHttpClient.getOfflineStatus()) {
+						SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
+						mySubmitQuestionTask.execute(myQuizQuestion);
+						try {
+							status = mySubmitQuestionTask.get();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+					// if we are online, or if the question didn't get to get server, we add it to ToSendBox
+					if (myProxyHttpClient.getOfflineStatus() || status != HttpStatus.SC_ACCEPTED) {
+						addQuestionToSendBox(myQuizQuestion);
+					}
+					// if proxy accepted the question, reply okay (201) and
+					// return
+					// the question as json to confirm
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_CREATED,
+							myQuizQuestion.toPostEntity()));
+				} catch (JSONException e) {
+					// if the question is malformed, we send a 500 error code
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_INTERNAL_SERVER_ERROR,
+							"INTERNAL SERVER ERROR"));
+				}
+			}
+		}
+		// only post method is accepted here, so return Method Not Allowed Error
+		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
+				"METHOD NOT ALLOWED"));
 	}
 
 	/**
@@ -85,6 +150,41 @@ public final class CacheHttpClient implements IHttpClient {
 		// offline et cache vide
 		return null;
 	}
+	
+	/**
+	 * Basic method that check if the sessionID is consistent.
+	 * 
+	 * @param authToken
+	 *            session id to test.
+	 * @return true if it's consistent.
+	 */
+	private boolean checkBasicAuthentificationSpecification(String authToken) {
+		if (authToken == null) {
+			return false;
+		}
+		if (!authToken.startsWith("Tequila ")) {
+			return false;
+		}
+		int specifiedLength = "Tequila dvoon4y2wp1r2biq052dppkxghyrob14"
+				.length();
+		if (authToken.length() != specifiedLength) {
+			return false;
+		}
+		// String token = authToken.substring("tequila ".length()+1);
+		// if (!token.matches("a-z0-9")){
+		// return false;
+		// }
+		return true;
+	}
+	
+//	/**
+//	 * Get the tequila header.
+//	 * 
+//	 * @return the tequila header.
+//	 */
+//	public String getTequilaWordWithSessionID() {
+//		return tequilaWordWithSessionID;
+//	}
 
 	/**
 	 * Add a question to the cache.
@@ -170,8 +270,7 @@ public final class CacheHttpClient implements IHttpClient {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 			post.setHeader("Content-type", "application/json");
-			post.setHeader("Authorization",
-					myProxyHttpClient.getTequilaWordWithSessionID());
+			post.setHeader("Authorization", tequilaWordWithSessionID);
 
 			try {
 				myQuestion = questionElement[0];

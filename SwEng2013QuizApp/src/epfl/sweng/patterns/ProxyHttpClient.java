@@ -116,41 +116,6 @@ public final class ProxyHttpClient implements IHttpClient {
 	}
 
 	/**
-	 * Basic method that check if the sessionID is consistent.
-	 * 
-	 * @param authToken
-	 *            session id to test.
-	 * @return true if it's consistent.
-	 */
-	private boolean checkBasicAuthentificationSpecification(String authToken) {
-		if (authToken == null) {
-			return false;
-		}
-		if (!authToken.startsWith("Tequila ")) {
-			return false;
-		}
-		int specifiedLength = "Tequila dvoon4y2wp1r2biq052dppkxghyrob14"
-				.length();
-		if (authToken.length() != specifiedLength) {
-			return false;
-		}
-		// String token = authToken.substring("tequila ".length()+1);
-		// if (!token.matches("a-z0-9")){
-		// return false;
-		// }
-		return true;
-	}
-
-	/**
-	 * Get the tequila header.
-	 * 
-	 * @return the tequila header.
-	 */
-	public String getTequilaWordWithSessionID() {
-		return tequilaWordWithSessionID;
-	}
-
-	/**
 	 * Execute a request to submit a question.
 	 * <p>
 	 * Retrieve a question and stores into the cache. If online, redirect also
@@ -159,52 +124,8 @@ public final class ProxyHttpClient implements IHttpClient {
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
-
-		String method = request.getMethod();
-		if (method.equals("POST")) {
-			HttpPost post = (HttpPost) request;
-			// checks that the auth is consistent.
-			Header[] headers = post.getHeaders("Authorization");
-			if (headers.length != 1
-					|| !checkBasicAuthentificationSpecification(headers[0]
-							.getValue())) {
-				return new BasicHttpResponse(new BasicStatusLine(
-						new ProtocolVersion("HTTP", 2, 1),
-						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
-			} else {
-				tequilaWordWithSessionID = headers[0].getValue();
-				// extract and add to the cache
-				String jsonContent = EntityUtils.toString(post.getEntity());
-				QuizQuestion myQuizQuestion;
-				try {
-					// owner/id are needed to construct quizquestion and set as
-					// default values
-					myQuizQuestion = new QuizQuestion(jsonContent);
-					cacheHttpClient.addQuestionToCache(myQuizQuestion);
-					cacheHttpClient.addQuestionToSendBox(myQuizQuestion);
-					if (!offline) {
-						cacheHttpClient.sendToSendBox();
-					}
-					// if proxy accepted the question, reply okay (201) and
-					// return
-					// the question as json to confirm
-					return new BasicHttpResponse(new BasicStatusLine(
-							new ProtocolVersion("HTTP", 2, 1),
-							HttpStatus.SC_CREATED,
-							myQuizQuestion.toPostEntity()));
-				} catch (JSONException e) {
-					// if the question is malformed, we send a 500 error code
-					return new BasicHttpResponse(new BasicStatusLine(
-							new ProtocolVersion("HTTP", 2, 1),
-							HttpStatus.SC_INTERNAL_SERVER_ERROR,
-							"INTERNAL SERVER ERROR"));
-				}
-			}
-		}
-		// only post method is accepted here, so return Method Not Allowed Error
-		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
-				"METHOD NOT ALLOWED"));
+		// we go to the cache, which decides to send the question to the real subject
+		return cacheHttpClient.execute(request);
 	}
 
 	/**
@@ -227,13 +148,12 @@ public final class ProxyHttpClient implements IHttpClient {
 					if (jsonQuestion.has("message")) {
 						goOffLine();
 					} else {
-						// si la question est mal formee ou que c'est pas un
-						// questions > exception > offline
+						// if the retrieved question is malformed or it's not
+						// question: exception > offline
 						QuizQuestion myQuizQuestion = new QuizQuestion(
 								(String) t);
-						// pour l'instant, on ne verifie pas si l'id de la
-						// question
-						// existe déjà dans la liste. Utiliser Set pour cela.
+						// for the moment, we dont check if the id of the
+						// question already exist in the list. Hint: SET
 						cacheHttpClient.addQuestionToCache(myQuizQuestion);
 						return t;
 					}
