@@ -3,6 +3,7 @@ package epfl.sweng.patterns;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
@@ -39,7 +40,7 @@ public final class ProxyHttpClient implements IHttpClient {
 
 	private String tequilaWordWithSessionID = null;
 	private IHttpClient realHttpClient = null;
-	private CacheQuizQuestion myCacheQuizQuestion = null;
+	private CacheQuizQuestionInner myCacheQuizQuestion = null;
 	private ICheckBoxTask myCheckBoxTask = null;
 	
 	private int aSyncCounter = 0;
@@ -49,8 +50,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	private ProxyHttpClient() {
 		this.realHttpClient = RealHttpClient.getInstance();
-		this.myCacheQuizQuestion = CacheQuizQuestion
-				.getInstance(this);
+		this.myCacheQuizQuestion = new CacheQuizQuestionInner(this);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * <p>
 	 * WARNING: DON'T CALL THIS! CALL GO ONLINE WHICH HANDLE ALL!
 	 */
-	protected void goOnlineResponse(boolean bool) {
+	private void goOnlineResponse(boolean bool) {
 		if (offline) {
 			if (bool) {
 				offline = false;
@@ -269,7 +269,10 @@ public final class ProxyHttpClient implements IHttpClient {
 		// if server disconnected, we return null;
 		return null;
 	}
-		
+	
+	/**
+	 * An async task can notify when it's done.
+	 */
 	private void aSyncCounter() {
 		aSyncCounter--;
 		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
@@ -278,12 +281,18 @@ public final class ProxyHttpClient implements IHttpClient {
 		
 	}
 	
-	protected int sendQuestion(QuizQuestion question) {
+	/**
+	 * Send a question.
+	 * @param question the question to be sent.
+	 * @return the http status, -1 if fail to end the task.
+	 */
+	private int sendQuestion(QuizQuestion question) {
 		SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
 		mySubmitQuestionTask.execute(question);
 		int httpStatus = -1;
 		try {
-			// bloquant, attend l'execution complète de l'asynctask
+			// /!\ bloquant, attend l'execution complète de l'asynctask
+			// attention, c'est peut etre faux!
 			httpStatus = mySubmitQuestionTask.get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -293,11 +302,19 @@ public final class ProxyHttpClient implements IHttpClient {
 		return httpStatus;
 	}
 	
+	/**
+	 * A question to failBox.
+	 * @param myQuestion
+	 */
 	private void addToFailBox(QuizQuestion myQuestion) {
 		myCacheQuizQuestion.addToFailBox(myQuestion);
 	}
 	
-	protected void setASyncCounter(int k) {
+	/**
+	 * Set the async counter.
+	 * @param k
+	 */
+	private void setASyncCounter(int k) {
 		aSyncCounter = k;
 	}
 	
@@ -364,6 +381,107 @@ public final class ProxyHttpClient implements IHttpClient {
 
 			}
 			aSyncCounter();
+		}
+	}
+	
+	/** 
+	 * CacheQuizQuestion is a cache in the proxy design pattern. It stores 
+	 * all question already fetched and question to be submitted.
+	 * @author valentin
+	 *
+	 */
+	private class CacheQuizQuestionInner {
+		private ProxyHttpClient myProxyHttpClient = null;
+		
+		private ArrayList<QuizQuestion> myCacheQuizQuestion;
+		private ArrayList<QuizQuestion> outBox;
+		private ArrayList<QuizQuestion> failBox;
+
+		/**
+		 * Private constructor of the singleton.
+		 */
+		public CacheQuizQuestionInner(ProxyHttpClient myProxyHttpClient) {
+			this.myCacheQuizQuestion = new ArrayList<QuizQuestion>();
+			this.outBox = new ArrayList<QuizQuestion>();
+			this.failBox = new ArrayList<QuizQuestion>();
+			this.myProxyHttpClient = myProxyHttpClient;
+		}
+
+		/**
+		 * Fetch a question from the cache.
+		 */
+		protected String getRandomQuestionFromCache() {
+			if (!myCacheQuizQuestion.isEmpty()) {
+				int size = myCacheQuizQuestion.size();
+				int index = (int) (Math.random() * size);
+				return myCacheQuizQuestion.get(index).toPostEntity();
+			}
+			// offline and empty cache
+			return null;
+		}
+
+		/**
+		 * Add a question to the cache.
+		 * 
+		 * @param myQuizQuestion
+		 *            QuizQuestion to add
+		 * @return
+		 */
+		protected boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
+			return myCacheQuizQuestion.add(myQuizQuestion);
+		}
+
+		/**
+		 * Add a question to the outBox.
+		 * 
+		 * @param myQuizQuestion
+		 *            QuizQuestion to add
+		 * @return
+		 */
+		protected boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
+			return outBox.add(myQuizQuestion);
+		}
+
+		/**
+		 * Send the outBox to the real subject.
+		 * <p>
+		 * For each question, it ask the proxy to send the question to the real subject.
+		 * 
+		 * @return
+		 */
+		protected boolean sendOutBox() {
+			if (outBox.size() == 0) { // && failBox.size() == 0) {
+				myProxyHttpClient.goOnlineResponse(true);
+			} else {
+				int k = outBox.size();
+				myProxyHttpClient.setASyncCounter(k);
+				boolean flag = true;
+				for (int i = 0; flag && i < k; ++i) {
+					QuizQuestion question = outBox.get(0);
+					outBox.remove(0);
+					myProxyHttpClient.sendQuestion(question);
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Add a question to the failBox.
+		 * @param myQuestion
+		 */
+		protected void addToFailBox(QuizQuestion myQuestion) {
+			failBox.add(myQuestion);
+		}
+		
+		/**
+		 * Checks if all questions have been sent.
+		 * @return true if not question was in the failBox.
+		 */
+		protected boolean getSentStatus() {
+			boolean status = failBox.size() == 0;
+			outBox.addAll(0, failBox);
+			failBox.clear();
+			return status;
 		}
 	}
 }
