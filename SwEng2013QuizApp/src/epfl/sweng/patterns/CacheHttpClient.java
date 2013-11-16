@@ -113,7 +113,7 @@ public final class CacheHttpClient implements IHttpClient {
 	 * @return
 	 */
 	public boolean sendToSendBox() {
-		if (toSendBox.size() == 0 && failBox.size() == 0) {
+		if (toSendBox.size() == 0) { // && failBox.size() == 0) {
 			myProxyHttpClient.goOnlineResponse(true);
 		} else {
 			int k = toSendBox.size();

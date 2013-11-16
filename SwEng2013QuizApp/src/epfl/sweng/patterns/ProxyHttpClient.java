@@ -246,9 +246,12 @@ public final class ProxyHttpClient implements IHttpClient {
 				e.printStackTrace();
 				goOffLine();
 			}
+		} else {
+			// if offline we fetch the cache
+			return cacheHttpClient.execute(arg0, arg1);
 		}
 
-		// if offline, or server disconnected, we fetch the cache
-		return cacheHttpClient.execute(arg0, arg1);
+		// if server disconnected, we return null;
+		return null;
 	}
 }
