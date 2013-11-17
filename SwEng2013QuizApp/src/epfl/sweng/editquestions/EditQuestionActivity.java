@@ -143,6 +143,8 @@ public class EditQuestionActivity extends Activity {
 		//The widget has its visibility property set to VISIBLE.
 
 		// != 0 because VISIBLE = 0
+		System.out.println("stexts1" + tagsText.getText().toString());
+
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
 				|| !(tagsText.getHint().equals("Type in the question's tags"))) {
 			editErrors++;
@@ -198,7 +200,6 @@ public class EditQuestionActivity extends Activity {
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
 				Button correctCheck = (Button) findViewById(idList.get(i));
-				System.out.println("stexts" + correctCheck.getText().toString());
 				if (!togToAns 
 						|| !((correctCheck.getText().equals("\u2714"))  // correct
 								|| (correctCheck.getText().equals("\u2718"))) // wrong
