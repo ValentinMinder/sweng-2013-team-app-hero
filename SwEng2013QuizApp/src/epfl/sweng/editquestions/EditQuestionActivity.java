@@ -126,6 +126,8 @@ public class EditQuestionActivity extends Activity {
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
 				EditText editCheck = (EditText) findViewById(idList.get(i) + answerCst);
+				System.out.println("stexts" + editCheck.getText().toString());
+			
 				if (!zeroOrMore || !editCheck.getHint().equals("Type in the answer") 
 						|| editCheck.getVisibility() != View.VISIBLE) {
 					editErrors++;
@@ -196,6 +198,7 @@ public class EditQuestionActivity extends Activity {
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
 				Button correctCheck = (Button) findViewById(idList.get(i));
+				System.out.println("stexts" + correctCheck.getText().toString());
 				if (!togToAns 
 						|| !((correctCheck.getText().equals("\u2714"))  // correct
 								|| (correctCheck.getText().equals("\u2718"))) // wrong
@@ -238,6 +241,7 @@ public class EditQuestionActivity extends Activity {
 			return 0;
 		} else {
 			System.out.println("err_sub " + auditAnswers()+auditButtons()+auditEditTexts());
+			System.out.println("errsub " + tagsText.getText().toString());
 			return 1;
 		}
 		
