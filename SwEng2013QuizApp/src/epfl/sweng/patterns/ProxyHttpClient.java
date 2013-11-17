@@ -160,6 +160,10 @@ public final class ProxyHttpClient implements IHttpClient {
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
+		HttpResponse response = null;
+		if (!getOfflineStatus()) {
+			response = realHttpClient.execute(request);
+		}
 		
 		String method = request.getMethod();
 		if (method.equals("POST")) {
@@ -185,7 +189,6 @@ public final class ProxyHttpClient implements IHttpClient {
 					// if we are online, we send the question to the server
 					if (!getOfflineStatus()) {
 						setASyncCounter(1);
-						HttpResponse response = realHttpClient.execute(post);
 						Integer statusCode = response.getStatusLine().getStatusCode();
 						response.getEntity().consumeContent();
 						System.out.println("statzus " + statusCode);
