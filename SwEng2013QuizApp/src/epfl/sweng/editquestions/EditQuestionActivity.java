@@ -238,9 +238,11 @@ public class EditQuestionActivity extends Activity {
 	private int auditSubmitButton() {
 		
 		if (audit() == 0) {
+			System.out.println("err_sub0 " + audit());
+
 			return 0;
 		} else {
-			System.out.println("err_sub " + auditAnswers()+auditButtons()+auditEditTexts());
+			System.out.println("err_sub1 " + audit());
 			return 1;
 		}
 		
@@ -511,7 +513,6 @@ public class EditQuestionActivity extends Activity {
 		if (!oneTrue) {
 			checkErrors++;
 		}
-		System.out.println(checkErrors);
 		return checkErrors;
 
 	}
