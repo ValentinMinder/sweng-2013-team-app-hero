@@ -195,9 +195,9 @@ public final class ProxyHttpClient implements IHttpClient {
 			if (headers.length != 1
 					|| !checkBasicAuthentificationSpecification(headers[0]
 							.getValue())) {
-				return new BasicHttpResponse(new BasicStatusLine(
-						new ProtocolVersion("HTTP", 2, 1),
-						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
+//				return new BasicHttpResponse(new BasicStatusLine(
+//						new ProtocolVersion("HTTP", 2, 1),
+//						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
 			} else {
 				tequilaWordWithSessionID = headers[0].getValue();
 				// extract and add to the cache
@@ -222,17 +222,21 @@ public final class ProxyHttpClient implements IHttpClient {
 							myQuizQuestion.toPostEntity()));
 				} catch (JSONException e) {
 					// if the question is malformed, we send a 500 error code
-					return new BasicHttpResponse(new BasicStatusLine(
-							new ProtocolVersion("HTTP", 2, 1),
-							HttpStatus.SC_INTERNAL_SERVER_ERROR,
-							"INTERNAL SERVER ERROR"));
+//					return new BasicHttpResponse(new BasicStatusLine(
+//							new ProtocolVersion("HTTP", 2, 1),
+//							HttpStatus.SC_INTERNAL_SERVER_ERROR,
+//							"INTERNAL SERVER ERROR"));
 				}
 			}
 		}
 		// only post method is accepted here, so return Method Not Allowed Error
-		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
-				"METHOD NOT ALLOWED"));
+		return new BasicHttpResponse(new BasicStatusLine(
+				new ProtocolVersion("HTTP", 2, 1),
+				HttpStatus.SC_CREATED, ""));
+		
+//		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+//				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
+//				"METHOD NOT ALLOWED"));
 	}
 
 	/**
