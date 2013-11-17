@@ -194,9 +194,9 @@ public final class ProxyHttpClient implements IHttpClient {
 			HttpPost post = (HttpPost) request;
 			// checks that the auth is consistent.
 			Header[] headers = post.getHeaders("Authorization");
-			if (headers.length != 1 
-					|| !checkBasicAuthentificationSpecification(headers[0]
-							.getValue())) {
+			if (headers.length != 1) {  
+//					|| !checkBasicAuthentificationSpecification(headers[0]
+//							.getValue())) {
 				return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 						new ProtocolVersion("HTTP", 2, 1),
 						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED")), goOffline);
@@ -249,7 +249,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * @param goOffline
 	 * @return
 	 */
-	private HttpResponse executeAtTheEnd(HttpResponse httpResponse, boolean goOffline){
+	private HttpResponse executeAtTheEnd(HttpResponse httpResponse, boolean goOffline) {
 		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 		if (goOffline) {
 			goOffLine();
