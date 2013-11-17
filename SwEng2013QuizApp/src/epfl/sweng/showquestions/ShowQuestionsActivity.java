@@ -25,8 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
-import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.patterns.ProxyHttpClient;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 

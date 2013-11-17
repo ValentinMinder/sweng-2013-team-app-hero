@@ -1,7 +1,6 @@
 package epfl.sweng.editquestions;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
@@ -544,10 +542,10 @@ public class EditQuestionActivity extends Activity {
 				post.setEntity(new StringEntity(questionElement[0]));
 				HttpResponse response = ProxyHttpClient.getInstance().execute(post);
 				return response;
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			} catch (HttpResponseException e) {
-				e.printStackTrace();
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//			} catch (HttpResponseException e) {
+//				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -562,6 +560,7 @@ public class EditQuestionActivity extends Activity {
 		 */
 		protected void onPostExecute(HttpResponse httpResponse) {
 			// if result is null, server something else than a 2xx status.
+			System.out.println(httpResponse);
 			if (httpResponse != null && httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 				successEditQuestion();
 				// result contain a JSON object representing the question if success on submit
