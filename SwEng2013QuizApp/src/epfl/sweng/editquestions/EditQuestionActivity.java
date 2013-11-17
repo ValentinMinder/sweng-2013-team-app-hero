@@ -234,7 +234,7 @@ public class EditQuestionActivity extends Activity {
 
 	private int auditSubmitButton() {
 		
-		if (auditAnswers()+auditButtons()+auditEditTexts()+audit() == 0) {
+		if (audit() == 0) {
 			return 0;
 		} else {
 			System.out.println("err_sub " + auditAnswers()+auditButtons()+auditEditTexts());
