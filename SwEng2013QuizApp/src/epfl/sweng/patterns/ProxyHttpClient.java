@@ -311,7 +311,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		aSyncCounter = k;
 	}
 	
-	private Integer sendQuestions (QuizQuestion... questionElement){
+	private Integer sendQuestions(QuizQuestion... questionElement) {
 		String serverURL = "https://sweng-quiz.appspot.com/";
 		HttpPost post = new HttpPost(serverURL + "quizquestions/");
 		post.setHeader("Content-type", "application/json");
@@ -339,7 +339,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		return HttpStatus.SC_BAD_GATEWAY;
 	}
 	
-	private void after (Integer result, QuizQuestion myQuestion){
+	private void after(Integer result, QuizQuestion myQuestion) {
 		if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
 			// je sais, y a rien, mais pas touche à mon if!
 		} else if (!getOfflineStatus()
