@@ -544,19 +544,16 @@ public class EditQuestionActivity extends Activity {
 
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
-
+				System.out.println("exec post");
 				HttpResponse response = ProxyHttpClient.getInstance().execute(post);
-
-				//afficheMoiCeMessageDeDebug("status: " + response.getStatusLine().getStatusCode());
-				//afficheMoiCeMessageDeDebug("msg: " + response.getStatusLine().getReasonPhrase());
-
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+				System.out.println("resp reciev");
+				if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 					HttpEntity result = response.getEntity();
 					if (result != null) {
+						result.consumeContent();
 						return EntityUtils.toString(result);
 					} else {
-						//TODO to fix, just for the test and eventually finding the bug
-						return " ";
+						return null;
 					}
 				}
 			} catch (UnsupportedEncodingException e) {
