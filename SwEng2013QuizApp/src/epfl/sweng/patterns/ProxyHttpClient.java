@@ -160,15 +160,15 @@ public final class ProxyHttpClient implements IHttpClient {
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
-		HttpResponse response = null;
+		HttpResponse serverResponse = null;
 		boolean previousOfflineStatus = getOfflineStatus();
 		boolean onlineSuccesfulComm = false;
 		boolean goOffline = false;
 		if (!previousOfflineStatus) {
 			Integer statusCode = -1;
 			try {
-				response = realHttpClient.execute(request);
-				statusCode = response.getStatusLine().getStatusCode();
+				serverResponse = realHttpClient.execute(request);
+				statusCode = serverResponse.getStatusLine().getStatusCode();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 				goOffline = true;
@@ -199,7 +199,7 @@ public final class ProxyHttpClient implements IHttpClient {
 							.getValue())) {
 				return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 						new ProtocolVersion("HTTP", 2, 1),
-						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED")), goOffline);
+						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED")), goOffline, onlineSuccesfulComm, serverResponse);
 			} else {
 				tequilaWordWithSessionID = headers[0].getValue();
 				// extract and add to the cache
@@ -221,20 +221,20 @@ public final class ProxyHttpClient implements IHttpClient {
 					return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 							new ProtocolVersion("HTTP", 2, 1),
 							HttpStatus.SC_CREATED,
-							myQuizQuestion.toPostEntity())), goOffline);
+							myQuizQuestion.toPostEntity())), goOffline, onlineSuccesfulComm, serverResponse);
 				} catch (JSONException e) {
 					// if the question is malformed, we send a 500 error code
 					return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 							new ProtocolVersion("HTTP", 2, 1),
 							HttpStatus.SC_INTERNAL_SERVER_ERROR,
-							"INTERNAL SERVER ERROR")), goOffline);
+							"INTERNAL SERVER ERROR")), goOffline, onlineSuccesfulComm, serverResponse);
 				}
 			}
 		} else {
 			// only post method is accepted here, so return Method Not Allowed Error
 			return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 					"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
-					"METHOD NOT ALLOWED")), goOffline);
+					"METHOD NOT ALLOWED")), goOffline, onlineSuccesfulComm, serverResponse);
 		}
 		// we dont care about the server response: only proxy response is important for client
 //		if (response != null && !previousOfflineStatus){
@@ -245,16 +245,19 @@ public final class ProxyHttpClient implements IHttpClient {
 	/**
 	 * For modularity reason: confirm the question, go offline if request, and sent back
 	 * the httpResponse.
-	 * @param httpResponse
+	 * @param proxyResponse
 	 * @param goOffline
 	 * @return
 	 */
-	private HttpResponse executeAtTheEnd(HttpResponse httpResponse, boolean goOffline) {
+	private HttpResponse executeAtTheEnd(HttpResponse proxyResponse, boolean goOffline, boolean onlineSuccesfulComm, HttpResponse serverResponse) {
 		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 		if (goOffline) {
 			offline = true;
 		}
-		return httpResponse;
+		if (onlineSuccesfulComm && serverResponse != null){
+			return serverResponse;
+		}
+		return proxyResponse;
 	}
 
 	/**
