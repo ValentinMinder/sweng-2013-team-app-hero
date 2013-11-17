@@ -249,12 +249,13 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * @param goOffline
 	 * @return
 	 */
-	private HttpResponse executeAtTheEnd(HttpResponse proxyResponse, boolean goOffline, boolean onlineSuccesfulComm, HttpResponse serverResponse) {
+	private HttpResponse executeAtTheEnd(HttpResponse proxyResponse, 
+			boolean goOffline, boolean onlineSuccesfulComm, HttpResponse serverResponse) {
 		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 		if (goOffline) {
 			offline = true;
 		}
-		if (onlineSuccesfulComm && serverResponse != null){
+		if (onlineSuccesfulComm && serverResponse != null) {
 			return serverResponse;
 		}
 		return proxyResponse;
