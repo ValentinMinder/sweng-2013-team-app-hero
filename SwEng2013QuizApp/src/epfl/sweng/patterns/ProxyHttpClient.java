@@ -168,7 +168,6 @@ public final class ProxyHttpClient implements IHttpClient {
 			try {
 				response = realHttpClient.execute(request);
 				statusCode = response.getStatusLine().getStatusCode();
-				response.getEntity().consumeContent();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

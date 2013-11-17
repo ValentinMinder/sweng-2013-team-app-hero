@@ -550,8 +550,9 @@ public class EditQuestionActivity extends Activity {
 				if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 					HttpEntity result = response.getEntity();
 					if (result != null) {
+						String returnContent = EntityUtils.toString(result);
 						result.consumeContent();
-						return EntityUtils.toString(result);
+						return returnContent;
 					} else {
 						return null;
 					}
