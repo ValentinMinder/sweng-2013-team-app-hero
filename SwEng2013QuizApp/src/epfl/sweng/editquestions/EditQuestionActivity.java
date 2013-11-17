@@ -126,7 +126,6 @@ public class EditQuestionActivity extends Activity {
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
 				EditText editCheck = (EditText) findViewById(idList.get(i) + answerCst);
-				System.out.println("stexts" + editCheck.getText().toString());
 			
 				if (!zeroOrMore || !editCheck.getHint().equals("Type in the answer") 
 						|| editCheck.getVisibility() != View.VISIBLE) {
@@ -143,7 +142,6 @@ public class EditQuestionActivity extends Activity {
 		//The widget has its visibility property set to VISIBLE.
 
 		// != 0 because VISIBLE = 0
-		System.out.println("stexts1" + tagsText.getText().toString());
 
 		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
 				|| !(tagsText.getHint().equals("Type in the question's tags"))) {
@@ -237,12 +235,9 @@ public class EditQuestionActivity extends Activity {
 
 	private int auditSubmitButton() {
 		
-		if (audit() == 0) {
-			System.out.println("err_sub0 " + audit());
-
+		if ((audit() == 0 && submit.isEnabled()) || (audit()>0 && !submit.isEnabled())) {
 			return 0;
 		} else {
-			System.out.println("err_sub1 " + audit());
 			return 1;
 		}
 		
