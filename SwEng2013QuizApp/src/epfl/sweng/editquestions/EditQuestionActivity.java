@@ -229,7 +229,10 @@ public class EditQuestionActivity extends Activity {
 	}
 	
 	public int auditErrors() {
-		
+		System.out.println(auditAnswers());
+		System.out.println(auditButtons());
+		System.out.println(auditEditTexts());
+		System.out.println(auditSubmitButton());
 		return auditAnswers()+auditButtons()+auditEditTexts()+auditSubmitButton();
 		
 	}
