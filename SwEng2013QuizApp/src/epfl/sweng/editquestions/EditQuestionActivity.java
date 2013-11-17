@@ -229,10 +229,11 @@ public class EditQuestionActivity extends Activity {
 	}
 	
 	public int auditErrors() {
-		System.out.println(auditAnswers());
-		System.out.println(auditButtons());
-		System.out.println(auditEditTexts());
-		System.out.println(auditSubmitButton());
+		System.out.println("audit answer " + auditAnswers());
+		System.out.println("audit button " + auditButtons());
+		System.out.println("audit edittext " + auditEditTexts());
+		System.out.println("audit submit button " + auditSubmitButton());
+		System.out.println("audit = " + audit() + " submit enabled " + submit.isEnabled());
 		return auditAnswers()+auditButtons()+auditEditTexts()+auditSubmitButton();
 		
 	}
