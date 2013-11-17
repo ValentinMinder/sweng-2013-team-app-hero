@@ -161,8 +161,30 @@ public final class ProxyHttpClient implements IHttpClient {
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
 		HttpResponse response = null;
-		if (!getOfflineStatus()) {
-			response = realHttpClient.execute(request);
+		boolean previousOfflineStatus = getOfflineStatus();
+		boolean onlineSuccesfulComm = false;
+		if (!previousOfflineStatus) {
+			Integer statusCode = -1;
+			try {
+				response = realHttpClient.execute(request);
+				statusCode = response.getStatusLine().getStatusCode();
+				response.getEntity().consumeContent();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			if (statusCode.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
+				onlineSuccesfulComm = true;
+			} else if (!getOfflineStatus()
+					&& statusCode.compareTo(Integer
+							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
+				onlineSuccesfulComm = false;
+				goOffLine();
+			} else {
+				onlineSuccesfulComm = false;
+			}
 		}
 		
 		String method = request.getMethod();
@@ -186,29 +208,9 @@ public final class ProxyHttpClient implements IHttpClient {
 					// default values
 					myQuizQuestion = new QuizQuestion(jsonContent);
 					myCacheQuizQuestion.addQuestionToCache(myQuizQuestion);
-					// if we are online, we send the question to the server
-					if (!getOfflineStatus()) {
-						setASyncCounter(1);
-						Integer statusCode = response.getStatusLine().getStatusCode();
-						response.getEntity().consumeContent();
-						System.out.println("statzus " + statusCode);
-						if (statusCode.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
-							// je sais, y a rien, mais pas touche à mon if!
-						} else if (!getOfflineStatus()
-								&& statusCode.compareTo(Integer
-										.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
-							addToFailBox(myQuizQuestion);
-							goOffLine();
-							System.out.println("async fail + offline " + myQuizQuestion.toPostEntity());
-
-						} else {
-							addToFailBox(myQuizQuestion);
-							System.out.println("async fail " + myQuizQuestion.toPostEntity());
-
-						}
-						aSyncCounter();
-					} else {
+					if (previousOfflineStatus || !onlineSuccesfulComm) {
 						// if we are offline we add it to ToSendBox
+						// if we are online and there was an error
 						myCacheQuizQuestion.addQuestionToOutBox(myQuizQuestion);
 					}
 					// if proxy accepted the question, reply okay (201) and
