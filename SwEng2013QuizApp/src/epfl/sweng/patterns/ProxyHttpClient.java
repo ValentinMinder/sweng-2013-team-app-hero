@@ -216,10 +216,10 @@ public final class ProxyHttpClient implements IHttpClient {
 					// if proxy accepted the question, reply okay (201) and
 					// return
 					// the question as json to confirm
-					return new BasicHttpResponse(new BasicStatusLine(
-							new ProtocolVersion("HTTP", 2, 1),
-							HttpStatus.SC_CREATED,
-							myQuizQuestion.toPostEntity()));
+//					return new BasicHttpResponse(new BasicStatusLine(
+//							new ProtocolVersion("HTTP", 2, 1),
+//							HttpStatus.SC_CREATED,
+//							myQuizQuestion.toPostEntity()));
 				} catch (JSONException e) {
 					// if the question is malformed, we send a 500 error code
 //					return new BasicHttpResponse(new BasicStatusLine(
@@ -230,6 +230,9 @@ public final class ProxyHttpClient implements IHttpClient {
 			}
 		}
 		// only post method is accepted here, so return Method Not Allowed Error
+		if (response != null && !previousOfflineStatus){
+			return response;
+		}
 		return new BasicHttpResponse(new BasicStatusLine(
 				new ProtocolVersion("HTTP", 2, 1),
 				HttpStatus.SC_CREATED, ""));
