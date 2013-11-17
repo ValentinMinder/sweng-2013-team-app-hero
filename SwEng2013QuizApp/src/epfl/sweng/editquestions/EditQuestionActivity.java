@@ -9,14 +9,12 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -32,8 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
-import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.patterns.ProxyHttpClient;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -526,13 +524,13 @@ public class EditQuestionActivity extends Activity {
 	 * @author Valentin
 	 * 
 	 */
-	private class SubmitQuestionTask extends AsyncTask<String, Void, String> {
+	private class SubmitQuestionTask extends AsyncTask<String, Void, HttpResponse> {
 
 		/**
 		 * Execute and retrieve the answer from the website.
 		 */
 		@Override
-		protected String doInBackground(String... questionElement) {
+		protected HttpResponse doInBackground(String... questionElement) {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
 			post.setHeader("Content-type", "application/json");
@@ -544,19 +542,8 @@ public class EditQuestionActivity extends Activity {
 
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
-				System.out.println("exec post");
 				HttpResponse response = ProxyHttpClient.getInstance().execute(post);
-				System.out.println("resp reciev");
-				if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-					HttpEntity result = response.getEntity();
-					if (result != null) {
-						String returnContent = EntityUtils.toString(result);
-						result.consumeContent();
-						return returnContent;
-					} else {
-						return null;
-					}
-				}
+				return response;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			} catch (HttpResponseException e) {
@@ -573,15 +560,24 @@ public class EditQuestionActivity extends Activity {
 		/**
 		 * Execute and retrieve the answer from the website.
 		 */
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(HttpResponse httpResponse) {
 			// if result is null, server something else than a 2xx status.
-			if (result != null) {
-				// result contain a JSON object representing the question if success on submit
+			if (httpResponse != null && httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 				successEditQuestion();
+				// result contain a JSON object representing the question if success on submit
+//				HttpEntity result = response.getEntity();
+//				if (result != null) {
+//					String returnContent = EntityUtils.toString(result);
+//					result.consumeContent();
+//					return returnContent;
+//				} else {
+//					return null;
+//				}
 			} else {
 				errorEditQuestion();
-			}			
-			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+			}		
+			// moving TTCheck to proxy, because should be check before going offline on error
+//			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 			initUI();
 		}
 

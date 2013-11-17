@@ -21,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
-
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -71,6 +70,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	public void goOffLine() {
 		if (!offline) {
 			offline = true;
+			// a verifier la necessite de cela:
 //			myCheckBoxTask.confirmCheckBoxTask(offline);
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		}
@@ -163,6 +163,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		HttpResponse response = null;
 		boolean previousOfflineStatus = getOfflineStatus();
 		boolean onlineSuccesfulComm = false;
+		boolean goOffline = false;
 		if (!previousOfflineStatus) {
 			Integer statusCode = -1;
 			try {
@@ -170,8 +171,10 @@ public final class ProxyHttpClient implements IHttpClient {
 				statusCode = response.getStatusLine().getStatusCode();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
+				goOffline = true;
 			} catch (IOException e) {
 				e.printStackTrace();
+				goOffline = true;
 			}
 			
 			if (statusCode.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
@@ -180,7 +183,7 @@ public final class ProxyHttpClient implements IHttpClient {
 					&& statusCode.compareTo(Integer
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
 				onlineSuccesfulComm = false;
-				goOffLine();
+				goOffline = true;
 			} else {
 				onlineSuccesfulComm = false;
 			}
@@ -191,12 +194,12 @@ public final class ProxyHttpClient implements IHttpClient {
 			HttpPost post = (HttpPost) request;
 			// checks that the auth is consistent.
 			Header[] headers = post.getHeaders("Authorization");
-			if (headers.length != 1) {
-//					|| !checkBasicAuthentificationSpecification(headers[0]
-//							.getValue())) {
-				return new BasicHttpResponse(new BasicStatusLine(
+			if (headers.length != 1 
+					|| !checkBasicAuthentificationSpecification(headers[0]
+							.getValue())) {
+				return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 						new ProtocolVersion("HTTP", 2, 1),
-						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
+						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED")), goOffline);
 			} else {
 				tequilaWordWithSessionID = headers[0].getValue();
 				// extract and add to the cache
@@ -215,28 +218,43 @@ public final class ProxyHttpClient implements IHttpClient {
 					// if proxy accepted the question, reply okay (201) and
 					// return
 					// the question as json to confirm
-					return new BasicHttpResponse(new BasicStatusLine(
+					return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 							new ProtocolVersion("HTTP", 2, 1),
 							HttpStatus.SC_CREATED,
-							myQuizQuestion.toPostEntity()));
+							myQuizQuestion.toPostEntity())), goOffline);
 				} catch (JSONException e) {
 					// if the question is malformed, we send a 500 error code
-					return new BasicHttpResponse(new BasicStatusLine(
+					return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(
 							new ProtocolVersion("HTTP", 2, 1),
 							HttpStatus.SC_INTERNAL_SERVER_ERROR,
-							"INTERNAL SERVER ERROR"));
+							"INTERNAL SERVER ERROR")), goOffline);
 				}
 			}
 		} else {
 			// only post method is accepted here, so return Method Not Allowed Error
-			return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+			return executeAtTheEnd(new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
 					"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
-					"METHOD NOT ALLOWED"));
+					"METHOD NOT ALLOWED")), goOffline);
 		}
 		// we dont care about the server response: only proxy response is important for client
 //		if (response != null && !previousOfflineStatus){
 //			return response;
 //		}		
+	}
+	
+	/**
+	 * For modularity reason: confirm the question, go offline if request, and sent back
+	 * the httpResponse.
+	 * @param httpResponse
+	 * @param goOffline
+	 * @return
+	 */
+	private HttpResponse executeAtTheEnd(HttpResponse httpResponse, boolean goOffline){
+		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+		if (goOffline) {
+			goOffLine();
+		}
+		return httpResponse;
 	}
 
 	/**
