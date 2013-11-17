@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
@@ -75,7 +74,7 @@ public class MainActivity extends Activity {
 				CheckBox check = (CheckBox) findViewById(R.id.offline);
 				boolean isNextCheck = check.isChecked();
 				check.setChecked(!isNextCheck);
-				// we lock the use of the checkbox
+				// we lock the use of the checkbox (NOT USED ANYMORE)
 				if (!isNextCheck) {
 					System.out.println("trying to goonline");
 					ProxyHttpClient.getInstance().goOnline();
