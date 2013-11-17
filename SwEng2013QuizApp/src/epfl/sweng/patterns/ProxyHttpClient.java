@@ -72,7 +72,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	public void goOffLine() {
 		if (!offline) {
 			offline = true;
-			myCheckBoxTask.confirmCheckBoxTask(offline);
+//			myCheckBoxTask.confirmCheckBoxTask(offline);
 			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		}
 	}
@@ -183,22 +183,13 @@ public final class ProxyHttpClient implements IHttpClient {
 					// default values
 					myQuizQuestion = new QuizQuestion(jsonContent);
 					myCacheQuizQuestion.addQuestionToCache(myQuizQuestion);
-					// if we are online, we 
-					// si on est online, on envoie la question au serveur
-					int status = 0;
+					// if we are online, we send the question to the server
 					if (!getOfflineStatus()) {
+						setASyncCounter(1);
 						SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
 						mySubmitQuestionTask.execute(myQuizQuestion);
-						try {
-							status = mySubmitQuestionTask.get();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						}
-					}
-					// if we are online, or if the question didn't get to get server, we add it to ToSendBox
-					if (getOfflineStatus() || status != HttpStatus.SC_ACCEPTED) {
+					} else {
+						// if we are offline we add it to ToSendBox
 						myCacheQuizQuestion.addQuestionToOutBox(myQuizQuestion);
 					}
 					// if proxy accepted the question, reply okay (201) and
@@ -258,6 +249,7 @@ public final class ProxyHttpClient implements IHttpClient {
 				e.printStackTrace();
 				goOffLine();
 			} catch (UnknownHostException e) {
+				System.out.println("we catched the exception");
 				e.printStackTrace();
 				goOffLine();
 			}
@@ -275,7 +267,9 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	private void aSyncCounter() {
 		aSyncCounter--;
+		System.out.println(aSyncCounter);
 		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
+			System.out.println("asny 0");
 			goOnlineResponse(myCacheQuizQuestion.getSentStatus());
 		}
 		
@@ -290,15 +284,15 @@ public final class ProxyHttpClient implements IHttpClient {
 		SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
 		mySubmitQuestionTask.execute(question);
 		int httpStatus = -1;
-		try {
-			// /!\ bloquant, attend l'execution complète de l'asynctask
-			// attention, c'est peut etre faux!
-			httpStatus = mySubmitQuestionTask.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			// /!\ bloquant, attend l'execution complète de l'asynctask
+//			// attention, c'est peut etre faux!
+//			httpStatus = mySubmitQuestionTask.get();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			e.printStackTrace();
+//		}
 		return httpStatus;
 	}
 	
@@ -346,6 +340,7 @@ public final class ProxyHttpClient implements IHttpClient {
 				HttpResponse response = realHttpClient.execute(post);
 				Integer statusCode = response.getStatusLine().getStatusCode();
 				response.getEntity().consumeContent();
+				System.out.println("statzus " + statusCode);
 				return statusCode;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
@@ -371,13 +366,13 @@ public final class ProxyHttpClient implements IHttpClient {
 			} else if (!getOfflineStatus()
 					&& result.compareTo(Integer
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
-				goOffLine();
 				addToFailBox(myQuestion);
-//				System.out.println("async fail + offline " + myQuestion.toPostEntity());
+				goOffLine();
+				System.out.println("async fail + offline " + myQuestion.toPostEntity());
 
 			} else {
 				addToFailBox(myQuestion);
-//				System.out.println("async fail " + myQuestion.toPostEntity());
+				System.out.println("async fail " + myQuestion.toPostEntity());
 
 			}
 			aSyncCounter();
@@ -481,6 +476,7 @@ public final class ProxyHttpClient implements IHttpClient {
 			boolean status = failBox.size() == 0;
 			outBox.addAll(0, failBox);
 			failBox.clear();
+			System.out.println("sent status" + status);
 			return status;
 		}
 	}

@@ -76,17 +76,27 @@ public class MainActivity extends Activity {
 				boolean isNextCheck = check.isChecked();
 				check.setChecked(!isNextCheck);
 				// we lock the use of the checkbox
-				if (!checkBoxInUse) {
-					checkBoxInUse = true;
-					if (!isNextCheck) {
-						ProxyHttpClient.getInstance().goOnline();
-					} else {
-						ProxyHttpClient.getInstance().goOffLine();
-					}
+				if (!isNextCheck) {
+					System.out.println("trying to goonline");
+					ProxyHttpClient.getInstance().goOnline();
+					System.out.println("going online submitted");
 				} else {
-					Toast.makeText(getApplicationContext(), "Please wait, " +
-							"busy with a previous connection request", Toast.LENGTH_SHORT).show();
+					ProxyHttpClient.getInstance().goOffLine();
+					check.setChecked(isNextCheck);
 				}
+//				if (!checkBoxInUse) {
+//					checkBoxInUse = true;
+//					if (!isNextCheck) {
+//						ProxyHttpClient.getInstance().goOnline();
+//					} else {
+//						ProxyHttpClient.getInstance().goOffLine();
+//						check.setChecked(isNextCheck);
+//						checkBoxInUse = false;
+//					}
+//				} else {
+//					Toast.makeText(getApplicationContext(), "Please wait, " +
+//							"busy with a previous connection request", Toast.LENGTH_SHORT).show();
+//				}
 			}
 		});
 	}
