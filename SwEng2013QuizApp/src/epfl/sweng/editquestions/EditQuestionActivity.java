@@ -228,7 +228,6 @@ public class EditQuestionActivity extends Activity {
 		}
 		if (correctCount > 1) {
 			answerErrors++;
-			System.out.println("bu1_ans");
 
 		}
 
