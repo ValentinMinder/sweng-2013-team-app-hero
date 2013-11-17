@@ -241,7 +241,6 @@ public class EditQuestionActivity extends Activity {
 			return 0;
 		} else {
 			System.out.println("err_sub " + auditAnswers()+auditButtons()+auditEditTexts());
-			System.out.println("errsub " + tagsText.getText().toString());
 			return 1;
 		}
 		
@@ -487,14 +486,20 @@ public class EditQuestionActivity extends Activity {
 		String tagsToString = editTags.getText().toString();
 		if (tagsToString.trim().length() == 0) {
 			checkErrors++;
+			System.out.println("errsub_tts " + tagsToString);
+
 		}
 
 		if (idList.size() < 2 || questionText.trim().length() == 0) {
 			checkErrors++;
+			System.out.println("errsub_qt " + questionText);
+
 		}
 
 		for (int i = 0; i < idList.size(); i++) {
-			Button isCorrect = (Button) findViewById(idList.get(i));			
+			Button isCorrect = (Button) findViewById(idList.get(i));	
+			System.out.println("errsub_iscorr " + isCorrect.getText().toString());
+
 			if (isCorrect.getText().equals("\u2714")) {
 				oneTrue = true;
 			}
@@ -502,13 +507,15 @@ public class EditQuestionActivity extends Activity {
 			EditText isFull = (EditText) findViewById(idList.get(i) + answerCst);
 			if (isFull.getText().toString().trim().length() == 0) {
 				checkErrors++;
+				System.out.println("errsub_isfull " + isFull.getText().toString());
+
 			}
 		}
 
 		if (!oneTrue) {
 			checkErrors++;
 		}
-
+System.out.println(checkErrors);
 		return checkErrors;
 
 	}
