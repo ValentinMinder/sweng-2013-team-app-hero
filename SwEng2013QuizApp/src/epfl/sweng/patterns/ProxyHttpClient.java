@@ -191,12 +191,12 @@ public final class ProxyHttpClient implements IHttpClient {
 			HttpPost post = (HttpPost) request;
 			// checks that the auth is consistent.
 			Header[] headers = post.getHeaders("Authorization");
-			if (headers.length != 1
-					|| !checkBasicAuthentificationSpecification(headers[0]
-							.getValue())) {
-//				return new BasicHttpResponse(new BasicStatusLine(
-//						new ProtocolVersion("HTTP", 2, 1),
-//						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
+			if (headers.length != 1) {
+//					|| !checkBasicAuthentificationSpecification(headers[0]
+//							.getValue())) {
+				return new BasicHttpResponse(new BasicStatusLine(
+						new ProtocolVersion("HTTP", 2, 1),
+						HttpStatus.SC_UNAUTHORIZED, "UNAUTHORIZED"));
 			} else {
 				tequilaWordWithSessionID = headers[0].getValue();
 				// extract and add to the cache
@@ -215,30 +215,28 @@ public final class ProxyHttpClient implements IHttpClient {
 					// if proxy accepted the question, reply okay (201) and
 					// return
 					// the question as json to confirm
-//					return new BasicHttpResponse(new BasicStatusLine(
-//							new ProtocolVersion("HTTP", 2, 1),
-//							HttpStatus.SC_CREATED,
-//							myQuizQuestion.toPostEntity()));
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_CREATED,
+							myQuizQuestion.toPostEntity()));
 				} catch (JSONException e) {
 					// if the question is malformed, we send a 500 error code
-//					return new BasicHttpResponse(new BasicStatusLine(
-//							new ProtocolVersion("HTTP", 2, 1),
-//							HttpStatus.SC_INTERNAL_SERVER_ERROR,
-//							"INTERNAL SERVER ERROR"));
+					return new BasicHttpResponse(new BasicStatusLine(
+							new ProtocolVersion("HTTP", 2, 1),
+							HttpStatus.SC_INTERNAL_SERVER_ERROR,
+							"INTERNAL SERVER ERROR"));
 				}
 			}
+		} else {
+			// only post method is accepted here, so return Method Not Allowed Error
+			return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
+					"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
+					"METHOD NOT ALLOWED"));
 		}
-		// only post method is accepted here, so return Method Not Allowed Error
-		if (response != null && !previousOfflineStatus){
-			return response;
-		}
-		return new BasicHttpResponse(new BasicStatusLine(
-				new ProtocolVersion("HTTP", 2, 1),
-				HttpStatus.SC_CREATED, ""));
-		
-//		return new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion(
-//				"HTTP", 2, 1), HttpStatus.SC_METHOD_NOT_ALLOWED,
-//				"METHOD NOT ALLOWED"));
+		// we dont care about the server response: only proxy response is important for client
+//		if (response != null && !previousOfflineStatus){
+//			return response;
+//		}		
 	}
 
 	/**
