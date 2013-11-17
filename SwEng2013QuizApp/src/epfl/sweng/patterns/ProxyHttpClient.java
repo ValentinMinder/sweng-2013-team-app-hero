@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -186,8 +185,8 @@ public final class ProxyHttpClient implements IHttpClient {
 					// if we are online, we send the question to the server
 					if (!getOfflineStatus()) {
 						setASyncCounter(1);
-						SubmitQuestionTask mySubmitQuestionTask = new SubmitQuestionTask();
-						mySubmitQuestionTask.execute(myQuizQuestion);
+						Integer integer = sendQuestions(myQuizQuestion);
+						after(integer, myQuizQuestion);
 					} else {
 						// if we are offline we add it to ToSendBox
 						myCacheQuizQuestion.addQuestionToOutBox(myQuizQuestion);
@@ -310,6 +309,52 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	private void setASyncCounter(int k) {
 		aSyncCounter = k;
+	}
+	
+	private Integer sendQuestions (QuizQuestion... questionElement){
+		String serverURL = "https://sweng-quiz.appspot.com/";
+		HttpPost post = new HttpPost(serverURL + "quizquestions/");
+		post.setHeader("Content-type", "application/json");
+		post.setHeader("Authorization", tequilaWordWithSessionID);
+		QuizQuestion myQuestion = null;
+		try {
+			myQuestion = questionElement[0];
+			post.setEntity(new StringEntity(myQuestion.toPostEntity()));
+			HttpResponse response = realHttpClient.execute(post);
+			Integer statusCode = response.getStatusLine().getStatusCode();
+			response.getEntity().consumeContent();
+			System.out.println("statzus " + statusCode);
+			return statusCode;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+			return HttpStatus.SC_BAD_GATEWAY;
+		} catch (IOException e) {
+			// en particulier si y a pas de réseau!!
+			e.printStackTrace();
+			return HttpStatus.SC_BAD_GATEWAY;
+		}
+		// to-do code de failure			
+		return HttpStatus.SC_BAD_GATEWAY;
+	}
+	
+	private void after (Integer result, QuizQuestion myQuestion){
+		if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
+			// je sais, y a rien, mais pas touche à mon if!
+		} else if (!getOfflineStatus()
+				&& result.compareTo(Integer
+						.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
+			addToFailBox(myQuestion);
+			goOffLine();
+			System.out.println("async fail + offline " + myQuestion.toPostEntity());
+
+		} else {
+			addToFailBox(myQuestion);
+			System.out.println("async fail " + myQuestion.toPostEntity());
+
+		}
+		aSyncCounter();
 	}
 	
 	/**
