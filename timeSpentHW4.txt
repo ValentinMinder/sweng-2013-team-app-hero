@@ -1,11 +1,6 @@
-preexam fixing
-A: 2h
-V: 4h
-
-common: 11h
-AppHero/HW4
-J: 4h
-AF: 2h
-S: 6h00 
-V: 22h
-AW: 4h30
+Final timespent:
+15h
+13h
+17h
+35h
+17h
