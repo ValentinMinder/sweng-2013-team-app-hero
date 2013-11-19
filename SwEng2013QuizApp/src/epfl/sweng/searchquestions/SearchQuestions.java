@@ -23,7 +23,16 @@ public class SearchQuestions {
 	}
 	
 	public QuizQuestion getNextQuizQuestion() {
-		// TODO non implemented method
+		if (lastRequestArray.isEmpty()) {
+			// TODO retrieve from server, and fill the array
+		}
+		// if we have a remaining array of question.
+		if (!lastRequestArray.isEmpty()) {
+			QuizQuestion myQuizQuestion = lastRequestArray.get(0);
+			lastRequestArray.remove(0);
+			return myQuizQuestion;
+		}
+		// if the array was empty and the server didn't get any more question.
 		return null;
 	}
 	
