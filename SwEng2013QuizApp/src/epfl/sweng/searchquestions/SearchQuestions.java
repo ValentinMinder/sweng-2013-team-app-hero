@@ -1,7 +1,10 @@
 package epfl.sweng.searchquestions;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import org.apache.http.HttpResponse;
+
 import android.os.AsyncTask;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -9,10 +12,10 @@ public class SearchQuestions {
 	private static SearchQuestions instance = null;
 	private String nextID = null;
 	private String request = null;
-	private ArrayList<QuizQuestion> lastRequestArray = null;
+	private LinkedList<QuizQuestion> cachedRequestArray =  null;
 	
 	private SearchQuestions() {
-		lastRequestArray = new ArrayList<QuizQuestion>();
+		cachedRequestArray = new LinkedList<QuizQuestion>();
 	}
 	
 	public static synchronized SearchQuestions getInstance() {
@@ -23,14 +26,12 @@ public class SearchQuestions {
 	}
 	
 	public QuizQuestion getNextQuizQuestion() {
-		if (lastRequestArray.isEmpty()) {
+		if (cachedRequestArray.isEmpty()) {
 			// TODO retrieve from server, and fill the array
 		}
 		// if we have a remaining array of question.
-		if (!lastRequestArray.isEmpty()) {
-			QuizQuestion myQuizQuestion = lastRequestArray.get(0);
-			lastRequestArray.remove(0);
-			return myQuizQuestion;
+		if (!cachedRequestArray.isEmpty()) {
+			return cachedRequestArray.peekFirst();
 		}
 		// if the array was empty and the server didn't get any more question.
 		return null;
