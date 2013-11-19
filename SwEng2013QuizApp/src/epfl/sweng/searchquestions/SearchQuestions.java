@@ -14,13 +14,14 @@ public class SearchQuestions {
 	private String request = null;
 	private LinkedList<QuizQuestion> cachedRequestArray =  null;
 	
-	private SearchQuestions() {
+	private SearchQuestions(String requestS) {
 		cachedRequestArray = new LinkedList<QuizQuestion>();
+		this.request = requestS;
 	}
 	
-	public static synchronized SearchQuestions getInstance() {
+	public static synchronized SearchQuestions getInstance(String requestS) {
 		if (instance == null){
-			instance = new SearchQuestions();
+			instance = new SearchQuestions(requestS);
 		}
 		return instance;
 	}
