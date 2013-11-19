@@ -32,5 +32,8 @@
     <string name="error_retrieving_question">There was an error retrieving the question</string>
     <string name="offline">Offline mode</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="search_button">Search</string>
+    <string name="search_hint">Type in the search query</string>
+    
 
 </resources>

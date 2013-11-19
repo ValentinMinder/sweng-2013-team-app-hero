@@ -1,11 +1,13 @@
 package epfl.sweng.searchquestions;
 
-import epfl.sweng.R;
-import epfl.sweng.R.layout;
-import epfl.sweng.R.menu;
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
+import epfl.sweng.R;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class SearchActivity extends Activity {
 
@@ -21,5 +23,28 @@ public class SearchActivity extends Activity {
 		getMenuInflater().inflate(R.menu.search, menu);
 		return true;
 	}
+	
+	
+	
+	private TextWatcher textListener = new TextWatcher() {
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			TestCoordinator.check(TTChecks.QUERY_EDITED);
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+
+		}
+
+	};
 
 }
