@@ -37,7 +37,10 @@
             android:name="epfl.sweng.editquestions.EditQuestionActivity"
             android:label="@string/title_activity_edit_question" >
         </activity>
-        
+        <activity
+            android:name="epfl.sweng.searchquestions.SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
     </application>
 
 </manifest>

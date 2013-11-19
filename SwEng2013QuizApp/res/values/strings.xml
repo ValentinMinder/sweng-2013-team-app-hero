@@ -26,10 +26,11 @@
     <string name="gaspar_username">GASPAR Username</string>
     <string name="gaspar_password">GASPAR Password</string>
     <string name="log_in_tekila">Log in using Tequila</string>
-	<string name="authentication_failed">Authentication failed</string>
-	<string name="log_out">Log out</string>
-	<string name="not_upload_question">Could not upload the question to the server</string>
-	<string name="error_retrieving_question">There was an error retrieving the question</string>
-	<string name="offline">Offline mode</string>
+    <string name="authentication_failed">Authentication failed</string>
+    <string name="log_out">Log out</string>
+    <string name="not_upload_question">Could not upload the question to the server</string>
+    <string name="error_retrieving_question">There was an error retrieving the question</string>
+    <string name="offline">Offline mode</string>
+    <string name="title_activity_search">SearchActivity</string>
 
 </resources>
