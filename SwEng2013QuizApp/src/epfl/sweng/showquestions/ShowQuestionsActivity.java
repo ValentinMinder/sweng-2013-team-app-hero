@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -27,6 +28,7 @@ import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.searchquestions.SearchQuestions;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -39,6 +41,8 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 public class ShowQuestionsActivity extends Activity {
 
 	private QuizQuestion question = null;
+	private SearchQuestions searchQuestion = null;
+	private boolean isSearch = false;
 
 	/**
 	 * Method who is called if error occurred
@@ -71,8 +75,28 @@ public class ShowQuestionsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show_question);
+		Intent showQuestionIntent = getIntent();
+		String type = showQuestionIntent.getStringExtra("Type");
+		
+		if(type.equals("Search")) {
+			isSearch = true;
+			String search = showQuestionIntent.getStringExtra("Request");
+			searchQuestion = SearchQuestions.getInstance(search);
+			newRandomQuestion();
+			
+			
+		}else {
+			fetchQuestion();
+		}
+	}
 
-		fetchQuestion();
+	private void newRandomQuestion() {
+		question = searchQuestion.getNextQuizQuestion();
+		if(question == null) {
+			errorDisplayQuestion();
+		}else {
+			displayQuestion();
+		}
 	}
 
 	/**
@@ -89,7 +113,11 @@ public class ShowQuestionsActivity extends Activity {
 		nextQuestion.setEnabled(false);
 		TextView correctness = (TextView) findViewById(R.id.correctness);
 		correctness.setText("");
-		fetchQuestion();
+		if(isSearch) {
+			newRandomQuestion();
+		}else{
+			fetchQuestion();
+		}
 	}
 
 	/**

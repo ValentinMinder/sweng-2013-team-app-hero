@@ -134,7 +134,7 @@ public class MainActivity extends Activity {
 	public void showQuestion(View view) {
 		Intent showQuestionIntent = new Intent(this,
 				ShowQuestionsActivity.class);
-
+		showQuestionIntent.putExtra("Type", "Random");
 		startActivity(showQuestionIntent);
 	}
 
