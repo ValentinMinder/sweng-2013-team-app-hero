@@ -27,6 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/searchText"
         android:layout_below="@+id/searchText"
-        android:text="@string/search_button" />
+        android:text="@string/search_button"
+        android:onClick="search" />
+        
 
 </RelativeLayout>

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
 import epfl.sweng.R;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -17,9 +19,18 @@ public class SearchActivity extends Activity {
 		setContentView(R.layout.activity_search);
 	}
 
+	public void search(View view) {
+		
+		
+		
+	}
+
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		EditText editQuery = (EditText) findViewById(R.id.searchText);
+		editQuery.addTextChangedListener(textListener);
+
 		getMenuInflater().inflate(R.menu.search, menu);
 		return true;
 	}

@@ -39,6 +39,9 @@ public class MainActivity extends Activity {
 
 		Button button2 = (Button) findViewById(R.id.button2);
 		button2.setEnabled(false);
+		
+		Button button3 = (Button) findViewById(R.id.button3);
+		button3.setEnabled(false);
 
 		Button buttonLog = (Button) findViewById(R.id.button_log);
 		buttonLog.setText(R.string.log_in_tekila);

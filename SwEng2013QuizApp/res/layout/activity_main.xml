@@ -27,6 +27,12 @@
         android:layout_height="wrap_content"
         android:onClick="submitQuestion"
         android:text="@string/submit_quiz_question" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/search_quiz" />
     
     <Button
         android:id="@+id/button_log"

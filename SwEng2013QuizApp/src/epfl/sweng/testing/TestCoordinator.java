@@ -63,6 +63,7 @@ public final class TestCoordinator {
         LOGGED_OUT,
         OFFLINE_CHECKBOX_ENABLED,
         OFFLINE_CHECKBOX_DISABLED,
+        SEARCH_ACTIVITY_SHOWN,
         QUERY_EDITED
     };
 
