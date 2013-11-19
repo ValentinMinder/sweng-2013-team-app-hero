@@ -14,6 +14,7 @@ import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.patterns.ICheckBoxTask;
 import epfl.sweng.patterns.ProxyHttpClient;
+import epfl.sweng.searchquestions.SearchActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -140,6 +141,13 @@ public class MainActivity extends Activity {
 	public void submitQuestion(View view) {
 		Intent editQuestionIntent = new Intent(this, EditQuestionActivity.class);
 		startActivity(editQuestionIntent);
+	}
+	
+	public void searchQuestion(View view) {
+		Intent searchActivity = new Intent(this,
+				SearchActivity.class);
+
+		startActivity(searchActivity);
 	}
 
 	@Override
