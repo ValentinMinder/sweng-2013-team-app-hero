@@ -82,7 +82,7 @@ public class ShowQuestionsActivity extends Activity {
 			isSearch = true;
 			String search = showQuestionIntent.getStringExtra("Request");
 			searchQuestion = SearchQuestions.getInstance(search);
-			newRandomQuestion();
+			newSearchQuestion();
 			
 			
 		}else {
@@ -90,7 +90,7 @@ public class ShowQuestionsActivity extends Activity {
 		}
 	}
 
-	private void newRandomQuestion() {
+	private void newSearchQuestion() {
 		question = searchQuestion.getNextQuizQuestion();
 		if(question == null) {
 			errorDisplayQuestion();
@@ -114,7 +114,7 @@ public class ShowQuestionsActivity extends Activity {
 		TextView correctness = (TextView) findViewById(R.id.correctness);
 		correctness.setText("");
 		if(isSearch) {
-			newRandomQuestion();
+			newSearchQuestion();
 		}else{
 			fetchQuestion();
 		}
