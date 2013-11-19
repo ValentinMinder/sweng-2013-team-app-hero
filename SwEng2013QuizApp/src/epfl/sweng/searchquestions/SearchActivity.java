@@ -30,8 +30,8 @@ public class SearchActivity extends Activity {
 		
 		Intent showQuestionIntent = new Intent(this,
 				ShowQuestionsActivity.class);
-		showQuestionIntent.putExtra(R.string.extra_type, R.string.search_button);
-		showQuestionIntent.putExtra(R.string.extra_rquest), search);
+		showQuestionIntent.putExtra("Type", "Search"); // hardcoded car il faut des strings, pas des int!
+		showQuestionIntent.putExtra("Request", search);
 		startActivity(showQuestionIntent);
 
 	}

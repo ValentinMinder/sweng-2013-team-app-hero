@@ -34,6 +34,7 @@
     <string name="title_activity_search">SearchActivity</string>
     <string name="search_button">Search</string>
     <string name="search_hint">Type in the search query</string>
+    <string name="search_quiz">Search a quiz question</string>
     <string name="extra_type">Type</string>
     <string name="extra_request">Request</string>
     
