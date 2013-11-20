@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
+import epfl.sweng.caching.Cache;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.patterns.ICheckBoxTask;
 import epfl.sweng.patterns.ProxyHttpClient;
@@ -28,7 +29,8 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  */
 public class MainActivity extends Activity {
 	private ICheckBoxTask myCheckBoxTask = null;
-
+	private boolean checkBoxInUse = false;
+	
 	/**
 	 * Method who is called for modify each buttons when the user isn't
 	 * authenticated
@@ -54,7 +56,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		Cache.setContextApplication(getApplicationContext());
 		String session = StoreCredential.getInstance().getSessionId(
 				getApplicationContext());
 

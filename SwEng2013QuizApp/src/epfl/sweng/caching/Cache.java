@@ -1,6 +1,13 @@
 package epfl.sweng.caching;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import android.content.Context;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -13,13 +20,19 @@ import epfl.sweng.quizquestions.QuizQuestion;
  * 
  */
 public final class Cache {
+	private final static String NAME_DIRECTORY_QUESTIONS = "questions";
+	private final static String NAME_DIRECTORY_TAGS = "tags";
+	private final static int SIZE_BUFFER = 1024;
+	
+	private static Context contextApplication = null;
+
 	private static Cache instance = null;
 	private ICacheToProxyPrivateTasks myCacheToProxyPrivateTasks = null;
 
 	/**
 	 * All the question cached.
 	 */
-	private ArrayList<QuizQuestion> myCacheQuizQuestion;
+	// private ArrayList<QuizQuestion> myCacheQuizQuestion;
 
 	/**
 	 * Question to be sent while in offline mode.
@@ -41,10 +54,21 @@ public final class Cache {
 	 * @param innerCacheToProxyPrivateTasks
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
-		this.myCacheQuizQuestion = new ArrayList<QuizQuestion>();
+		// this.myCacheQuizQuestion = new ArrayList<QuizQuestion>();
 		this.outBox = new ArrayList<QuizQuestion>();
 		this.failBox = new ArrayList<QuizQuestion>();
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
+		File dirQuestions = new File(contextApplication.getFilesDir()
+				+ File.separator + NAME_DIRECTORY_QUESTIONS);
+		if (!dirQuestions.exists()) {
+			dirQuestions.mkdir();
+		}
+
+		File dirTags = new File(contextApplication.getFilesDir()
+				+ File.separator + NAME_DIRECTORY_TAGS);
+		if (!dirTags.exists()) {
+			dirTags.mkdir();
+		}
 	}
 
 	/**
@@ -85,13 +109,49 @@ public final class Cache {
 	 * Fetch a question from the cache.
 	 */
 	public String getRandomQuestionFromCache() {
-		if (!myCacheQuizQuestion.isEmpty()) {
-			int size = myCacheQuizQuestion.size();
-			int index = (int) (Math.random() * size);
-			return myCacheQuizQuestion.get(index).toPostEntity();
+		File dir = new File(contextApplication.getFilesDir() + File.separator
+				+ NAME_DIRECTORY_QUESTIONS);
+		// File dir = contextApplication.getDir(NAME_DIRECTORY_QUESTIONS,
+		// Context.MODE_PRIVATE);
+
+		String[] children = dir.list();
+		if (children != null) {
+			int size = children.length;
+			if (size != 0) {
+				int index = (int) (Math.random() * size);
+				String hashQuestion = children[index];
+
+				try {
+					FileInputStream fis = new FileInputStream(
+							contextApplication.getFilesDir() + File.separator
+									+ NAME_DIRECTORY_QUESTIONS + File.separator
+									+ hashQuestion);
+
+					StringBuffer fileContent = new StringBuffer("");
+
+					byte[] buffer = new byte[SIZE_BUFFER];
+
+					while (fis.read(buffer) != -1) {
+						fileContent.append(new String(buffer));
+					}
+					
+					fis.close();
+
+					return fileContent.toString();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+
 		// offline and empty cache
 		return null;
+	}
+
+	public static void setContextApplication(Context context) {
+		contextApplication = context;
 	}
 
 	/**
@@ -102,7 +162,26 @@ public final class Cache {
 	 * @return
 	 */
 	private boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
-		return myCacheQuizQuestion.add(myQuizQuestion);
+		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
+		String jsonQuestion = myQuizQuestion.toPostEntity();
+		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+				+ File.separator + NAME_DIRECTORY_QUESTIONS + File.separator
+				+ hashQuestion);
+		if (!file.exists()) {
+			try {
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(jsonQuestion.getBytes());
+				fos.close();
+
+				return true;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return false;
 	}
 
 	/**
