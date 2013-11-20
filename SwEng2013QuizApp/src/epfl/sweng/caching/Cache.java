@@ -1,11 +1,23 @@
 package epfl.sweng.caching;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import android.content.Context;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -23,7 +35,7 @@ public final class Cache {
 	private final static String NAME_DIRECTORY_QUESTIONS = "questions";
 	private final static String NAME_DIRECTORY_TAGS = "tags";
 	private final static int SIZE_BUFFER = 1024;
-	
+
 	private static Context contextApplication = null;
 
 	private static Cache instance = null;
@@ -134,7 +146,7 @@ public final class Cache {
 					while (fis.read(buffer) != -1) {
 						fileContent.append(new String(buffer));
 					}
-					
+
 					fis.close();
 
 					return fileContent.toString();
@@ -173,6 +185,12 @@ public final class Cache {
 				fos.write(jsonQuestion.getBytes());
 				fos.close();
 
+				Iterator<String> itTag = myQuizQuestion.getTags().iterator();
+				while (itTag.hasNext()) {
+					String tag = itTag.next();
+					addQuestionToTagFile(tag, hashQuestion);
+				}
+
 				return true;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -181,6 +199,67 @@ public final class Cache {
 			}
 		}
 
+		return false;
+	}
+
+	/**
+	 * Add the hashcode of a question to a file that corresponds to a tag and
+	 * that contains a Set of hashcode (corresponding to all the questions that
+	 * contains that tag)
+	 * 
+	 * @param tag
+	 * @param hashQuestion
+	 * @return
+	 * @author AntoineW
+	 */
+	private boolean addQuestionToTagFile(String tag, String hashQuestion) {
+		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+				+ File.separator + NAME_DIRECTORY_TAGS + File.separator
+				+ tag);
+		Set<String> setHash = null;
+
+		if (!file.exists()) {
+			setHash = new HashSet<String>();
+		} else {
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				InputStream buffer = new BufferedInputStream(fis);
+				ObjectInput input = new ObjectInputStream(buffer);
+				// deserialize the List
+				setHash = (Set<String>) input.readObject();
+				input.close();
+				buffer.close();
+				fis.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (StreamCorruptedException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (!setHash.contains(tag)) {
+			setHash.add(tag);
+			try {
+				FileOutputStream fileOutput = new FileOutputStream(file, false);
+				OutputStream buffer = new BufferedOutputStream(fileOutput);
+				ObjectOutput output = new ObjectOutputStream(buffer);
+			    output.writeObject(setHash);
+				output.close();
+				buffer.close();
+				fileOutput.close();
+				
+				return true;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return false;
 	}
 
