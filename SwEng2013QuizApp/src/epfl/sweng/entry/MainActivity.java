@@ -28,7 +28,6 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  */
 public class MainActivity extends Activity {
 	private ICheckBoxTask myCheckBoxTask = null;
-	private boolean checkBoxInUse = false;
 
 	/**
 	 * Method who is called for modify each buttons when the user isn't

@@ -48,14 +48,12 @@ public class ShowQuestionsActivity extends Activity {
 	 * Method who is called if error occurred
 	 */
 	private void errorDisplayQuestion() {
-		Toast.makeText(getBaseContext(),
-				R.string.error_retrieving_question, Toast.LENGTH_SHORT)
-				.show();
+		Toast.makeText(getBaseContext(), R.string.error_retrieving_question,
+				Toast.LENGTH_SHORT).show();
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 
-		
 	}
-	
+
 	/**
 	 * Method who is going to take a random question on the server.
 	 * 
@@ -63,7 +61,9 @@ public class ShowQuestionsActivity extends Activity {
 	 */
 	private void fetchQuestion() {
 		try {
-			new GetQuestionTask().execute("https://sweng-quiz.appspot.com/quizquestions/random").get();
+			new GetQuestionTask().execute(
+					"https://sweng-quiz.appspot.com/quizquestions/random")
+					.get();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
@@ -77,24 +77,23 @@ public class ShowQuestionsActivity extends Activity {
 		setContentView(R.layout.activity_show_question);
 		Intent showQuestionIntent = getIntent();
 		String type = showQuestionIntent.getStringExtra("Type");
-		
-		if(type.equals("Search")) {
+
+		if (type.equals("Search")) {
 			isSearch = true;
 			String search = showQuestionIntent.getStringExtra("Request");
 			searchQuestion = SearchQuestions.getInstance(search);
 			newSearchQuestion();
-			
-			
-		}else {
+
+		} else {
 			fetchQuestion();
 		}
 	}
 
 	private void newSearchQuestion() {
 		question = searchQuestion.getNextQuizQuestion();
-		if(question == null) {
+		if (question == null) {
 			errorDisplayQuestion();
-		}else {
+		} else {
 			displayQuestion();
 		}
 	}
@@ -113,9 +112,9 @@ public class ShowQuestionsActivity extends Activity {
 		nextQuestion.setEnabled(false);
 		TextView correctness = (TextView) findViewById(R.id.correctness);
 		correctness.setText("");
-		if(isSearch) {
+		if (isSearch) {
 			newSearchQuestion();
-		}else{
+		} else {
 			fetchQuestion();
 		}
 	}
@@ -142,31 +141,30 @@ public class ShowQuestionsActivity extends Activity {
 				TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 
 				possibleAnswers
-				.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> a, View v,
-							int position, long id) {
-						TextView correctness = (TextView) findViewById(R.id.correctness);
-						Button nextQuestion = (Button) findViewById(R.id.next_question_button);
-						if (!nextQuestion.isEnabled()) {
-							// The right solution has not already been
-							// found, thus we can react to user input
-							if (id == question.getSolutionIndex()) {
-								// The right answer has been found
-								correctness
-								.setText(R.string.right_answer);
-								((Button) findViewById(R.id.next_question_button))
-								.setEnabled(true);
-							} else {
-								correctness
-								.setText(R.string.wrong_answer);
-							}
-						}
-						TestCoordinator
-						.check(TTChecks.ANSWER_SELECTED);
+						.setOnItemClickListener(new OnItemClickListener() {
+							@Override
+							public void onItemClick(AdapterView<?> a, View v,
+									int position, long id) {
+								TextView correctness = (TextView) findViewById(R.id.correctness);
+								Button nextQuestion = (Button) findViewById(R.id.next_question_button);
+								if (!nextQuestion.isEnabled()) {
+									// The right solution has not already been
+									// found, thus we can react to user input
+									if (id == question.getSolutionIndex()) {
+										// The right answer has been found
+										correctness
+												.setText(R.string.right_answer);
+										((Button) findViewById(R.id.next_question_button))
+												.setEnabled(true);
+									} else {
+										correctness
+												.setText(R.string.wrong_answer);
+									}
+								}
+								TestCoordinator.check(TTChecks.ANSWER_SELECTED);
 
-					}
-				});
+							}
+						});
 			}
 
 			TextView tags = (TextView) findViewById(R.id.tags);
@@ -212,8 +210,8 @@ public class ShowQuestionsActivity extends Activity {
 									getApplicationContext()));
 			ResponseHandler<String> firstHandler = new BasicResponseHandler();
 			try {
-				return ProxyHttpClient.getInstance().execute(
-						firstRandom, firstHandler);
+				return ProxyHttpClient.getInstance().execute(firstRandom,
+						firstHandler);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

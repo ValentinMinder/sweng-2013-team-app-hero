@@ -3,31 +3,32 @@ package epfl.sweng.caching;
 import java.util.ArrayList;
 import epfl.sweng.quizquestions.QuizQuestion;
 
-/** 
- * CacheQuizQuestion is a cache: It stores 
- * all question already fetched and question to be submitted.
+/**
+ * CacheQuizQuestion is a cache: It stores all question already fetched and
+ * question to be submitted.
  * <p>
- * It will be set persistent and support fail of the app.
- * Ideally
+ * It will be set persistent and support fail of the app. Ideally
+ * 
  * @author valentin
- *
+ * 
  */
-public class Cache {
+public final class Cache {
 	private static Cache instance = null;
 	private ICacheToProxyPrivateTasks myCacheToProxyPrivateTasks = null;
-	
+
 	/**
 	 * All the question cached.
 	 */
 	private ArrayList<QuizQuestion> myCacheQuizQuestion;
-	
+
 	/**
 	 * Question to be sent while in offline mode.
 	 */
 	private ArrayList<QuizQuestion> outBox;
-	
+
 	/**
-	 * Stores failed to sent questions while trying to resume from offline mode to online.
+	 * Stores failed to sent questions while trying to resume from offline mode
+	 * to online.
 	 */
 	private ArrayList<QuizQuestion> failBox;
 
@@ -36,6 +37,7 @@ public class Cache {
 	 * <p>
 	 * There are NO getInstance as ONLY the proxy has an instance of the cache.
 	 * Use getProxyToCachePrivateTasks instead.
+	 * 
 	 * @param innerCacheToProxyPrivateTasks
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
@@ -44,33 +46,38 @@ public class Cache {
 		this.failBox = new ArrayList<QuizQuestion>();
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
 	}
-	
+
 	/**
-	 * Create a unique instance of the cache. Return a ProxyToCachePrivateTasks for the proxy 
-	 * to interact with the cache. Replace the standard getInstance, as only the proxy need to
-	 * be able to speak to cache: the proxy creates a cache with a private task for the cache to
-	 * speak to the proxy, and the cache send back a private task for the proxy to interact with 
-	 * the cache. 
+	 * Create a unique instance of the cache. Return a ProxyToCachePrivateTasks
+	 * for the proxy to interact with the cache. Replace the standard
+	 * getInstance, as only the proxy need to be able to speak to cache: the
+	 * proxy creates a cache with a private task for the cache to speak to the
+	 * proxy, and the cache send back a private task for the proxy to interact
+	 * with the cache.
 	 * <p>
-	 * We've choose this architecture as proxy and cache have different roles, but are very close, 
-	 * and nobody else should disturb in there private methods.
-	 * @param innerCacheToProxyPrivateTasks a private task to interact from the cache to the proxy
+	 * We've choose this architecture as proxy and cache have different roles,
+	 * but are very close, and nobody else should disturb in there private
+	 * methods.
+	 * 
+	 * @param innerCacheToProxyPrivateTasks
+	 *            a private task to interact from the cache to the proxy
 	 * @return a private task to interact from the proxy to the cache
 	 */
 	public static synchronized IProxyToCachePrivateTasks getProxyToCachePrivateTasks(
 			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
-		if (instance == null){
+		if (instance == null) {
 			instance = new Cache(innerCacheToProxyPrivateTasks);
 		}
 		return instance.getProxyToCachePrivateTask();
-		
+
 	}
-	
+
 	/**
 	 * Creates a ProxyToCachePrivateTask.
+	 * 
 	 * @return
 	 */
-	private IProxyToCachePrivateTasks getProxyToCachePrivateTask (){
+	private IProxyToCachePrivateTasks getProxyToCachePrivateTask() {
 		return new InnerProxyToCachePrivateTask();
 	}
 
@@ -112,7 +119,8 @@ public class Cache {
 	/**
 	 * Send the outBox to the real subject.
 	 * <p>
-	 * For each question, it ask the proxy to send the question to the real subject.
+	 * For each question, it ask the proxy to send the question to the real
+	 * subject.
 	 * 
 	 * @return
 	 */
@@ -131,17 +139,19 @@ public class Cache {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Add a question to the failBox.
+	 * 
 	 * @param myQuestion
 	 */
 	private void addToFailBox(QuizQuestion myQuestion) {
 		failBox.add(myQuestion);
 	}
-	
+
 	/**
 	 * Checks if all questions have been sent.
+	 * 
 	 * @return true if not question was in the failBox.
 	 */
 	private boolean getSentStatus() {
@@ -151,15 +161,17 @@ public class Cache {
 		System.out.println("sent status" + status);
 		return status;
 	}
-	
+
 	/**
 	 * Private class to interact from the proxy to the cache.
 	 * <p>
 	 * Created to ensure that nobody else than the proxy calls these methods.
+	 * 
 	 * @author valentin
-	 *
+	 * 
 	 */
-	private class InnerProxyToCachePrivateTask implements IProxyToCachePrivateTasks {
+	private class InnerProxyToCachePrivateTask implements
+			IProxyToCachePrivateTasks {
 		@Override
 		public boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
 			return instance.addQuestionToCache(myQuizQuestion);
@@ -189,6 +201,6 @@ public class Cache {
 		public String getRandomQuestionFromCache() {
 			return instance.getRandomQuestionFromCache();
 		}
-		
+
 	}
 }
