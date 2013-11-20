@@ -3,7 +3,6 @@ package epfl.sweng.patterns;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -21,6 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import epfl.sweng.caching.Cache;
+import epfl.sweng.caching.ICacheToProxyPrivateTasks;
+import epfl.sweng.caching.IProxyToCachePrivateTasks;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -35,10 +37,10 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 public final class ProxyHttpClient implements IHttpClient {
 	private static boolean offline = false;
 	private static ProxyHttpClient instance = null;
+	private IProxyToCachePrivateTasks myProxyToCachePrivateTasks = null;
 
 	private String tequilaWordWithSessionID = null;
 	private IHttpClient realHttpClient = null;
-	private CacheQuizQuestionInner myCacheQuizQuestion = null;
 	private ICheckBoxTask myCheckBoxTask = null;
 	
 	private int aSyncCounter = 0;
@@ -48,7 +50,11 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	private ProxyHttpClient() {
 		this.realHttpClient = RealHttpClient.getInstance();
-		this.myCacheQuizQuestion = new CacheQuizQuestionInner(this);
+		myProxyToCachePrivateTasks = Cache.getProxyToCachePrivateTasks(new InnerCacheToProxyPrivateTasks());
+	}
+	
+	private void setProxyToCachePrivateTasks(IProxyToCachePrivateTasks myProxyToCachePrivateTasksS) {
+		this.myProxyToCachePrivateTasks = myProxyToCachePrivateTasksS;
 	}
 
 	/**
@@ -85,7 +91,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	public void goOnline() {
 		if (offline) {
-			myCacheQuizQuestion.sendOutBox();
+			myProxyToCachePrivateTasks.sendOutBox();
 		}
 	}
 
@@ -209,11 +215,11 @@ public final class ProxyHttpClient implements IHttpClient {
 					// owner/id are needed to construct quizquestion and set as
 					// default values
 					myQuizQuestion = new QuizQuestion(jsonContent);
-					myCacheQuizQuestion.addQuestionToCache(myQuizQuestion);
+					myProxyToCachePrivateTasks.addQuestionToCache(myQuizQuestion);
 					if (previousOfflineStatus || !onlineSuccesfulComm) {
 						// if we are offline we add it to ToSendBox
 						// if we are online and there was an error
-						myCacheQuizQuestion.addQuestionToOutBox(myQuizQuestion);
+						myProxyToCachePrivateTasks.addQuestionToOutBox(myQuizQuestion);
 					}
 					// if proxy accepted the question, reply okay (201) and
 					// return
@@ -287,7 +293,7 @@ public final class ProxyHttpClient implements IHttpClient {
 								(String) t);
 						// for the moment, we dont check if the id of the
 						// question already exist in the list. Hint: SET
-						myCacheQuizQuestion.addQuestionToCache(myQuizQuestion);
+						myProxyToCachePrivateTasks.addQuestionToCache(myQuizQuestion);
 						return t;
 					}
 				}
@@ -302,7 +308,7 @@ public final class ProxyHttpClient implements IHttpClient {
 			}
 		} else {
 			// if offline we fetch the cache
-			return (T) myCacheQuizQuestion.getRandomQuestionFromCache();
+			return (T) myProxyToCachePrivateTasks.getRandomQuestionFromCache();
 		}
 
 		// if server disconnected, we return null;
@@ -317,7 +323,7 @@ public final class ProxyHttpClient implements IHttpClient {
 		System.out.println(aSyncCounter);
 		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
 			System.out.println("asny 0");
-			goOnlineResponse(myCacheQuizQuestion.getSentStatus());
+			goOnlineResponse(myProxyToCachePrivateTasks.getSentStatus());
 		}
 		
 	}
@@ -348,7 +354,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * @param myQuestion
 	 */
 	private void addToFailBox(QuizQuestion myQuestion) {
-		myCacheQuizQuestion.addToFailBox(myQuestion);
+		myProxyToCachePrivateTasks.addToFailBox(myQuestion);
 	}
 	
 	/**
@@ -426,105 +432,34 @@ public final class ProxyHttpClient implements IHttpClient {
 		}
 	}
 	
-	/** 
-	 * CacheQuizQuestion is a cache in the proxy design pattern. It stores 
-	 * all question already fetched and question to be submitted.
+	/**
+	 * Private class to interact from the cache to the proxy.
+	 * <p>
+	 * Created to ensure that nobody else than the cache calls these methods.
 	 * @author valentin
 	 *
 	 */
-	private class CacheQuizQuestionInner {
-		private ProxyHttpClient myProxyHttpClient = null;
-		
-		private ArrayList<QuizQuestion> myCacheQuizQuestion;
-		private ArrayList<QuizQuestion> outBox;
-		private ArrayList<QuizQuestion> failBox;
+	private class InnerCacheToProxyPrivateTasks implements ICacheToProxyPrivateTasks {
 
-		/**
-		 * Private constructor of the singleton.
-		 */
-		public CacheQuizQuestionInner(ProxyHttpClient myProxyHttpClient) {
-			this.myCacheQuizQuestion = new ArrayList<QuizQuestion>();
-			this.outBox = new ArrayList<QuizQuestion>();
-			this.failBox = new ArrayList<QuizQuestion>();
-			this.myProxyHttpClient = myProxyHttpClient;
-		}
-
-		/**
-		 * Fetch a question from the cache.
-		 */
-		protected String getRandomQuestionFromCache() {
-			if (!myCacheQuizQuestion.isEmpty()) {
-				int size = myCacheQuizQuestion.size();
-				int index = (int) (Math.random() * size);
-				return myCacheQuizQuestion.get(index).toPostEntity();
-			}
-			// offline and empty cache
-			return null;
-		}
-
-		/**
-		 * Add a question to the cache.
-		 * 
-		 * @param myQuizQuestion
-		 *            QuizQuestion to add
-		 * @return
-		 */
-		protected boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
-			return myCacheQuizQuestion.add(myQuizQuestion);
-		}
-
-		/**
-		 * Add a question to the outBox.
-		 * 
-		 * @param myQuizQuestion
-		 *            QuizQuestion to add
-		 * @return
-		 */
-		protected boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
-			return outBox.add(myQuizQuestion);
-		}
-
-		/**
-		 * Send the outBox to the real subject.
-		 * <p>
-		 * For each question, it ask the proxy to send the question to the real subject.
-		 * 
-		 * @return
-		 */
-		protected boolean sendOutBox() {
-			if (outBox.size() == 0) { // && failBox.size() == 0) {
-				myProxyHttpClient.goOnlineResponse(true);
-			} else {
-				int k = outBox.size();
-				myProxyHttpClient.setASyncCounter(k);
-				boolean flag = true;
-				for (int i = 0; flag && i < k; ++i) {
-					QuizQuestion question = outBox.get(0);
-					outBox.remove(0);
-					myProxyHttpClient.sendQuestion(question);
-				}
-			}
-			return false;
+		@Override
+		public void setProxyToCachePrivateTasks(
+				IProxyToCachePrivateTasks myProxyToCachePrivateTasksS) {
+			instance.setProxyToCachePrivateTasks(myProxyToCachePrivateTasksS);
 		}
 		
-		/**
-		 * Add a question to the failBox.
-		 * @param myQuestion
-		 */
-		protected void addToFailBox(QuizQuestion myQuestion) {
-			failBox.add(myQuestion);
+		@Override
+		public void goOnlineResponse(boolean bool) {
+			instance.goOnlineResponse(bool);
 		}
 		
-		/**
-		 * Checks if all questions have been sent.
-		 * @return true if not question was in the failBox.
-		 */
-		protected boolean getSentStatus() {
-			boolean status = failBox.size() == 0;
-			outBox.addAll(0, failBox);
-			failBox.clear();
-			System.out.println("sent status" + status);
-			return status;
+		@Override
+		public int sendQuestion(QuizQuestion question) {
+			return instance.sendQuestion(question);
+		}
+
+		@Override
+		public void setASyncCounter(int k) {
+			instance.setASyncCounter(k);
 		}
 	}
 }
