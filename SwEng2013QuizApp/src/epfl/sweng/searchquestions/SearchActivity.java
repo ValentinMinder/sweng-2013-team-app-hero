@@ -21,6 +21,8 @@ public class SearchActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
+		editQuery = (EditText) findViewById(R.id.searchText);
+		editQuery.addTextChangedListener(textListener);
 	}
 
 	public void search(View view) {
@@ -39,9 +41,6 @@ public class SearchActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		editQuery = (EditText) findViewById(R.id.searchText);
-		editQuery.addTextChangedListener(textListener);
-
 		getMenuInflater().inflate(R.menu.search, menu);
 		return true;
 	}
