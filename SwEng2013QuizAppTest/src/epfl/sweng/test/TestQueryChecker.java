@@ -9,7 +9,6 @@ import epfl.sweng.utils.QueryChecker;
 
 public class TestQueryChecker extends TestCase {
 
-    @Test
     public void checkLengthTooLong() {
 	String test = "";
 	for (int i = 1; i < 600; ++i) {
@@ -21,7 +20,6 @@ public class TestQueryChecker extends TestCase {
 	assertTrue("Length condition is not respected", !q.checkQuery());
     }
 
-    @Test
     public void checkSpecialChars() {
 	QueryChecker q = QueryChecker.getInstance();
 	String query = "(a+b)";
@@ -39,7 +37,6 @@ public class TestQueryChecker extends TestCase {
 
     }
 
-    @Test
     public void checkAtLeatOneAlphaNum() {
 	QueryChecker q = QueryChecker.getInstance();
 	String query = "a+b";
@@ -52,7 +49,6 @@ public class TestQueryChecker extends TestCase {
 	assertTrue("No alphanum", !q.checkQuery());
     }
 
-    @Test
     public void checkNested() {
 	QueryChecker q = QueryChecker.getInstance();
 	String query = "(a + d j + b ( f + a))";
@@ -74,7 +70,6 @@ public class TestQueryChecker extends TestCase {
 
     }
 
-    @Test
     public void checkExpressions() {
 	QueryChecker q = QueryChecker.getInstance();
 	String[] queries = { "a+b", "a+b+c", "(a*b)+c", "(b+c)*c+d",
