@@ -43,18 +43,18 @@ public class SearchQuestions {
 	    GetQuestionTask task = new GetQuestionTask();
 	    task.execute(sessionID);
 	    try {
-			task.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
+		task.get();
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+	    } catch (ExecutionException e) {
+		e.printStackTrace();
+	    }
 	}
 	// if we have a remaining array of question.
 	if (!cachedRequestArray.isEmpty()) {
-		QuizQuestion question = cachedRequestArray.get(0);
+	    QuizQuestion question = cachedRequestArray.get(0);
 	    cachedRequestArray.remove(0);
-		return question;
+	    return question;
 	}
 	// if the array was empty and the server didn't get any more question.
 	return null;
@@ -79,26 +79,31 @@ public class SearchQuestions {
 	    try {
 		post.setEntity(new StringEntity(jsonQuery));
 		ResponseHandler<String> response = new BasicResponseHandler();
-		String content = ProxyHttpClient.getInstance().execute(post, response);
-		
-		    if (content == null) {
-			return null;
+		String content = ProxyHttpClient.getInstance().execute(post,
+			response);
+
+		if (content == null) {
+		    return null;
+		}
+
+		try {
+		    JSONObject array = new JSONObject(content);
+
+		    ArrayList<String> arrayString = JSONUtils
+			    .convertJSONArrayToArrayListString(array
+				    .getJSONArray("questions"));
+		    String next = array.getString("next");
+		    if (next != null) {
+			nextID = next;
 		    }
 
-		    try {
-			JSONObject array = new JSONObject(content);
-
-			ArrayList<String> arrayString = JSONUtils
-				.convertJSONArrayToArrayListString(array
-					.getJSONArray("questions"));
-
-			for (String s : arrayString) {
-			    cachedRequestArray.add(new QuizQuestion(s));
-			}
-		    } catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    for (String s : arrayString) {
+			cachedRequestArray.add(new QuizQuestion(s));
 		    }
+		} catch (JSONException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
 
 	    } catch (UnsupportedEncodingException e) {
 		// TODO Auto-generated catch block
