@@ -214,8 +214,69 @@ public final class Cache {
 	 */
 	private boolean addQuestionToTagFile(String tag, String hashQuestion) {
 		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
-				+ File.separator + NAME_DIRECTORY_TAGS + File.separator
-				+ tag);
+				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
+		Set<String> setHash = getSetTagWithFile(file);
+		if (setHash == null) {
+			setHash = new HashSet<String>();
+		}
+
+		if (!setHash.contains(tag)) {
+			setHash.add(tag);
+			try {
+				FileOutputStream fileOutput = new FileOutputStream(file, false);
+				OutputStream buffer = new BufferedOutputStream(fileOutput);
+				ObjectOutput output = new ObjectOutputStream(buffer);
+				output.writeObject(setHash);
+				output.close();
+				buffer.close();
+				fileOutput.close();
+
+				return true;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Add a question to the outBox.
+	 * 
+	 * @param myQuizQuestion
+	 *            QuizQuestion to add
+	 * @return
+	 */
+	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
+		return outBox.add(myQuizQuestion);
+	}
+
+	/**
+	 * Return the set of hashCode corresponding to questions are in cache and
+	 * corresponding to the tag
+	 * 
+	 * @param tag
+	 * @return
+	 * @author AntoineW
+	 */
+	public Set<String> getSetTag(String tag) {
+		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
+		Set<String> setHash = getSetTagWithFile(file);
+
+		return setHash;
+	}
+
+	/**
+	 * Return a set of string that is in a file
+	 * @param tag
+	 * @param file
+	 * @return
+	 * @author AntoineW
+	 */
+	private Set<String> getSetTagWithFile(File file) {
 		Set<String> setHash = null;
 
 		if (!file.exists()) {
@@ -240,38 +301,8 @@ public final class Cache {
 				e.printStackTrace();
 			}
 		}
-		
-		if (!setHash.contains(tag)) {
-			setHash.add(tag);
-			try {
-				FileOutputStream fileOutput = new FileOutputStream(file, false);
-				OutputStream buffer = new BufferedOutputStream(fileOutput);
-				ObjectOutput output = new ObjectOutputStream(buffer);
-			    output.writeObject(setHash);
-				output.close();
-				buffer.close();
-				fileOutput.close();
-				
-				return true;
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return false;
-	}
 
-	/**
-	 * Add a question to the outBox.
-	 * 
-	 * @param myQuizQuestion
-	 *            QuizQuestion to add
-	 * @return
-	 */
-	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
-		return outBox.add(myQuizQuestion);
+		return setHash;
 	}
 
 	/**
