@@ -40,13 +40,21 @@ public class SearchQuestions {
 
     public QuizQuestion getNextQuizQuestion(String sessionID) {
 	if (cachedRequestArray.isEmpty()) {
-	    // TODO retrieve from server, and fill the array
 	    GetQuestionTask task = new GetQuestionTask();
 	    task.execute(sessionID);
+	    try {
+			task.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
 	}
 	// if we have a remaining array of question.
 	if (!cachedRequestArray.isEmpty()) {
-	    return cachedRequestArray.get(0);
+		QuizQuestion question = cachedRequestArray.get(0);
+	    cachedRequestArray.remove(0);
+		return question;
 	}
 	// if the array was empty and the server didn't get any more question.
 	return null;
