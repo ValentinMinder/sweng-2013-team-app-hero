@@ -2,29 +2,32 @@ package epfl.sweng.searchquestions;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.utils.JSONUtils;
 
 public class SearchQuestions {
     private static SearchQuestions instance = null;
     private String nextID = null;
     private String request = null;
-    private LinkedList<QuizQuestion> cachedRequestArray = null;
+    private ArrayList<QuizQuestion> cachedRequestArray = null;
 
     private SearchQuestions(String requestS) {
-	cachedRequestArray = new LinkedList<QuizQuestion>();
+	cachedRequestArray = new ArrayList<QuizQuestion>();
 	this.request = requestS;
     }
 
@@ -38,12 +41,12 @@ public class SearchQuestions {
     public QuizQuestion getNextQuizQuestion(String sessionID) {
 	if (cachedRequestArray.isEmpty()) {
 	    // TODO retrieve from server, and fill the array
-	    new GetQuestionTask().execute(sessionID);
-
+	    GetQuestionTask task = new GetQuestionTask();
+	    task.execute(sessionID);
 	}
 	// if we have a remaining array of question.
 	if (!cachedRequestArray.isEmpty()) {
-	    return cachedRequestArray.peekFirst();
+	    return cachedRequestArray.get(0);
 	}
 	// if the array was empty and the server didn't get any more question.
 	return null;
@@ -53,22 +56,42 @@ public class SearchQuestions {
 	this.request = requestS;
     }
 
-    private class GetQuestionTask extends AsyncTask<String, Void, HttpResponse> {
+    private class GetQuestionTask extends AsyncTask<String, Void, String> {
 
 	/**
 	 * Execute and retrieve the answer from the website.
 	 */
 	@Override
-	protected HttpResponse doInBackground(String... questionElement) {
+	protected String doInBackground(String... questionElement) {
 	    HttpPost post = new HttpPost(
 		    "https://sweng-quiz.appspot.com/search");
+	    post.setHeader("Content-type", "application/json");
 	    post.setHeader("Authorization", "Tequila " + questionElement[0]);
 	    String jsonQuery = "{\n\"query\": \"" + request + "\"\n}";
 	    try {
 		post.setEntity(new StringEntity(jsonQuery));
-		HttpResponse response = ProxyHttpClient.getInstance().execute(
-			post);
-		return response;
+		ResponseHandler<String> response = new BasicResponseHandler();
+		String content = ProxyHttpClient.getInstance().execute(post, response);
+		
+		    if (content == null) {
+			return null;
+		    }
+
+		    try {
+			JSONObject array = new JSONObject(content);
+
+			ArrayList<String> arrayString = JSONUtils
+				.convertJSONArrayToArrayListString(array
+					.getJSONArray("questions"));
+
+			for (String s : arrayString) {
+			    cachedRequestArray.add(new QuizQuestion(s));
+			}
+		    } catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		    }
+
 	    } catch (UnsupportedEncodingException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -87,27 +110,8 @@ public class SearchQuestions {
 	/**
 	 * Execute and retrieve the answer from the website.
 	 */
-	protected void onPostExecute(HttpResponse httpResponse) {
-	    if (httpResponse == null
-		    || httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
-		return;
-	    }
+	protected void onPostExecute(String content) {
 
-	    String content = httpResponse.getEntity().toString();
-	    System.out.println(content);
-	    try {
-		JSONArray array = new JSONArray(content);
-		JSONArray questionArray = array.getJSONArray(0);
-		
-		for (int i = 0; i < questionArray.length(); ++i) {
-		    cachedRequestArray.add(new QuizQuestion(questionArray.getString(i)));
-		    System.out.println(questionArray.getString(i));
-		}
-		
-	    } catch (JSONException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
 	}
     }
 }
