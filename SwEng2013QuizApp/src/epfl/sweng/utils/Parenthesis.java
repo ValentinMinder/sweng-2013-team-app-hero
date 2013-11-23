@@ -116,6 +116,23 @@ public class Parenthesis {
 	}
 	return queryClone;
     }
+    
+    public static int findCorrespondingClosingParenthesis(String query,
+	    int index) {
+	int count = 0;
+	for (int i = 0; i < query.length(); ++i) {
+	    char c = query.charAt(i);
+	    if (c == '(') {
+		count++;
+	    } else if (c == ')') {
+		count--;
+		if (count == 0) {
+		    return i;
+		}
+	    }
+	}
+	return index;
+    }
 
     private static String parenthesisOperator(char op, String query) {
 	int operatorIndex = 0;
@@ -222,22 +239,6 @@ public class Parenthesis {
 	return index;
     }
 
-    private static int findCorrespondingClosingParenthesis(String query,
-	    int index) {
-	int count = 0;
-	for (int i = 0; i < query.length(); ++i) {
-	    char c = query.charAt(i);
-	    if (c == '(') {
-		count++;
-	    } else if (c == ')') {
-		count--;
-		if (count == 0) {
-		    return i;
-		}
-	    }
-	}
-	return index;
-    }
 
     private static int findBlockLeft(String query) {
 	if (query.charAt(query.length() - 1) == ')') {
