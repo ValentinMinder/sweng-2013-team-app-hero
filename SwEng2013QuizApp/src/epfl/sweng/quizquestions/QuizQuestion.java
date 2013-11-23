@@ -1,5 +1,6 @@
 package epfl.sweng.quizquestions;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ import epfl.sweng.utils.JSONUtils;
  * @author xhanto
  * 
  */
-public class QuizQuestion {
+public class QuizQuestion implements Serializable {
 
 	private static final int TAGS_SIZE = 20;
 	

@@ -1,18 +1,14 @@
 package epfl.sweng.caching;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +30,8 @@ import epfl.sweng.quizquestions.QuizQuestion;
 public final class Cache {
 	private final static String NAME_DIRECTORY_QUESTIONS = "questions";
 	private final static String NAME_DIRECTORY_TAGS = "tags";
+	private final static String NAME_DIRECTORY_UTILS = "utils";
+	private final static String NAME_FILE_OUTBOX = "outbox";
 	private final static int SIZE_BUFFER = 1024;
 
 	private static Context contextApplication = null;
@@ -49,7 +47,7 @@ public final class Cache {
 	/**
 	 * Question to be sent while in offline mode.
 	 */
-	private ArrayList<QuizQuestion> outBox;
+	// private ArrayList<QuizQuestion> outBox;
 
 	/**
 	 * Stores failed to sent questions while trying to resume from offline mode
@@ -67,9 +65,16 @@ public final class Cache {
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
 		// this.myCacheQuizQuestion = new ArrayList<QuizQuestion>();
-		this.outBox = new ArrayList<QuizQuestion>();
+		// this.outBox = new ArrayList<QuizQuestion>();
 		this.failBox = new ArrayList<QuizQuestion>();
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
+		
+		File dirUtils = new File(contextApplication.getFilesDir()
+				+ File.separator + NAME_DIRECTORY_UTILS);
+		if (!dirUtils.exists()) {
+			dirUtils.mkdir();
+		}
+		
 		File dirQuestions = new File(contextApplication.getFilesDir()
 				+ File.separator + NAME_DIRECTORY_QUESTIONS);
 		if (!dirQuestions.exists()) {
@@ -123,8 +128,6 @@ public final class Cache {
 	public String getRandomQuestionFromCache() {
 		File dir = new File(contextApplication.getFilesDir() + File.separator
 				+ NAME_DIRECTORY_QUESTIONS);
-		// File dir = contextApplication.getDir(NAME_DIRECTORY_QUESTIONS,
-		// Context.MODE_PRIVATE);
 
 		String[] children = dir.list();
 		if (children != null) {
@@ -216,21 +219,15 @@ public final class Cache {
 		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
 				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
-		if (setHash == null) {
-			setHash = new HashSet<String>();
-		}
 
 		if (!setHash.contains(tag)) {
 			setHash.add(tag);
 			try {
 				FileOutputStream fileOutput = new FileOutputStream(file, false);
-				OutputStream buffer = new BufferedOutputStream(fileOutput);
-				ObjectOutput output = new ObjectOutputStream(buffer);
+				ObjectOutput output = new ObjectOutputStream(fileOutput);
 				output.writeObject(setHash);
 				output.close();
-				buffer.close();
 				fileOutput.close();
-
 				return true;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -250,8 +247,116 @@ public final class Cache {
 	 * @return
 	 */
 	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
-		return outBox.add(myQuizQuestion);
+		return addQuestionToOutBoxFile(myQuizQuestion);
 	}
+	
+	/**
+	 * Add a question to the outbox
+	 * 
+	 * @param question
+	 * @return
+	 * @author AntoineW
+	 */
+	private boolean addQuestionToOutBoxFile(QuizQuestion question) {
+		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+				+ File.separator + NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
+		
+		ArrayList<QuizQuestion> outbox = getListOutBoxWithFile(file);
+		if (outbox == null) {
+			outbox = new ArrayList<QuizQuestion>();
+		}
+
+		outbox.add(question);
+		try {
+			FileOutputStream fileOutput = new FileOutputStream(file, false);
+			ObjectOutput output = new ObjectOutputStream(fileOutput);
+			output.writeObject(outbox);
+			output.close();
+			fileOutput.close();
+			
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Return the list questions to be sent while in offline mode.
+	 * 
+	 * @return
+	 * @author AntoineW
+	 */
+	public ArrayList<QuizQuestion> getListOutBox() {
+		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+				+ File.separator + NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
+		
+		return getListOutBoxWithFile(file);
+	}
+	
+	/**
+	 * Return the list questions to be sent while in offline mode.
+	 * 
+	 * @return
+	 * @author AntoineW
+	 */
+	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file) {
+		ArrayList<QuizQuestion> outbox = null;
+		
+		if (!file.exists()) {
+			outbox = new ArrayList<QuizQuestion>();
+		} else {
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				ObjectInput input = new ObjectInputStream(fis);
+				outbox = (ArrayList<QuizQuestion>) input.readObject();
+				input.close();
+				fis.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (StreamCorruptedException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return outbox;
+	}
+	
+	/**
+	 * Save the outbox to the file
+	 * @param outbox
+	 * @return
+	 * @author AntoineW
+	 */
+	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) {
+		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+				+ File.separator + NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
+		
+		try {
+			FileOutputStream fileOutput = new FileOutputStream(file, false);
+			ObjectOutput output = new ObjectOutputStream(fileOutput);
+			output.writeObject(outbox);
+			output.close();
+			fileOutput.close();
+			
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+	
+	
 
 	/**
 	 * Return the set of hashCode corresponding to questions are in cache and
@@ -284,12 +389,10 @@ public final class Cache {
 		} else {
 			try {
 				FileInputStream fis = new FileInputStream(file);
-				InputStream buffer = new BufferedInputStream(fis);
-				ObjectInput input = new ObjectInputStream(buffer);
+				ObjectInput input = new ObjectInputStream(fis);
 				// deserialize the List
-				setHash = (Set<String>) input.readObject();
+				setHash = (HashSet<String>) input.readObject();
 				input.close();
-				buffer.close();
 				fis.close();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -314,17 +417,21 @@ public final class Cache {
 	 * @return
 	 */
 	private boolean sendOutBox() {
-		if (outBox.size() == 0) { // && failBox.size() == 0) {
+		ArrayList<QuizQuestion> outbox = getListOutBox();
+		
+		if (outbox.size() == 0) { // && failBox.size() == 0) {
 			myCacheToProxyPrivateTasks.goOnlineResponse(true);
 		} else {
-			int k = outBox.size();
+			int k = outbox.size();
 			myCacheToProxyPrivateTasks.setASyncCounter(k);
 			boolean flag = true;
 			for (int i = 0; flag && i < k; ++i) {
-				QuizQuestion question = outBox.get(0);
-				outBox.remove(0);
+				QuizQuestion question = outbox.get(0);
+				outbox.remove(0);
 				myCacheToProxyPrivateTasks.sendQuestion(question);
 			}
+			
+			saveOutBox(outbox);
 		}
 		return false;
 	}
@@ -345,7 +452,9 @@ public final class Cache {
 	 */
 	private boolean getSentStatus() {
 		boolean status = failBox.size() == 0;
+		ArrayList<QuizQuestion> outBox = getListOutBox();
 		outBox.addAll(0, failBox);
+		saveOutBox(outBox);
 		failBox.clear();
 		System.out.println("sent status" + status);
 		return status;
