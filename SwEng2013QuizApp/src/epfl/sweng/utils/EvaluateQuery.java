@@ -3,14 +3,10 @@ package epfl.sweng.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import sweng.BasicOperation;
-import sweng.Parenthesis;
-import sweng.ResultQuery;
 
 public class EvaluateQuery {
 	/**
