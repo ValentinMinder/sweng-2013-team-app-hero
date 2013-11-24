@@ -1,10 +1,6 @@
 package epfl.sweng.test;
 
-import static org.junit.Assert.assertTrue;
 import junit.framework.TestCase;
-
-import org.junit.Test;
-
 import epfl.sweng.utils.QueryChecker;
 
 public class TestQueryChecker extends TestCase {
