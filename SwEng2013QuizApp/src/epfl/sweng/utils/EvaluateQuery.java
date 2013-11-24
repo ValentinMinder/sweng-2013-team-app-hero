@@ -8,6 +8,10 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import sweng.BasicOperation;
+import sweng.Parenthesis;
+import sweng.ResultQuery;
+
 public class EvaluateQuery {
 	/**
 	 * Class under construction, here some guideline about how it works
@@ -28,7 +32,8 @@ public class EvaluateQuery {
 	 * BasicOperation class is where the operation are done (and, or)
 	 * 
 	 * ResultQuery class store information (to discuss if really necessary to
-	 * store operands, operator ..) and the result associated
+	 * store operands, operator, we might use it to optimize the query we
+	 * already checked ..) and the result associated
 	 * 
 	 * WARNING: I've just done some BASIC test of some queries, I can't tell if
 	 * it really works the way that is should. Some operation are probably not
@@ -40,6 +45,7 @@ public class EvaluateQuery {
 	 * 
 	 */
 	public static void evaluate(String query) {
+		System.out.println("Evaluating " + query);
 		HashMap<Integer, Integer> parenthesisLevel = getLevels(query);
 		ArrayList<ResultQuery> results = new ArrayList<ResultQuery>();
 		int count = 0;
@@ -51,7 +57,8 @@ public class EvaluateQuery {
 					query.substring(beginIndex), beginIndex) + beginIndex;
 			// we now have a basic expression
 			String subQuery = query.substring(beginIndex + 1, endIndex);
-			String pattern = "([\\w@]+)([+*]+)(\\w+)";
+			System.out.println("Sub query : " + subQuery);
+			String pattern = "([\\w@]+)([+*]+)([\\w@]+)";
 			Pattern p = Pattern.compile(pattern);
 			Matcher matcher = p.matcher(subQuery);
 
@@ -73,10 +80,11 @@ public class EvaluateQuery {
 
 			Set<String> op1Set = null;
 			Set<String> op2Set = null;
-			Pattern extractPattern = Pattern.compile("(@)([0-9]+)");
+			Pattern extractPattern = Pattern.compile("(@)(\\d+)");
 			Matcher extracter = extractPattern.matcher(operand1);
 
 			if (extracter.find()) {
+				System.out.println("Matches op1...");
 				op1Set = results.get(Integer.parseInt(extracter.group(2)))
 						.getResult();
 			} else {
@@ -86,25 +94,23 @@ public class EvaluateQuery {
 			extracter = extractPattern.matcher(operand2);
 
 			if (extracter.find()) {
+				System.out.println("Matches op2 ...");
+
 				op2Set = results.get(Integer.parseInt(extracter.group(2)))
 						.getResult();
 			} else {
 				op2Set = simulate(operand2);
 			}
 
+			ResultQuery tempResult = new ResultQuery(operand1, operand2,
+					operator);
 			if (operator.equals("+")) {
-				ResultQuery tempResult = new ResultQuery(operand1, operand2,
-						operator);
 				tempResult.addResult(BasicOperation.or(op1Set, op2Set));
-				results.add(tempResult);
 			} else {
-				ResultQuery tempResult = new ResultQuery(operand1, operand2,
-						operator);
 				tempResult.addResult(BasicOperation.and(op1Set, op2Set));
-				results.add(tempResult);
 			}
+			results.add(tempResult);
 
-			parenthesisLevel.remove(max.getKey());
 			count++;
 			parenthesisLevel = getLevels(query);
 		}
@@ -113,8 +119,7 @@ public class EvaluateQuery {
 
 	public static Set<String> simulate(String s) {
 		HashSet<String> hash = new HashSet<String>();
-		int n = (int) (Math.random() * 10 + 1);
-		for (int i = 0; i < n; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			hash.add(s + "" + i);
 		}
 		return hash;
