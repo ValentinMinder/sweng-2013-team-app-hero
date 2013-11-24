@@ -91,8 +91,8 @@ public class Parenthesis {
 		// }
 		String subAnd = parenthesisOperator('*', queryClone);
 		String subOr = parenthesisOperator('+', subAnd);
-
-		return subOr;
+		//TODO to check, but I think it is necessary for a good evaluation
+		return removeUselessParenthesis(subOr);
 	}
 
 	public static String removeUselessParenthesis(String query) {
