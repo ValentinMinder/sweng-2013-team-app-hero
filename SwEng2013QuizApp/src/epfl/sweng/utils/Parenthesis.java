@@ -1,6 +1,8 @@
 package epfl.sweng.utils;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class Parenthesis {
 	public static String parenthesis(String query) {
@@ -89,9 +91,10 @@ public class Parenthesis {
 		//
 		// operatorIndex = subQuery.indexOf('+', lastOperatorIndex);
 		// }
+		queryClone = removeParenthesisAroundOneElement(queryClone);
 		String subAnd = parenthesisOperator('*', queryClone);
 		String subOr = parenthesisOperator('+', subAnd);
-		//TODO to check, but I think it is necessary for a good evaluation
+		// TODO to check, but I think it is necessary for a good evaluation
 		return removeUselessParenthesis(subOr);
 	}
 
@@ -105,12 +108,24 @@ public class Parenthesis {
 				int closing = findCorrespondingClosingParenthesis(
 						queryClone.substring(i), 0)
 						+ i;
-				map.put(i, closing);
+
 				if (map.get(i - 1) != null && map.get(i - 1) == closing + 1) {
 					queryClone = queryClone.substring(0, i)
 							+ queryClone.substring(i + 1, closing)
 							+ queryClone.substring(closing + 1);
-					i -= 2;
+					map.remove(i);
+
+					// Update all value
+					Set<Integer> keys = map.keySet();
+					Iterator<Integer> it = keys.iterator();
+					while (it.hasNext()) {
+						Integer key = it.next();
+						map.put(key, map.get(key) - 2);
+					}
+
+					i -= 1;
+				} else {
+					map.put(i, closing);
 				}
 			}
 		}
@@ -132,6 +147,58 @@ public class Parenthesis {
 			}
 		}
 		return index;
+	}
+
+	public static String removeParenthesisAroundOneElement(String query) {
+		String queryClone = query;
+
+		int i = 0;
+		while (i < queryClone.length()) {
+			char c = queryClone.charAt(i);
+			while (i < queryClone.length() - 1 && !Character.isLetter(c)
+					&& !Character.isDigit(c)) {
+				i++;
+				c = queryClone.charAt(i);
+			}
+
+			char c2 = c;
+			int j = i;
+			if (i != queryClone.length() && i > 0) {
+				boolean isUsefull = true;
+				while (isUsefull) {
+					while (j < queryClone.length() - 1
+							&& (Character.isLetter(c2) || Character.isDigit(c2))) {
+						j++;
+						c2 = queryClone.charAt(j);
+					}
+
+					if (c2 != ')') {
+						isUsefull = false;
+					}
+
+					while (isUsefull && c2 == ')') {
+						queryClone = queryClone.substring(0, i - 1)
+								+ queryClone.substring(i, j)
+								+ queryClone.substring(j + 1);
+						j -= 1;
+						i -= 1;
+						if (j < queryClone.length()) {
+							c2 = queryClone.charAt(j);
+						} else {
+							c2 = ' ';
+						}
+					}
+
+					if (c2 != ')') {
+						isUsefull = false;
+					}
+				}
+			}
+
+			i = j;
+		}
+
+		return queryClone;
 	}
 
 	private static String parenthesisOperator(char op, String query) {

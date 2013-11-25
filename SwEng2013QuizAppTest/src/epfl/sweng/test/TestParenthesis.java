@@ -6,6 +6,19 @@ import epfl.sweng.utils.Parenthesis;
 
 public class TestParenthesis {
 	@Test
+	public void checkRemoveParenthesisOneElement() {
+		String query = Parenthesis.removeParenthesisAroundOneElement("((a))");
+		assertTrue("Just one", query.equals("a"));
+
+		query = Parenthesis.removeParenthesisAroundOneElement("(a)+(b)");
+		assertTrue("Just two", query.equals("a+b"));
+
+		query = Parenthesis
+				.removeParenthesisAroundOneElement("(a)+(b)+(c)+(d)");
+		assertTrue("Just two", query.equals("a+b+c+d"));
+	}
+
+	@Test
 	public void checkParenthesis() {
 		String query = Parenthesis.parenthesis("");
 		assertTrue("Empty", query.equals(""));
@@ -22,8 +35,17 @@ public class TestParenthesis {
 		query = Parenthesis.parenthesis("((((a+b))*c))");
 		assertTrue("Useless parenthesis", query.equals("((a+b)*c)"));
 
+		query = Parenthesis.parenthesis("(((a)+((b)))*c)");
+		assertTrue("Useless parenthesis 2 ", query.equals("((a+b)*c)"));
+
+		query = Parenthesis.parenthesis("((((((((a+b))))*c))))");
+		assertTrue("Useless parenthesis 2 ", query.equals("((a+b)*c)"));
+
+		query = Parenthesis.parenthesis("((((((((((a))+((b))))))*c))))");
+		assertTrue("Useless parenthesis 2 ", query.equals("((a+b)*c)"));
+
 		query = Parenthesis.parenthesis("(abc+xyz)*hvd");
-		assertTrue("With parenthesis and variables with more than one letter",
+		assertTrue("With parenthesis and variable with more than one letter",
 				query.equals("((abc+xyz)*hvd)"));
 
 		query = Parenthesis.parenthesis("a+(b*c)+(v+d)*c+g+(a*b+c*(g+d))");
