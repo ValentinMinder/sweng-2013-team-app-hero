@@ -53,7 +53,6 @@ public class EvaluateQuery {
 					query.substring(beginIndex), beginIndex) + beginIndex;
 			// we now have a basic expression
 			String subQuery = query.substring(beginIndex + 1, endIndex);
-			System.out.println("Sub query : " + subQuery);
 			String pattern = "([\\w@]+)([+*]+)([\\w@]+)";
 			Pattern p = Pattern.compile(pattern);
 			Matcher matcher = p.matcher(subQuery);
@@ -80,7 +79,6 @@ public class EvaluateQuery {
 			Matcher extracter = extractPattern.matcher(operand1);
 
 			if (extracter.find()) {
-				System.out.println("Matches op1...");
 				op1Set = results.get(Integer.parseInt(extracter.group(2)))
 						.getResult();
 			} else {
@@ -90,8 +88,6 @@ public class EvaluateQuery {
 			extracter = extractPattern.matcher(operand2);
 
 			if (extracter.find()) {
-				System.out.println("Matches op2 ...");
-
 				op2Set = results.get(Integer.parseInt(extracter.group(2)))
 						.getResult();
 			} else {

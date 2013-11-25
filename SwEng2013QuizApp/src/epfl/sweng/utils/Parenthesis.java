@@ -6,95 +6,14 @@ import java.util.Set;
 
 public class Parenthesis {
 	public static String parenthesis(String query) {
-		// String pattern = "([\\w])(\\s+)([\\w])";
-		// String queryClone = query;
-		// queryClone = queryClone.replaceAll(pattern, "$1*$3");
-		// pattern = "([\\w])(\\s+)([(])";
-		// queryClone = queryClone.replaceAll(pattern, "$1*$3");
-		// pattern = "([)])(\\s+)(\\w)";
-		// queryClone = queryClone.replaceAll(pattern, "$1*$3");
-		// pattern = "([)])(\\s+)([(])";
-		// queryClone = queryClone.replaceAll(pattern, "$1*$3");
-		// queryClone = queryClone.replaceAll("\\s+", "");
-		String queryClone = replaceSpace(query);
-		System.out.println("Checking ... " + queryClone);
-		// int operatorIndex = 0;
-		// int lastOperatorIndex = 0;
-		// String subQuery = queryClone;
-		// lastOperatorIndex = operatorIndex;
-		// operatorIndex = subQuery.indexOf('*', lastOperatorIndex);
-		//
-		// while (operatorIndex != -1) {
-		// int blockLeft = findBlockLeft(subQuery.substring(0, operatorIndex));
-		// if (blockLeft != -1) {
-		// int blockRight = findBlockRight(subQuery
-		// .substring(operatorIndex + 1));
-		// if (blockRight != -1) {
-		// int right = blockRight + operatorIndex + 1;
-		// int left = blockLeft;
-		// lastOperatorIndex = right + 1;
-		// if (right + 1 <= subQuery.length() - 1 && left != 0) {
-		// subQuery = subQuery.substring(0, left) + "("
-		// + subQuery.substring(left, right + 1) + ")"
-		// + subQuery.substring(right + 1);
-		// } else if (left == 0 && right + 1 > subQuery.length() - 1) {
-		// subQuery = "(" + subQuery.substring(0, right) + ")"
-		// + subQuery.substring(right);
-		// } else if (left == 0) {
-		// subQuery = "(" + subQuery + ")";
-		// } else {
-		// subQuery = subQuery.substring(0, left) + "("
-		// + subQuery.substring(left) + ")";
-		// }
-		// } else {
-		// lastOperatorIndex++;
-		// }
-		// } else {
-		// lastOperatorIndex++;
-		// }
-		//
-		// operatorIndex = subQuery.indexOf('*', lastOperatorIndex);
-		// }
 
-		// operatorIndex = 0;
-		// lastOperatorIndex = 0;
-		// operatorIndex = subQuery.indexOf('+', lastOperatorIndex);
-		//
-		// while (operatorIndex != -1 && operatorIndex != lastOperatorIndex) {
-		// int blockLeft = findBlockLeft(subQuery.substring(0, operatorIndex));
-		// if (blockLeft != -1) {
-		// int blockRight = findBlockRight(subQuery
-		// .substring(operatorIndex + 1));
-		// if (blockRight != -1) {
-		// int right = blockRight + operatorIndex + 1;
-		// int left = blockLeft;
-		// lastOperatorIndex = right + 1;
-		// if (right + 1 <= subQuery.length() - 1 && left != 0) {
-		// subQuery = subQuery.substring(0, left) + "("
-		// + subQuery.substring(left, right + 1) + ")"
-		// + subQuery.substring(right + 1);
-		// } else if (left == 0 && right + 1 < subQuery.length() - 1) {
-		// subQuery = "(" + subQuery.substring(0, right) + ")"
-		// + subQuery.substring(right);
-		// } else if (left == 0) {
-		// subQuery = "(" + subQuery + ")";
-		// } else {
-		// subQuery = subQuery.substring(0, left) + "("
-		// + subQuery.substring(left) + ")";
-		// }
-		// } else {
-		// lastOperatorIndex++;
-		// }
-		// } else {
-		// lastOperatorIndex++;
-		// }
-		//
-		// operatorIndex = subQuery.indexOf('+', lastOperatorIndex);
-		// }
+		String queryClone = replaceSpace(query);
+		System.out.println("Parenthesing ... " + queryClone);
+
 		queryClone = removeParenthesisAroundOneElement(queryClone);
 		String subAnd = parenthesisOperator('*', queryClone);
 		String subOr = parenthesisOperator('+', subAnd);
-		// TODO to check, but I think it is necessary for a good evaluation
+
 		return removeUselessParenthesis(subOr);
 	}
 
@@ -247,33 +166,6 @@ public class Parenthesis {
 	}
 
 	private static String replaceSpace(String query) {
-
-		// String newQuery = query;
-		// for (int i = 0; i < newQuery.length(); ++i) {
-		// char c = newQuery.charAt(i);
-		// if (c == ' ') {
-		// if (i == 0) {
-		// newQuery = newQuery.substring(1);
-		// } else if (i == query.length() - 1) {
-		// newQuery = newQuery.substring(0, i);
-		// } else {
-		// String subTest = newQuery.substring(i - 1, i + 2);
-		// String pattern = "(\\w)(\\s+)(\\w)";
-		// subTest = subTest.replaceAll(pattern, "$1*$3");
-		// pattern = "(\\w)(\\s+)([(]+)";
-		// subTest = subTest.replaceAll(pattern, "$1*$3");
-		// pattern = "([)]+)(\\s+)(\\w)";
-		// subTest = subTest.replaceAll(pattern, "$1*$3");
-		// pattern = "([)]+)(\\s+)([(]+)";
-		// subTest = subTest.replaceAll(pattern, "$1*$3");
-		// subTest = subTest.replaceAll("\\s+", "");
-		// newQuery = newQuery.substring(0, i - 1) + subTest
-		// + newQuery.substring(i + 2);
-		// int newSize = 3 - subTest.length();
-		// i -= newSize;
-		// }
-		// }
-		// }
 		String queryClone = query;
 		for (int i = 0; i < query.length(); ++i) {
 			String pattern = "([\\w])(\\s+)([\\w])";
