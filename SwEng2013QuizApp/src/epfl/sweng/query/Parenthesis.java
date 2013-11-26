@@ -1,4 +1,4 @@
-package epfl.sweng.utils;
+package epfl.sweng.query;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +28,8 @@ public class Parenthesis {
 						queryClone.substring(i), 0)
 						+ i;
 
-				if (closing != i && map.get(i - 1) != null && map.get(i - 1) == closing + 1) {
+				if (closing != i && map.get(i - 1) != null
+						&& map.get(i - 1) == closing + 1) {
 					queryClone = queryClone.substring(0, i)
 							+ queryClone.substring(i + 1, closing)
 							+ queryClone.substring(closing + 1);
@@ -77,38 +78,49 @@ public class Parenthesis {
 			char secondParenthesis = ' ';
 			char cChar = queryClone.charAt(i);
 			int invariant = i;
-			
+
 			while (i < queryClone.length() - 1 && !Character.isLetter(cChar)
 					&& !Character.isDigit(cChar)) {
 				i++;
 				cChar = queryClone.charAt(i);
 			}
-			
+
 			int firstCharVariable = i;
-			
+
 			if (firstCharVariable > 0) {
 				firstParenthesis = queryClone.charAt(firstCharVariable - 1);
 				if (firstParenthesis == '(') {
 					while (i < queryClone.length() - 1
-							&& (Character.isLetter(cChar) || Character.isDigit(cChar) && cChar != '(' && cChar != '+' && cChar != '*')) {
+							&& (Character.isLetter(cChar) || Character
+									.isDigit(cChar)
+									&& cChar != '('
+									&& cChar != '+' && cChar != '*')) {
 						i++;
 						cChar = queryClone.charAt(i);
 					}
-					
+
 					if (i + 1 < queryClone.length()) {
 						secondParenthesis = cChar;
-						while (firstParenthesis == '(' && secondParenthesis == ')') {
-							/*queryClone = queryClone.substring(0, firstCharVariable - 1)
-									+ queryClone.substring(firstCharVariable, i)
-									+ queryClone.substring(i + 1);*/
-							String s1 = queryClone.substring(0, firstCharVariable - 1);
-							String s2 = queryClone.substring(firstCharVariable, i);
+						while (firstParenthesis == '('
+								&& secondParenthesis == ')') {
+							/*
+							 * queryClone = queryClone.substring(0,
+							 * firstCharVariable - 1) +
+							 * queryClone.substring(firstCharVariable, i) +
+							 * queryClone.substring(i + 1);
+							 */
+							String s1 = queryClone.substring(0,
+									firstCharVariable - 1);
+							String s2 = queryClone.substring(firstCharVariable,
+									i);
 							String s3 = queryClone.substring(i + 1);
 							queryClone = s1 + s2 + s3;
 							firstCharVariable -= 1;
 							i -= 1;
-							if (firstCharVariable > 0 && i + 1 < queryClone.length()) {
-								firstParenthesis = queryClone.charAt(firstCharVariable - 1);
+							if (firstCharVariable > 0
+									&& i + 1 < queryClone.length()) {
+								firstParenthesis = queryClone
+										.charAt(firstCharVariable - 1);
 								secondParenthesis = queryClone.charAt(i);
 							} else {
 								firstParenthesis = ' ';
@@ -117,7 +129,7 @@ public class Parenthesis {
 					}
 				}
 			}
-			
+
 			if (i == invariant) {
 				i++;
 			}

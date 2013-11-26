@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import classe.Parenthesis;
+import epfl.sweng.query.Parenthesis;
 
 public class TestParenthesis {
 

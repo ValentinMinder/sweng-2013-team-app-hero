@@ -1,4 +1,4 @@
-package epfl.sweng.utils;
+package epfl.sweng.query;
 
 import java.util.EmptyStackException;
 import java.util.Stack;

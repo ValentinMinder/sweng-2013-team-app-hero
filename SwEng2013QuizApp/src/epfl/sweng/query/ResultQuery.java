@@ -1,4 +1,4 @@
-package epfl.sweng.utils;
+package epfl.sweng.query;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import epfl.sweng.utils.QueryChecker;
+import epfl.sweng.query.QueryChecker;
 
 public class TestQueryChecker {
 
