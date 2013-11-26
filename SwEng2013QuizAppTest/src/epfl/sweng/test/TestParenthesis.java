@@ -10,10 +10,13 @@ public class TestParenthesis {
 
 	@Test
 	public void checkRemoveParenthesisOneElement() {
-		String query = Parenthesis.removeParenthesisAroundOneElement("((a))");
+		String query = Parenthesis.removeParenthesisAroundOneElement("((((a))))");
 		assertTrue("Just one", query.equals("a"));
 
-		query = Parenthesis.removeParenthesisAroundOneElement("(a)+(b)");
+		query = Parenthesis.removeParenthesisAroundOneElement("(((a))+((b)))");
+		assertTrue("Just two", query.equals("(a+b)"));
+		
+		query = Parenthesis.removeParenthesisAroundOneElement("((a))+((b))");
 		assertTrue("Just two", query.equals("a+b"));
 
 		query = Parenthesis

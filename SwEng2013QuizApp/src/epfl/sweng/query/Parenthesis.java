@@ -92,33 +92,34 @@ public class Parenthesis {
 				if (firstParenthesis == '(') {
 					while (i < queryClone.length() - 1
 							&& (Character.isLetter(cChar) || Character
-									.isDigit(cChar)
-									&& cChar != '('
-									&& cChar != '+' && cChar != '*')) {
+									.isDigit(cChar))) {
 						i++;
 						cChar = queryClone.charAt(i);
 					}
 
-					if (i + 1 < queryClone.length()) {
+					if (i < queryClone.length()) {
 						secondParenthesis = cChar;
 						while (firstParenthesis == '('
 								&& secondParenthesis == ')') {
+
+							queryClone = queryClone.substring(0,
+									firstCharVariable - 1)
+									+ queryClone
+											.substring(firstCharVariable, i)
+									+ queryClone.substring(i + 1);
+
 							/*
-							 * queryClone = queryClone.substring(0,
-							 * firstCharVariable - 1) +
-							 * queryClone.substring(firstCharVariable, i) +
-							 * queryClone.substring(i + 1);
+							 * String s1 = queryClone.substring(0,
+							 * firstCharVariable - 1); String s2 =
+							 * queryClone.substring(firstCharVariable, i);
+							 * String s3 = queryClone.substring(i + 1);
+							 * queryClone = s1 + s2 + s3;
 							 */
-							String s1 = queryClone.substring(0,
-									firstCharVariable - 1);
-							String s2 = queryClone.substring(firstCharVariable,
-									i);
-							String s3 = queryClone.substring(i + 1);
-							queryClone = s1 + s2 + s3;
+
 							firstCharVariable -= 1;
 							i -= 1;
 							if (firstCharVariable > 0
-									&& i + 1 < queryClone.length()) {
+									&& i < queryClone.length()) {
 								firstParenthesis = queryClone
 										.charAt(firstCharVariable - 1);
 								secondParenthesis = queryClone.charAt(i);
