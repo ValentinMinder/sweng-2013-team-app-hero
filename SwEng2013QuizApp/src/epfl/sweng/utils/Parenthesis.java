@@ -28,7 +28,7 @@ public class Parenthesis {
 						queryClone.substring(i), 0)
 						+ i;
 
-				if (map.get(i - 1) != null && map.get(i - 1) == closing + 1) {
+				if (closing != i && map.get(i - 1) != null && map.get(i - 1) == closing + 1) {
 					queryClone = queryClone.substring(0, i)
 							+ queryClone.substring(i + 1, closing)
 							+ queryClone.substring(closing + 1);
@@ -73,48 +73,54 @@ public class Parenthesis {
 
 		int i = 0;
 		while (i < queryClone.length()) {
-			char c = queryClone.charAt(i);
-			while (i < queryClone.length() - 1 && !Character.isLetter(c)
-					&& !Character.isDigit(c)) {
+			char firstParenthesis = ' ';
+			char secondParenthesis = ' ';
+			char cChar = queryClone.charAt(i);
+			int invariant = i;
+			
+			while (i < queryClone.length() - 1 && !Character.isLetter(cChar)
+					&& !Character.isDigit(cChar)) {
 				i++;
-				c = queryClone.charAt(i);
+				cChar = queryClone.charAt(i);
 			}
-
-			char c2 = c;
-			int j = i;
-			if (i != queryClone.length() && i > 0) {
-				boolean isUsefull = true;
-				while (isUsefull) {
-					while (j < queryClone.length() - 1
-							&& (Character.isLetter(c2) || Character.isDigit(c2))) {
-						j++;
-						c2 = queryClone.charAt(j);
+			
+			int firstCharVariable = i;
+			
+			if (firstCharVariable > 0) {
+				firstParenthesis = queryClone.charAt(firstCharVariable - 1);
+				if (firstParenthesis == '(') {
+					while (i < queryClone.length() - 1
+							&& (Character.isLetter(cChar) || Character.isDigit(cChar) && cChar != '(' && cChar != '+' && cChar != '*')) {
+						i++;
+						cChar = queryClone.charAt(i);
 					}
-
-					if (c2 != ')') {
-						isUsefull = false;
-					}
-
-					while (isUsefull && c2 == ')') {
-						queryClone = queryClone.substring(0, i - 1)
-								+ queryClone.substring(i, j)
-								+ queryClone.substring(j + 1);
-						j -= 1;
-						i -= 1;
-						if (j < queryClone.length()) {
-							c2 = queryClone.charAt(j);
-						} else {
-							c2 = ' ';
+					
+					if (i + 1 < queryClone.length()) {
+						secondParenthesis = cChar;
+						while (firstParenthesis == '(' && secondParenthesis == ')') {
+							/*queryClone = queryClone.substring(0, firstCharVariable - 1)
+									+ queryClone.substring(firstCharVariable, i)
+									+ queryClone.substring(i + 1);*/
+							String s1 = queryClone.substring(0, firstCharVariable - 1);
+							String s2 = queryClone.substring(firstCharVariable, i);
+							String s3 = queryClone.substring(i + 1);
+							queryClone = s1 + s2 + s3;
+							firstCharVariable -= 1;
+							i -= 1;
+							if (firstCharVariable > 0 && i + 1 < queryClone.length()) {
+								firstParenthesis = queryClone.charAt(firstCharVariable - 1);
+								secondParenthesis = queryClone.charAt(i);
+							} else {
+								firstParenthesis = ' ';
+							}
 						}
-					}
-
-					if (c2 != ')') {
-						isUsefull = false;
 					}
 				}
 			}
-
-			i = j;
+			
+			if (i == invariant) {
+				i++;
+			}
 		}
 
 		return queryClone;
