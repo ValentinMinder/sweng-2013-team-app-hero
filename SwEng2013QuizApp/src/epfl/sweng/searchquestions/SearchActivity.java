@@ -23,6 +23,7 @@ public class SearchActivity extends Activity {
 		setContentView(R.layout.activity_search);
 		editQuery = (EditText) findViewById(R.id.searchText);
 		editQuery.addTextChangedListener(textListener);
+		TestCoordinator.check(TTChecks.SEARCH_ACTIVITY_SHOWN);
 	}
 
 	public void search(View view) {
