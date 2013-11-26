@@ -17,7 +17,8 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
 
-public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
+public class ShowQuestionsActivityTest extends
+		ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 	private Solo solo;
 	public static final int DODO = 3000;
 	private MockHttpClient httpClient;
@@ -32,19 +33,18 @@ public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<
 		SwengHttpClientFactory.setInstance(httpClient);
 		solo = new Solo(getInstrumentation());
 	}
-	public void testShowQuestion() {
-		httpClient.pushCannedResponse(
-				"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
-				HttpStatus.SC_OK,
-				"{\"question\": \"What is the answer to life, the universe, and everything?\","
-						+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
-						+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-				"application/json");
 
+	public void testShowQuestiomSearch() {
+		httpClient
+				.pushCannedResponse(
+						"GET (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
+						HttpStatus.SC_OK,
+						"{\"query\": \"(banana + garlic) fruit\","
+								+ "\"from\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"}",
+						"application/json");
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		solo.sleep(DODO);	
+		solo.sleep(DODO);
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
-		//Button nextQuesiton = (Button) solo.getButton("Next question");
 		int i = 0;
 		TextView correctness;
 		do {
@@ -52,7 +52,41 @@ public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<
 			solo.clickOnText(answer);
 			correctness = (TextView) solo.getView(R.id.correctness);
 			i++;
-		} while(correctness.toString().equals(R.string.right_answer));
+		} while (correctness.toString().equals(R.string.right_answer));
+		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
+
+		Button bouton = (Button) solo.getView(R.id.next_question_button);
+		solo.clickOnView(bouton);
+		solo.sleep(DODO);
+		answers = (ListView) solo.getView(R.id.multiple_choices);
+		String answer = (String) answers.getItemAtPosition(1);
+		solo.clickOnText(answer);
+
+		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
+	}
+
+	public void testShowQuestion() {
+		httpClient
+				.pushCannedResponse(
+						"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+						HttpStatus.SC_OK,
+						"{\"question\": \"What is the answer to life, the universe, and everything?\","
+								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
+								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+						"application/json");
+
+		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		solo.sleep(DODO);
+		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
+		// Button nextQuesiton = (Button) solo.getButton("Next question");
+		int i = 0;
+		TextView correctness;
+		do {
+			String answer = (String) answers.getItemAtPosition(i);
+			solo.clickOnText(answer);
+			correctness = (TextView) solo.getView(R.id.correctness);
+			i++;
+		} while (correctness.toString().equals(R.string.right_answer));
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 
 		Button bouton = (Button) solo.getView(R.id.next_question_button);
@@ -66,18 +100,20 @@ public class ShowQuestionsActivityTest extends ActivityInstrumentationTestCase2<
 
 	}
 
-	/*public void testShowQuestion() {
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-
-		solo.sleep(3000);	
-		assertTrue("Question is displayed", 
-		solo.searchText("What is the answer to Life, the universe and everything?"));
-		assertTrue("Correct answer is displayed", solo.searchText("Forty-two"));
-		assertTrue("Incorrect answer is displayed", solo.searchText("Twenty-seven"));
-
-		Button nextQuestionButton = solo.getButton("Next question");
-		assertFalse("Next question button is disabled", nextQuestionButton.isEnabled());
-	}
+	/*
+	 * public void testShowQuestion() {
+	 * getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+	 * 
+	 * solo.sleep(3000); assertTrue("Question is displayed",
+	 * solo.searchText("What is the answer to Life, the universe and everything?"
+	 * )); assertTrue("Correct answer is displayed",
+	 * solo.searchText("Forty-two"));
+	 * assertTrue("Incorrect answer is displayed",
+	 * solo.searchText("Twenty-seven"));
+	 * 
+	 * Button nextQuestionButton = solo.getButton("Next question");
+	 * assertFalse("Next question button is disabled",
+	 * nextQuestionButton.isEnabled()); }
 	 */
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
