@@ -18,7 +18,7 @@ import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.utils.JSONUtils;
 
-public class SearchQuestions {
+public final class SearchQuestions {
 	private static SearchQuestions instance = null;
 	private String nextID = null;
 	private String request = null;
@@ -37,6 +37,13 @@ public class SearchQuestions {
 	}
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
+		// TODO traiter le cas next maybe ?
+		// stocker les questions dans le cache même si elles ne sont pas
+		// affichées non ?
+		// "You must store questions even if they have not yet been displayed to
+		// the user
+		// (e.g., the app received a batch of questions but the user has not yet
+		// iterated through all of them)."
 		if (cachedRequestArray.isEmpty()) {
 			GetQuestionTask task = new GetQuestionTask();
 			task.execute(sessionID);

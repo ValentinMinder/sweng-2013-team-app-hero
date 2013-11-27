@@ -65,23 +65,23 @@ public final class Cache {
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
-		
+
 		initCache();
 	}
-	
+
 	private Cache() {
 		initCache();
 	}
-	
+
 	private void initCache() {
 		this.failBox = new ArrayList<QuizQuestion>();
-		
+
 		File dirUtils = new File(contextApplication.getFilesDir()
 				+ File.separator + NAME_DIRECTORY_UTILS);
 		if (!dirUtils.exists()) {
 			dirUtils.mkdir();
 		}
-		
+
 		File dirQuestions = new File(contextApplication.getFilesDir()
 				+ File.separator + NAME_DIRECTORY_QUESTIONS);
 		if (!dirQuestions.exists()) {
@@ -119,12 +119,12 @@ public final class Cache {
 		return instance.getProxyToCachePrivateTask();
 
 	}
-	
+
 	public static Cache getInstance() {
 		if (instance == null) {
 			instance = new Cache();
 		}
-		
+
 		return instance;
 	}
 
@@ -135,6 +135,25 @@ public final class Cache {
 	 */
 	private IProxyToCachePrivateTasks getProxyToCachePrivateTask() {
 		return new InnerProxyToCachePrivateTask();
+	}
+
+	/**
+	 * Return a ArrayList of string corresponding to all the questions (identify
+	 * by the set of hashCode in parameter) in JSON format
+	 * 
+	 * @param hashCodes
+	 * @return
+	 * @author AntoineW
+	 */
+	public ArrayList<String> getArrayOfJSONQuestions(Set<String> hashCodes) {
+		ArrayList<String> result = new ArrayList<String>();
+		Iterator<String> itHashCode = hashCodes.iterator();
+		while (itHashCode.hasNext()) {
+			String hashCode = itHashCode.next();
+			result.add(getJSONQuestion(hashCode));
+		}
+
+		return result;
 	}
 
 	/**
@@ -151,28 +170,7 @@ public final class Cache {
 				int index = (int) (Math.random() * size);
 				String hashQuestion = children[index];
 
-				try {
-					FileInputStream fis = new FileInputStream(
-							contextApplication.getFilesDir() + File.separator
-									+ NAME_DIRECTORY_QUESTIONS + File.separator
-									+ hashQuestion);
-
-					StringBuffer fileContent = new StringBuffer("");
-
-					byte[] buffer = new byte[SIZE_BUFFER];
-
-					while (fis.read(buffer) != -1) {
-						fileContent.append(new String(buffer));
-					}
-
-					fis.close();
-
-					return fileContent.toString();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				return getJSONQuestion(hashQuestion);
 			}
 		}
 
@@ -264,7 +262,7 @@ public final class Cache {
 	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
 		return addQuestionToOutBoxFile(myQuizQuestion);
 	}
-	
+
 	/**
 	 * Add a question to the outbox
 	 * 
@@ -274,8 +272,9 @@ public final class Cache {
 	 */
 	private boolean addQuestionToOutBoxFile(QuizQuestion question) {
 		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
-				+ File.separator + NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
-		
+				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
+				+ NAME_FILE_OUTBOX);
+
 		ArrayList<QuizQuestion> outbox = getListOutBoxWithFile(file);
 		if (outbox == null) {
 			outbox = new ArrayList<QuizQuestion>();
@@ -288,7 +287,7 @@ public final class Cache {
 			output.writeObject(outbox);
 			output.close();
 			fileOutput.close();
-			
+
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -298,7 +297,7 @@ public final class Cache {
 
 		return false;
 	}
-	
+
 	/**
 	 * Return the list questions to be sent while in offline mode.
 	 * 
@@ -307,11 +306,12 @@ public final class Cache {
 	 */
 	public ArrayList<QuizQuestion> getListOutBox() {
 		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
-				+ File.separator + NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
-		
+				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
+				+ NAME_FILE_OUTBOX);
+
 		return getListOutBoxWithFile(file);
 	}
-	
+
 	/**
 	 * Return the list questions to be sent while in offline mode.
 	 * 
@@ -320,7 +320,7 @@ public final class Cache {
 	 */
 	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file) {
 		ArrayList<QuizQuestion> outbox = null;
-		
+
 		if (!file.exists()) {
 			outbox = new ArrayList<QuizQuestion>();
 		} else {
@@ -343,24 +343,54 @@ public final class Cache {
 
 		return outbox;
 	}
-	
+
+	private String getJSONQuestion(String hashCode) {
+		String result = null;
+		try {
+			FileInputStream fis = new FileInputStream(
+					contextApplication.getFilesDir() + File.separator
+							+ NAME_DIRECTORY_QUESTIONS + File.separator
+							+ hashCode);
+
+			StringBuffer fileContent = new StringBuffer("");
+
+			byte[] buffer = new byte[SIZE_BUFFER];
+
+			while (fis.read(buffer) != -1) {
+				fileContent.append(new String(buffer));
+			}
+
+			fis.close();
+
+			result = fileContent.toString();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 	/**
 	 * Save the outbox to the file
+	 * 
 	 * @param outbox
 	 * @return
 	 * @author AntoineW
 	 */
 	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) {
 		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
-				+ File.separator + NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
-		
+				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
+				+ NAME_FILE_OUTBOX);
+
 		try {
 			FileOutputStream fileOutput = new FileOutputStream(file, false);
 			ObjectOutput output = new ObjectOutputStream(fileOutput);
 			output.writeObject(outbox);
 			output.close();
 			fileOutput.close();
-			
+
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -370,8 +400,6 @@ public final class Cache {
 
 		return false;
 	}
-	
-	
 
 	/**
 	 * Return the set of hashCode corresponding to questions are in cache and
@@ -391,6 +419,7 @@ public final class Cache {
 
 	/**
 	 * Return a set of string that is in a file
+	 * 
 	 * @param tag
 	 * @param file
 	 * @return
@@ -433,7 +462,7 @@ public final class Cache {
 	 */
 	private boolean sendOutBox() {
 		ArrayList<QuizQuestion> outbox = getListOutBox();
-		
+
 		if (outbox.size() == 0) { // && failBox.size() == 0) {
 			myCacheToProxyPrivateTasks.goOnlineResponse(true);
 		} else {
@@ -445,7 +474,7 @@ public final class Cache {
 				outbox.remove(0);
 				myCacheToProxyPrivateTasks.sendQuestion(question);
 			}
-			
+
 			saveOutBox(outbox);
 		}
 		return false;

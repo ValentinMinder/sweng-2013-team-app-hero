@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
+
 import epfl.sweng.caching.Cache;
 
 public class EvaluateQuery {
@@ -42,7 +44,7 @@ public class EvaluateQuery {
 	 * 
 	 * 
 	 */
-	public static void evaluate(String query) {
+	public static ArrayList<String> evaluate(String query) {
 		System.out.println("Evaluating " + query);
 		HashMap<Integer, Integer> parenthesisLevel = getLevels(query);
 		ArrayList<ResultQuery> results = new ArrayList<ResultQuery>();
@@ -110,7 +112,8 @@ public class EvaluateQuery {
 			count++;
 			parenthesisLevel = getLevels(query);
 		}
-		results.get(count - 1).print();
+		//results.get(count - 1).print();
+		return Cache.getInstance().getArrayOfJSONQuestions(results.get(count - 1).getResult());
 	}
 
 	public static Set<String> simulate(String s) {
