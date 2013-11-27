@@ -35,10 +35,10 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 		
 		solo.enterText((EditText) solo.getView(R.id.searchText), querry);
 		//getActivityAndWaitFor(TTChecks.QUERY_EDITED);
-		solo.sleep(DODO);
+		
 		
 		solo.clickOnButton("Search");
-		
+		solo.sleep(DODO);
 		
 	}
 	
