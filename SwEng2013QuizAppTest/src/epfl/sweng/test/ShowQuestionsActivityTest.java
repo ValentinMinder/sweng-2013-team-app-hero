@@ -34,7 +34,7 @@ public class ShowQuestionsActivityTest extends
 		solo = new Solo(getInstrumentation());
 	}
 
-	public void testShowQuestiomSearch() {
+	public void testShowQuestionSearch() {
 		httpClient
 				.pushCannedResponse(
 						"GET (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
@@ -74,7 +74,7 @@ public class ShowQuestionsActivityTest extends
 								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
 								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
 						"application/json");
-
+		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo.sleep(DODO);
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);

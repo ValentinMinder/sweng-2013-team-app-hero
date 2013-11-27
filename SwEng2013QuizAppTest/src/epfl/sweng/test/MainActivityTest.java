@@ -15,6 +15,7 @@ import epfl.sweng.testing.TestingTransaction;
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 	private Solo solo;
 	private String token = "917c2be62cb949b6b47022123b4d0f8e";
+	public static final int DODO = 3000;
 
 
 	public MainActivityTest() {
@@ -38,9 +39,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	}*/
 	public void testMain3() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+		solo.sleep(DODO);
 		Button butlog = (Button) solo.getView(R.id.button_log);
 		solo.clickOnView(butlog);
-		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
+		getActivityAndWaitFor(TTChecks.LOGGED_OUT);
+		//getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
 	
 	public void testSuccessAuthentification() {
