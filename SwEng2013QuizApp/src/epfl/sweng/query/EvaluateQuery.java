@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import epfl.sweng.caching.Cache;
+
 public class EvaluateQuery {
 	/**
 	 * Class under construction, here some guideline about how it works
@@ -82,7 +84,7 @@ public class EvaluateQuery {
 				op1Set = results.get(Integer.parseInt(extracter.group(2)))
 						.getResult();
 			} else {
-				op1Set = simulate(operand1);
+				op1Set = Cache.getInstance().getSetTag(operand1);
 			}
 
 			extracter = extractPattern.matcher(operand2);
@@ -91,16 +93,18 @@ public class EvaluateQuery {
 				op2Set = results.get(Integer.parseInt(extracter.group(2)))
 						.getResult();
 			} else {
-				op2Set = simulate(operand2);
+				op2Set = Cache.getInstance().getSetTag(operand2);
 			}
 
 			ResultQuery tempResult = new ResultQuery(operand1, operand2,
 					operator);
+			Set<String> setResult = new HashSet<String>(op1Set);
 			if (operator.equals("+")) {
-				tempResult.addResult(BasicOperation.or(op1Set, op2Set));
+				setResult.addAll(op2Set);
 			} else {
-				tempResult.addResult(BasicOperation.and(op1Set, op2Set));
+				setResult.retainAll(op2Set);
 			}
+			tempResult.addResult(setResult);
 			results.add(tempResult);
 
 			count++;

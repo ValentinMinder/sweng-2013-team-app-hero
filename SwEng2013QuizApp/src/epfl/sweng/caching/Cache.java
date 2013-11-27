@@ -64,10 +64,17 @@ public final class Cache {
 	 * @param innerCacheToProxyPrivateTasks
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
-		// this.myCacheQuizQuestion = new ArrayList<QuizQuestion>();
-		// this.outBox = new ArrayList<QuizQuestion>();
-		this.failBox = new ArrayList<QuizQuestion>();
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
+		
+		initCache();
+	}
+	
+	private Cache() {
+		initCache();
+	}
+	
+	private void initCache() {
+		this.failBox = new ArrayList<QuizQuestion>();
 		
 		File dirUtils = new File(contextApplication.getFilesDir()
 				+ File.separator + NAME_DIRECTORY_UTILS);
@@ -111,6 +118,14 @@ public final class Cache {
 		}
 		return instance.getProxyToCachePrivateTask();
 
+	}
+	
+	public static Cache getInstance() {
+		if (instance == null) {
+			instance = new Cache();
+		}
+		
+		return instance;
 	}
 
 	/**

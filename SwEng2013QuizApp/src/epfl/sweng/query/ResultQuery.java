@@ -9,17 +9,17 @@ public class ResultQuery {
 	private String operand1;
 	private String operand2;
 	private String operator;
-	private ArrayList<String> results;
+	private Set<String> results;
 
 	public ResultQuery(String operand1, String operand2, String operator) {
 		super();
 		this.operand1 = operand1;
 		this.operand2 = operand2;
 		this.operator = operator;
-		this.results = new ArrayList<String>();
+		this.results = new HashSet<String>();
 	}
 
-	public void addResult(List<String> l) {
+	public void addResult(Set<String> l) {
 		results.addAll(l);
 	}
 
@@ -31,6 +31,6 @@ public class ResultQuery {
 	}
 
 	public Set<String> getResult() {
-		return new HashSet(results);
+		return results;
 	}
 }
