@@ -42,6 +42,7 @@ public class ShowQuestionsActivityTest extends
 						"{\"query\": \"(banana + garlic) fruit\","
 								+ "\"from\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"}",
 						"application/json");
+		//getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo.sleep(DODO);
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
@@ -74,13 +75,14 @@ public class ShowQuestionsActivityTest extends
 								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
 								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
 						"application/json");
-		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+		//getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo.sleep(DODO);
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
 		// Button nextQuesiton = (Button) solo.getButton("Next question");
 		int i = 0;
 		TextView correctness;
+		
 		do {
 			String answer = (String) answers.getItemAtPosition(i);
 			solo.clickOnText(answer);

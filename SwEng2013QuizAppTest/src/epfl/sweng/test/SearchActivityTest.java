@@ -29,8 +29,9 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 	}
 
 	public void testSearch() {
-		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
 		solo.sleep(DODO);
+		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
+		
 		String querry = "fruit";
 		
 		solo.enterText((EditText) solo.getView(R.id.searchText), querry);
