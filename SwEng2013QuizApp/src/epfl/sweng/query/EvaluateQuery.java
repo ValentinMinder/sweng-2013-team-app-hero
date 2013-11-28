@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 
+import android.util.Log;
+
 import epfl.sweng.caching.Cache;
 
 public class EvaluateQuery {
@@ -116,7 +118,9 @@ public class EvaluateQuery {
 		if (count != 0) {
 			return Cache.getInstance().getArrayOfJSONQuestions(results.get(count - 1).getResult());
 		} else {
-			return new ArrayList<String>();
+			Log.e("test", query);
+			return Cache.getInstance().getArrayOfJSONQuestions(Cache.getInstance().getSetTag(query));
+			//return new ArrayList<String>();
 		}
 	}
 

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import android.content.Context;
+import android.util.Log;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -427,10 +428,12 @@ public final class Cache {
 	 */
 	private Set<String> getSetTagWithFile(File file) {
 		Set<String> setHash = null;
-
+		Log.e("test", "start getSetTagWithFile");
 		if (!file.exists()) {
+			Log.e("test", "File not exist");
 			setHash = new HashSet<String>();
 		} else {
+			Log.e("test", "File exist");
 			try {
 				FileInputStream fis = new FileInputStream(file);
 				ObjectInput input = new ObjectInputStream(fis);
@@ -448,7 +451,7 @@ public final class Cache {
 				e.printStackTrace();
 			}
 		}
-
+		Log.e("test", "getSetTagWithFile size set : " + setHash.size());
 		return setHash;
 	}
 

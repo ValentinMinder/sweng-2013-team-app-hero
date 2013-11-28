@@ -31,7 +31,7 @@ public class SearchQuestions {
 	}
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
-		if (cachedRequestArray.isEmpty() && !nextID.equals("null")) {
+		if (cachedRequestArray.isEmpty() && (nextID == null || !nextID.equals("null"))) {
 			GetQuestionTask task = new GetQuestionTask();
 			task.execute(sessionID);
 			try {
