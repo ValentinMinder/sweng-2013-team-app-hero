@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
-
 import android.util.Log;
 
 import epfl.sweng.caching.Cache;
@@ -49,7 +47,7 @@ public class EvaluateQuery {
 	public static ArrayList<String> evaluate(String query) {
 		System.out.println("Evaluating " + query);
 		HashMap<Integer, Integer> parenthesisLevel = getLevels(query);
-		ArrayList<ResultQuery> results = new ArrayList<ResultQuery>();
+		ArrayList<Set<String>> results = new ArrayList<Set<String>>();
 		int count = 0;
 
 		while (parenthesisLevel.size() != 0) {
@@ -85,8 +83,7 @@ public class EvaluateQuery {
 			Matcher extracter = extractPattern.matcher(operand1);
 
 			if (extracter.find()) {
-				op1Set = results.get(Integer.parseInt(extracter.group(2)))
-						.getResult();
+				op1Set = results.get(Integer.parseInt(extracter.group(2)));
 			} else {
 				op1Set = Cache.getInstance().getSetTag(operand1);
 			}
@@ -94,33 +91,32 @@ public class EvaluateQuery {
 			extracter = extractPattern.matcher(operand2);
 
 			if (extracter.find()) {
-				op2Set = results.get(Integer.parseInt(extracter.group(2)))
-						.getResult();
+				op2Set = results.get(Integer.parseInt(extracter.group(2)));
 			} else {
 				op2Set = Cache.getInstance().getSetTag(operand2);
 			}
 
-			ResultQuery tempResult = new ResultQuery(operand1, operand2,
-					operator);
 			Set<String> setResult = new HashSet<String>(op1Set);
 			if (operator.equals("+")) {
 				setResult.addAll(op2Set);
 			} else {
 				setResult.retainAll(op2Set);
 			}
-			tempResult.addResult(setResult);
-			results.add(tempResult);
+
+			results.add(setResult);
 
 			count++;
 			parenthesisLevel = getLevels(query);
 		}
-		//results.get(count - 1).print();
+		// results.get(count - 1).print();
 		if (count != 0) {
-			return Cache.getInstance().getArrayOfJSONQuestions(results.get(count - 1).getResult());
+			return Cache.getInstance().getArrayOfJSONQuestions(
+					results.get(count - 1));
 		} else {
 			Log.e("test", query);
-			return Cache.getInstance().getArrayOfJSONQuestions(Cache.getInstance().getSetTag(query));
-			//return new ArrayList<String>();
+			return Cache.getInstance().getArrayOfJSONQuestions(
+					Cache.getInstance().getSetTag(query));
+			// return new ArrayList<String>();
 		}
 	}
 

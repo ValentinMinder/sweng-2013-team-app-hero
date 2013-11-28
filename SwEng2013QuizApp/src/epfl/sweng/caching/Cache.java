@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import android.content.Context;
-import android.util.Log;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -39,16 +38,6 @@ public final class Cache {
 
 	private static Cache instance = null;
 	private ICacheToProxyPrivateTasks myCacheToProxyPrivateTasks = null;
-
-	/**
-	 * All the question cached.
-	 */
-	// private ArrayList<QuizQuestion> myCacheQuizQuestion;
-
-	/**
-	 * Question to be sent while in offline mode.
-	 */
-	// private ArrayList<QuizQuestion> outBox;
 
 	/**
 	 * Stores failed to sent questions while trying to resume from offline mode
@@ -234,8 +223,8 @@ public final class Cache {
 				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
 
-		if (!setHash.contains(tag)) {
-			setHash.add(tag);
+		if (!setHash.contains(hashQuestion)) {
+			setHash.add(hashQuestion);
 			try {
 				FileOutputStream fileOutput = new FileOutputStream(file, false);
 				ObjectOutput output = new ObjectOutputStream(fileOutput);
@@ -364,6 +353,23 @@ public final class Cache {
 			fis.close();
 
 			result = fileContent.toString();
+
+			// Other solution
+			/*
+			 * Path path = Paths.get(contextApplication.getFilesDir() +
+			 * File.separator + NAME_DIRECTORY_QUESTIONS + File.separator +
+			 * hashCode); InputStream in = Files.newInputStream(file);
+			 * BufferedReader reader = new BufferedReader(new
+			 * InputStreamReader(in))) { String line = null; while ((line =
+			 * reader.readLine()) != null) { System.out.println(line); }
+			 */
+
+			// Other solution
+			/*
+			 * Path path = Paths.get(contextApplication.getFilesDir() +
+			 * File.separator + NAME_DIRECTORY_QUESTIONS + File.separator +
+			 * hashCode); return Files.readAllLines(path, ENCODING);
+			 */
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -428,12 +434,9 @@ public final class Cache {
 	 */
 	private Set<String> getSetTagWithFile(File file) {
 		Set<String> setHash = null;
-		Log.e("test", "start getSetTagWithFile");
 		if (!file.exists()) {
-			Log.e("test", "File not exist");
 			setHash = new HashSet<String>();
 		} else {
-			Log.e("test", "File exist");
 			try {
 				FileInputStream fis = new FileInputStream(file);
 				ObjectInput input = new ObjectInputStream(fis);
@@ -451,7 +454,7 @@ public final class Cache {
 				e.printStackTrace();
 			}
 		}
-		Log.e("test", "getSetTagWithFile size set : " + setHash.size());
+
 		return setHash;
 	}
 
@@ -503,7 +506,7 @@ public final class Cache {
 		outBox.addAll(0, failBox);
 		saveOutBox(outBox);
 		failBox.clear();
-		System.out.println("sent status" + status);
+
 		return status;
 	}
 
