@@ -81,7 +81,7 @@ public class ShowQuestionsActivity extends Activity {
 		if (type != null && type.equals("Search")) {
 			isSearch = true;
 			String search = showQuestionIntent.getStringExtra("Request");
-			searchQuestion = SearchQuestions.getInstance(search);
+			searchQuestion = new SearchQuestions(search);
 			newSearchQuestion();
 
 		} else {

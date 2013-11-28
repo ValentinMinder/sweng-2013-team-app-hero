@@ -14,26 +14,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.utils.JSONUtils;
 
-public final class SearchQuestions {
+public class SearchQuestions {
 	private static SearchQuestions instance = null;
 	private String nextID = null;
 	private String request = null;
 	private ArrayList<QuizQuestion> cachedRequestArray = null;
 
-	private SearchQuestions(String requestS) {
+	public SearchQuestions(String requestS) {
 		cachedRequestArray = new ArrayList<QuizQuestion>();
 		this.request = requestS;
-	}
-
-	public static synchronized SearchQuestions getInstance(String requestS) {
-		if (instance == null) {
-			instance = new SearchQuestions(requestS);
-		}
-		return instance;
 	}
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
@@ -83,7 +77,7 @@ public final class SearchQuestions {
 			String jsonQuery = "{\n\"query\": \"" + request + "\"\n}";
 			if (nextID != null) {
 				jsonQuery = "{\n\"query\": \"" + request + "\"\n" +
-						"\"next\": \"" + nextID + "\"\n}";
+						"\"from\": \"" + nextID + "\"\n}";
 			}
 			try {
 				post.setEntity(new StringEntity(jsonQuery));
@@ -101,14 +95,12 @@ public final class SearchQuestions {
 					ArrayList<String> arrayString = JSONUtils
 							.convertJSONArrayToArrayListString(array
 									.getJSONArray("questions"));
-					try {
-						String next = array.getString("next");
-						if (next != null) {
-							nextID = next;
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					
+					String next = array.getString("next");
+					if (next.equals("null")) {
+						nextID = null;
+					} else {
+						nextID = next;
 					}
 					
 					for (String s : arrayString) {

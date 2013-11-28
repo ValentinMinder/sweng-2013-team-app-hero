@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.ICacheToProxyPrivateTasks;
 import epfl.sweng.caching.IProxyToCachePrivateTasks;
@@ -346,6 +347,7 @@ public final class ProxyHttpClient implements IHttpClient {
 				try {
 					JSONObject json = new JSONObject(jsonString);
 					String query = json.getString("query");
+					Log.e("test", query);
 					String clearQuery = Parenthesis.parenthesis(query);
 					ArrayList<String> listJSONQuestions = EvaluateQuery
 							.evaluate(clearQuery);
