@@ -1,14 +1,14 @@
 package epfl.sweng.test;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import epfl.sweng.query.Parenthesis;
+import junit.framework.TestCase;
 
-public class TestParenthesis {
+public class TestParenthesis extends TestCase {
 
-	@Test
+	protected void setUp() throws Exception {
+		super.setUp();
+	}
+	
 	public void testCheckRemoveParenthesisOneElement() {
 		String query = Parenthesis.removeParenthesisAroundOneElement("((((a))))");
 		assertTrue("Just one", query.equals("a"));
@@ -23,8 +23,7 @@ public class TestParenthesis {
 				.removeParenthesisAroundOneElement("(a)+(b)+(c)+(d)");
 		assertTrue("Just four", query.equals("a+b+c+d"));
 	}
-
-	@Test
+	
 	public void checkParenthesis() {
 		String query = Parenthesis.parenthesis("");
 		assertTrue("Empty", query.equals(""));
@@ -58,4 +57,5 @@ public class TestParenthesis {
 		assertTrue("Big query",
 				query.equals("((((a+(b*c))+((v+d)*c))+g)+((a*b)+(c*(g+d))))"));
 	}
+
 }
