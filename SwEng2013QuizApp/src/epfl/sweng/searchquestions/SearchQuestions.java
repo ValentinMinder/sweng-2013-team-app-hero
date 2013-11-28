@@ -81,6 +81,10 @@ public final class SearchQuestions {
 			post.setHeader("Content-type", "application/json");
 			post.setHeader("Authorization", "Tequila " + questionElement[0]);
 			String jsonQuery = "{\n\"query\": \"" + request + "\"\n}";
+			if (nextID != null) {
+				jsonQuery = "{\n\"query\": \"" + request + "\"\n" +
+						"\"next\": \"" + nextID + "\"\n}";
+			}
 			try {
 				post.setEntity(new StringEntity(jsonQuery));
 				ResponseHandler<String> response = new BasicResponseHandler();
@@ -97,11 +101,16 @@ public final class SearchQuestions {
 					ArrayList<String> arrayString = JSONUtils
 							.convertJSONArrayToArrayListString(array
 									.getJSONArray("questions"));
-					String next = array.getString("next");
-					if (next != null) {
-						nextID = next;
+					try {
+						String next = array.getString("next");
+						if (next != null) {
+							nextID = next;
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-
+					
 					for (String s : arrayString) {
 						cachedRequestArray.add(new QuizQuestion(s));
 					}

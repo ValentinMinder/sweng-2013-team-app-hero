@@ -31,6 +31,7 @@ import epfl.sweng.query.Parenthesis;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
+import epfl.sweng.utils.JSONUtils;
 
 /**
  * ProxyHttpClient is the proxy in the proxy design pattern. It decides whether
@@ -316,6 +317,15 @@ public final class ProxyHttpClient implements IHttpClient {
 								.addQuestionToCache(myQuizQuestion);
 						return t;
 					} else if (jsonQuestion.has("questions")) {
+						// add all the question to the cache
+						ArrayList<String> arrayString = JSONUtils
+								.convertJSONArrayToArrayListString(jsonQuestion
+										.getJSONArray("questions"));
+						
+						for (String s : arrayString) {
+							myProxyToCachePrivateTasks
+							.addQuestionToCache(new QuizQuestion(s));
+						}
 						return t;
 					}
 				}
