@@ -113,7 +113,11 @@ public class EvaluateQuery {
 			parenthesisLevel = getLevels(query);
 		}
 		//results.get(count - 1).print();
-		return Cache.getInstance().getArrayOfJSONQuestions(results.get(count - 1).getResult());
+		if (count != 0) {
+			return Cache.getInstance().getArrayOfJSONQuestions(results.get(count - 1).getResult());
+		} else {
+			return new ArrayList<String>();
+		}
 	}
 
 	public static Set<String> simulate(String s) {

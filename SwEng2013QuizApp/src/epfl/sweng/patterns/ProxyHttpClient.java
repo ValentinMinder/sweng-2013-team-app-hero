@@ -27,6 +27,7 @@ import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.ICacheToProxyPrivateTasks;
 import epfl.sweng.caching.IProxyToCachePrivateTasks;
 import epfl.sweng.query.EvaluateQuery;
+import epfl.sweng.query.Parenthesis;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -330,11 +331,19 @@ public final class ProxyHttpClient implements IHttpClient {
 		} else {
 			// if offline we fetch the cache
 			if (arg0.getURI().toString().contains("search")) {
-				// TODO recover the query
-				ArrayList<String> listJSONQuestions = EvaluateQuery
-						.evaluate("query");
-				return (T) (new JSONArray(Arrays.asList(listJSONQuestions)))
-						.toString();
+				HttpPost post = (HttpPost) arg0;
+				String jsonString = EntityUtils.toString(post.getEntity());
+				try {
+					JSONObject json = new JSONObject(jsonString);
+					String query = json.getString("query");
+					String clearQuery = Parenthesis.parenthesis(query);
+					ArrayList<String> listJSONQuestions = EvaluateQuery
+							.evaluate(clearQuery);
+					return (T) (new JSONArray(Arrays.asList(listJSONQuestions))
+							.toString());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			} else {
 				return (T) myProxyToCachePrivateTasks
 						.getRandomQuestionFromCache();
