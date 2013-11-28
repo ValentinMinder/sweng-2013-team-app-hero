@@ -49,11 +49,12 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo.enterText(ans2, "Reponse2");
 
 		solo.enterText(tags, "a, b, c");
+		solo.enterText(tags, "oui, non");
 
 		solo.clickOnView(correct);
 		submit = (Button) solo.getView(R.id.submit_question);
 		solo.clickOnButton("Submit");
-		solo.clickOnButton("Submit");
+		//solo.clickOnButton("Submit");
 		solo.sleep(DODO);
 //		Button remove = (Button) solo.getView(REM);
 //		solo.clickOnView(remove);
