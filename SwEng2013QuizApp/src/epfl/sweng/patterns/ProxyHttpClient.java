@@ -351,8 +351,17 @@ public final class ProxyHttpClient implements IHttpClient {
 					String clearQuery = Parenthesis.parenthesis(query);
 					ArrayList<String> listJSONQuestions = EvaluateQuery
 							.evaluate(clearQuery);
-					return (T) (new JSONArray(Arrays.asList(listJSONQuestions))
-							.toString());
+//					for (int i = 0; i < listJSONQuestions.size(); i++) {
+//						Log.e("test", "question" + i);
+//						System.out.println(listJSONQuestions.get(i));
+//					}
+					String ret = "{\n \"questions\": ";
+					// TODO: there is an error there...
+					ret += (new JSONArray(Arrays.asList(listJSONQuestions))
+					.toString());
+					ret += ", \n\"next\": \"null\"\n}";
+					System.out.println(ret);
+					return (T) ret;
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

@@ -31,14 +31,7 @@ public class SearchQuestions {
 	}
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
-		// TODO traiter le cas next maybe ?
-		// stocker les questions dans le cache même si elles ne sont pas
-		// affichées non ?
-		// "You must store questions even if they have not yet been displayed to
-		// the user
-		// (e.g., the app received a batch of questions but the user has not yet
-		// iterated through all of them)."
-		if (cachedRequestArray.isEmpty()) {
+		if (cachedRequestArray.isEmpty() && !nextID.equals("null")) {
 			GetQuestionTask task = new GetQuestionTask();
 			task.execute(sessionID);
 			try {
@@ -98,12 +91,13 @@ public class SearchQuestions {
 					
 					String next = array.getString("next");
 					if (next.equals("null")) {
-						nextID = null;
+						nextID = "null";
 					} else {
 						nextID = next;
 					}
 					
 					for (String s : arrayString) {
+						System.out.println(s);
 						cachedRequestArray.add(new QuizQuestion(s));
 					}
 				} catch (JSONException e) {
