@@ -9,7 +9,7 @@ import epfl.sweng.query.Parenthesis;
 public class TestParenthesis {
 
 	@Test
-	public void checkRemoveParenthesisOneElement() {
+	public void testCheckRemoveParenthesisOneElement() {
 		String query = Parenthesis.removeParenthesisAroundOneElement("((((a))))");
 		assertTrue("Just one", query.equals("a"));
 

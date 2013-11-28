@@ -36,6 +36,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		solo.enterText(pwd, "bb");
 		Button authentication = (Button) solo.getView(R.id.log_in_tekila);
 		solo.clickOnView(authentication);
+		solo.sleep(3000);
 	}
 	
 

@@ -41,39 +41,39 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		solo.clickOnButton(R.string.submit_quiz_question);
 
 	}*/
-	public void testMain3() {
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		solo.sleep(DODO);
-		Button butlog = (Button) solo.getView(R.id.button_log);
-		solo.clickOnView(butlog);
-		getActivityAndWaitFor(TTChecks.LOGGED_OUT);
-		
-	}
+//	public void testMain3() {
+//		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+//		solo.sleep(DODO);
+//		Button butlog = (Button) solo.getView(R.id.button_log);
+//		solo.clickOnView(butlog);
+//		getActivityAndWaitFor(TTChecks.LOGGED_OUT);	
+//	}
 	
-	public void testSuccessAuthentification() {
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		Button show = (Button) solo.getView(R.id.button2);
-		solo.clickOnView(show);
-		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
-	}
+//	public void testSuccessAuthentification() {
+//		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+//		Button show = (Button) solo.getView(R.id.button2);
+//		solo.clickOnView(show);
+//		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
+//	}
+	
 	public void test3() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+		solo.sleep(DODO);
 		Button show = (Button) solo.getView(R.id.button1);
-		Activity i = getActivity();
 		solo.clickOnView(show);
-		//getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
 		
-		
-		
+		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);	
+	
 	}
-	public void test4() {
-		
-		
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		Button show = (Button) solo.getView(R.id.button3);
-		solo.clickOnView(show);
-		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-	}
+	
+//	public void test4() {
+//		
+//		
+//		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+//		Button show = (Button) solo.getView(R.id.button3);
+//		solo.clickOnView(show);
+//		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+//	}
 	
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {

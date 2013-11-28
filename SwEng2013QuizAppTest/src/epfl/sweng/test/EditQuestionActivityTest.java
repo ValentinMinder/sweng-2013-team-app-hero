@@ -18,6 +18,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 	public static final int ID2 = 2001;
 	public static final int DODO = 10000;
 	public static final int REM = 1000;
+	
 	public EditQuestionActivityTest() {
 		super(EditQuestionActivity.class);
 	}
@@ -29,7 +30,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 
 	public void testEditQuestion() {
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-		//solo.sleep(DODO);
+		solo.sleep(DODO);
 		Button submit = (Button) solo.getView(R.id.submit_question);
 		assertFalse("Submit is disabled", submit.isEnabled());
 		Button add = (Button) solo.getView(R.id.add);
@@ -54,9 +55,9 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo.clickOnButton("Submit");
 		solo.clickOnButton("Submit");
 		solo.sleep(DODO);
-		Button remove = (Button) solo.getView(REM);
-		solo.clickOnView(remove);
-		getActivityAndWaitFor(TTChecks.QUESTION_EDITED);
+//		Button remove = (Button) solo.getView(REM);
+//		solo.clickOnView(remove);
+//		getActivityAndWaitFor(TTChecks.QUESTION_EDITED);
 
 
 	}
