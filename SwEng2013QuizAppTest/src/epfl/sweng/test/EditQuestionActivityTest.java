@@ -29,6 +29,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 
 	public void testEditQuestion() {
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+		//solo.sleep(DODO);
 		Button submit = (Button) solo.getView(R.id.submit_question);
 		assertFalse("Submit is disabled", submit.isEnabled());
 		Button add = (Button) solo.getView(R.id.add);
