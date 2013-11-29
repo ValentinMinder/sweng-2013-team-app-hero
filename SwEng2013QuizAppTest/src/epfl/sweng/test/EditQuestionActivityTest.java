@@ -78,67 +78,20 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo.enterText(tags, "");
 		solo.sleep(DODO);
 		assertFalse("Submit is disabled", submit.isEnabled());
-			
-	}
-	
-	public void testSubmitQuestion() {
-		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-		solo.sleep(DODO);
-		Button submit = (Button) solo.getView(R.id.submit_question);
-		Button add = (Button) solo.getView(R.id.add);
-		solo.clickOnView(add);
-		Button correct = (Button) solo.getView(0);
-		solo.clickOnView(correct);	
-		String s = "test question, please ignore";
-		EditText question = (EditText) solo.getView(R.id.type_question);
-		solo.enterText(question,s );	
-		EditText tags = (EditText) solo.getView(R.id.tags);
-		EditText ans1 = (EditText) solo.getView(ID1);
-		EditText ans2 = (EditText) solo.getView(ID2);	
-		solo.enterText(ans1, "correct One");
-		solo.enterText(ans2, "wrong One");
-		solo.enterText(tags, "test");
-		solo.sleep(DODO);
 		
+		solo.enterText(tags, "test");
+		assertTrue("Submit is disabled", submit.isEnabled());
+		solo.sleep(DODO);
 		solo.clickOnView(submit);
-		solo.sleep(DODO*10);
 		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+		solo.sleep(DODO*10);
+		Button remove = (Button) solo.getView(REM);
+		solo.clickOnView(remove);
+		getActivityAndWaitFor(TTChecks.QUESTION_EDITED);
 	}
 	
-//	public void testEditQuestion() {
-//		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-//		solo.sleep(DODO);
-//		Button submit = (Button) solo.getView(R.id.submit_question);
-//		assertFalse("Submit is disabled", submit.isEnabled());
-//		Button add = (Button) solo.getView(R.id.add);
-//		solo.clickOnView(add);
-//
-//		Button correct = (Button) solo.getView(0);
-//		EditText question = (EditText) solo.getView(R.id.type_question);
-//		solo.enterText(question, "test question, please ignore");
-//		EditText tags = (EditText) solo.getView(R.id.tags);
-//		EditText ans1 = (EditText) solo.getView(ID1);
-//		EditText ans2 = (EditText) solo.getView(ID2);
-//		assertFalse("Submit is disabled", submit.isEnabled());
-//
-//		solo.enterText(ans1, "Reponse1");
-//
-//		solo.enterText(ans2, "Reponse2");
-//
-//		solo.enterText(tags, "a, b, c");
-//		solo.enterText(tags, "oui, non");
-//
-//		solo.clickOnView(correct);
-//		submit = (Button) solo.getView(R.id.submit_question);
-//		solo.clickOnButton("Submit");
-//		//solo.clickOnButton("Submit");
-//		solo.sleep(DODO);
-////		Button remove = (Button) solo.getView(REM);
-////		solo.clickOnView(remove);
-////		getActivityAndWaitFor(TTChecks.QUESTION_EDITED);
-//
-//
-//	}
+
+	
 
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
