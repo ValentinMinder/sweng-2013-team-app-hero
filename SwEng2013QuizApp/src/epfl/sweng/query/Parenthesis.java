@@ -1,8 +1,6 @@
 package epfl.sweng.query;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 public class Parenthesis {
 	public static String parenthesis(String query) {
@@ -13,40 +11,35 @@ public class Parenthesis {
 		queryClone = removeParenthesisAroundOneElement(queryClone);
 		String subAnd = parenthesisOperator('*', queryClone);
 		String subOr = parenthesisOperator('+', subAnd);
-
-		return removeUselessParenthesis(subOr);
+		return removeUselessParenthesisUpgraded(subOr);
 	}
-
-	public static String removeUselessParenthesis(String query) {
-		// TODO check (delete, edit..)
+	
+	public static String removeUselessParenthesisUpgraded(String query) {
 		String queryClone = query;
 		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 		for (int i = 0; i < queryClone.length(); ++i) {
-			char c = query.charAt(i);
+			char c = queryClone.charAt(i);
 			if (c == '(') {
 				int closing = findCorrespondingClosingParenthesis(
 						queryClone.substring(i), 0)
 						+ i;
-
 				if (closing != i && map.get(i - 1) != null
 						&& map.get(i - 1) == closing + 1) {
-					queryClone = queryClone.substring(0, i)
-							+ queryClone.substring(i + 1, closing)
-							+ queryClone.substring(closing + 1);
-					map.remove(i);
-
-					// Update all value
-					Set<Integer> keys = map.keySet();
-					Iterator<Integer> it = keys.iterator();
-					while (it.hasNext()) {
-						Integer key = it.next();
-						map.put(key, map.get(key) - 2);
+					if (i - 1 == 0) {
+						queryClone = queryClone.substring(1, closing + 1);
+					} else {
+						queryClone = queryClone.substring(0, i-1)
+								+ queryClone.substring(i, closing + 1)
+								+ queryClone.substring(closing + 2);
 					}
-
+					
+					map.remove(i - 1);
 					i -= 1;
+					map.put(i, closing - 1);
 				} else {
 					map.put(i, closing);
 				}
+				
 			}
 		}
 		return queryClone;
@@ -156,21 +149,26 @@ public class Parenthesis {
 					int left = blockLeft;
 					lastOperatorIndex = right + 1;
 					// normal case
+					System.out.println("entry" + subQuery);
 					if (right + 1 < subQuery.length() - 1 && left != 0) {
 						subQuery = subQuery.substring(0, left) + "("
 								+ subQuery.substring(left, right + 1) + ")"
 								+ subQuery.substring(right + 1);
+						System.out.println("case 1" + subQuery);
 						// left at min value but not right
 					} else if (left == 0 && right + 1 < subQuery.length() - 1) {
 						subQuery = "(" + subQuery.substring(0, right + 1) + ")"
 								+ subQuery.substring(right + 1);
+						System.out.println("case 2" + subQuery);
 						// left at min value and right at max value
 					} else if (left == 0) {
 						subQuery = "(" + subQuery + ")";
+						System.out.println("case 3" + subQuery);
 						// left not at min value but right at max value
 					} else {
 						subQuery = subQuery.substring(0, left) + "("
 								+ subQuery.substring(left) + ")";
+						System.out.println("case 4" + subQuery);
 					}
 				} else {
 					lastOperatorIndex++;
@@ -196,7 +194,8 @@ public class Parenthesis {
 			pattern = "([)])(\\s+)([(])";
 			queryClone = queryClone.replaceAll(pattern, "$1*$3");
 		}
-		// remove all space at the end only... avoid multiple space inline like "a b c"
+		// remove all space at the end only... avoid multiple space inline like
+		// "a b c"
 		queryClone = queryClone.replaceAll("\\s+", "");
 		return queryClone;
 	}
