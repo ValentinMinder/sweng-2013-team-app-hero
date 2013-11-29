@@ -44,7 +44,7 @@ public class TestParenthesis extends TestCase {
 		assertTrue("Useless parenthesis 2 ", query.equals("((a+b)*c)"));
 
 		query = Parenthesis.parenthesis("((((((((a+b))))*c))))");
-		assertTrue("Useless parenthesis 3 ", query.equals("((a+b)*c)"));
+		assertTrue("Useless parenthesis 3 " + query, query.equals("((a+b)*c)"));
 
 		query = Parenthesis.parenthesis("((((((((((a))+((b))))))*c))))");
 		assertTrue("Useless parenthesis 4 ", query.equals("((a+b)*c)"));
