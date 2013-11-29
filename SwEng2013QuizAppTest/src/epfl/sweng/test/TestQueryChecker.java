@@ -9,7 +9,7 @@ public class TestQueryChecker extends TestCase {
 		super.setUp();
 	}
 	
-	public void checkLengthTooLong() {
+	public void testCheckLengthTooLong() {
 		String test = "";
 		for (int i = 1; i < 600; ++i) {
 			test += i;
@@ -20,7 +20,7 @@ public class TestQueryChecker extends TestCase {
 		assertTrue("Length condition is not respected", !q.checkQuery());
 	}
 	
-	public void checkSpecialChars() {
+	public void TestCheckSpecialChars() {
 		QueryChecker q = QueryChecker.getInstance();
 		String query = "(a+b)";
 
@@ -37,7 +37,7 @@ public class TestQueryChecker extends TestCase {
 
 	}
 	
-	public void checkAtLeatOneAlphaNum() {
+	public void tesCheckAtLeatOneAlphaNum() {
 		QueryChecker q = QueryChecker.getInstance();
 		String query = "a+b";
 
@@ -49,7 +49,7 @@ public class TestQueryChecker extends TestCase {
 		assertTrue("No alphanum", !q.checkQuery());
 	}
 	
-	public void checkNested() {
+	public void testCheckNested() {
 		QueryChecker q = QueryChecker.getInstance();
 		String query = "(a + d j + b ( f + a))";
 
@@ -70,7 +70,7 @@ public class TestQueryChecker extends TestCase {
 
 	}
 	
-	public void checkExpressions() {
+	public void testCheckExpressions() {
 		QueryChecker q = QueryChecker.getInstance();
 		String[] queries = { "a+b", "a+b+c", "(a*b)+c", "(b+c)*c+d",
 				"((a+b)+c)*d a", "a b", "a+b+(b*d)", "a+b (c + d) 1",

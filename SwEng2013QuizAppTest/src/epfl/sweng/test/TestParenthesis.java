@@ -24,7 +24,7 @@ public class TestParenthesis extends TestCase {
 		assertTrue("Just four", query.equals("a+b+c+d"));
 	}
 	
-	public void checkParenthesis() {
+	public void testCheckParenthesis() {
 		String query = Parenthesis.parenthesis("");
 		assertTrue("Empty", query.equals(""));
 
