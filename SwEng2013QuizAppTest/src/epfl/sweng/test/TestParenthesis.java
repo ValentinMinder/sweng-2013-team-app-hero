@@ -99,7 +99,6 @@ public class TestParenthesis extends TestCase {
 		assertTrue("composed queries 4 var, 2 blocks, +*+, parent first group",
 				query.equals("(((a+b)*c)+d)"));
 		
-		// this one is buggy: give ((a+b)*((c+d))) and should give ((a+b)*(c+d))
 		query = Parenthesis.parenthesis("(a+b) (c+d)");
 		assertTrue("composed queries 4 var, 2 blocks, +*+, parent both groups",
 				query.equals("((a+b)*(c+d))"));
@@ -116,7 +115,6 @@ public class TestParenthesis extends TestCase {
 		assertTrue("composed queries 4 var, 2 blocks, *+*, parent first group",
 				query.equals("((a*b)+(c*d))"));
 		
-		// this one is buggy: give ((a*b)+((c*d))) and should give ((a*b)+(c*d))
 		query = Parenthesis.parenthesis("(a b)+(c d)");
 		assertTrue("composed queries 4 var, 2 blocks, *+*, parent both groups",
 				query.equals("((a*b)+(c*d))"));

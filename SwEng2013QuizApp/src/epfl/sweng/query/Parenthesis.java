@@ -1,10 +1,6 @@
 package epfl.sweng.query;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-
-import android.util.Log;
 
 public class Parenthesis {
 	public static String parenthesis(String query) {
@@ -15,24 +11,10 @@ public class Parenthesis {
 		queryClone = removeParenthesisAroundOneElement(queryClone);
 		String subAnd = parenthesisOperator('*', queryClone);
 		String subOr = parenthesisOperator('+', subAnd);
-		System.out.println("subor" + subOr);
-		subOr = NEW2removeUselessParenthesis(subOr);
-		System.out.println("subor-rem1" + subOr);
-		subOr = NEW2removeUselessParenthesis(subOr);
-		System.out.println("subor-rem2" + subOr);
-		return subOr;
-	}
-
-	public static String NEWremoveUselessParenthesis(String query) {
-		String queryClone = query;
-		for (int i = 0; i < query.length(); ++i) {
-			String pattern = "([(])([(])(\\w+[*+]\\w+)([)])([)])";
-			queryClone = queryClone.replaceAll(pattern, "$2$3$4");
-		}
-		return queryClone;
+		return removeUselessParenthesisUpgraded(subOr);
 	}
 	
-	public static String NEW2removeUselessParenthesis(String query) {
+	public static String removeUselessParenthesisUpgraded(String query) {
 		String queryClone = query;
 		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 		for (int i = 0; i < queryClone.length(); ++i) {
@@ -52,63 +34,12 @@ public class Parenthesis {
 					}
 					
 					map.remove(i - 1);
-					
-//					Set<Integer> keys = map.keySet();
-//					Iterator<Integer> it = keys.iterator();
-//					while (it.hasNext()) {
-//						Integer key = it.next();
-//						if (key <= i) {
-//							map.put(key, map.get(key));
-//						} else if (key > closing) {
-//							map.put(key, map.get(key) - 2);
-//						} else {
-//							map.put(key, map.get(key) - 1);
-//						}
-//						
-//					}
 					i -= 1;
 					map.put(i, closing - 1);
 				} else {
 					map.put(i, closing);
 				}
 				
-			}
-		}
-		return queryClone;
-	}
-	
-	public static String removeUselessParenthesis(String query) {
-		// TODO check (delete, edit..)
-		String queryClone = query;
-		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-		for (int i = 0; i < queryClone.length(); ++i) {
-			char c = query.charAt(i);
-			if (c == '(') {
-				int closing = findCorrespondingClosingParenthesis(
-						queryClone.substring(i), 0)
-						+ i;
-
-				if (closing != i && map.get(i - 1) != null
-						&& map.get(i - 1) == closing + 1) {
-					queryClone = queryClone.substring(0, i)
-							+ queryClone.substring(i + 1, closing)
-							+ queryClone.substring(closing + 1);
-					map.remove(i - 1);
-
-					// Update all value
-					Set<Integer> keys = map.keySet();
-					Iterator<Integer> it = keys.iterator();
-					while (it.hasNext()) {
-						Integer key = it.next();
-						map.put(key, map.get(key) - 2);
-					}
-
-					i -= 2;
-					map.put(i, closing - 2);
-				} else {
-					map.put(i, closing);
-				}
-
 			}
 		}
 		return queryClone;
