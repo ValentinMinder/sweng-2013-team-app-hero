@@ -1,5 +1,7 @@
 package epfl.sweng.patterns;
 
+import epfl.sweng.caching.CacheException;
+
 public class CheckProxyHelper implements ICheckProxyHelper {
 
 	/**
@@ -16,7 +18,11 @@ public class CheckProxyHelper implements ICheckProxyHelper {
 	 */
 	@Override
 	public Class<?> getProxyClass() {
-		return ProxyHttpClient.getInstance().getClass();
+		try {
+			return ProxyHttpClient.getInstance().getClass();
+		} catch (CacheException e) {
+			return null;
+		}
 	}
 
 }

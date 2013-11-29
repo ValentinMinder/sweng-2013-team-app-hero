@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
+import epfl.sweng.caching.CacheException;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.searchquestions.SearchQuestions;
@@ -231,6 +232,8 @@ public class ShowQuestionsActivity extends Activity {
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (CacheException e) {
 				e.printStackTrace();
 			}
 

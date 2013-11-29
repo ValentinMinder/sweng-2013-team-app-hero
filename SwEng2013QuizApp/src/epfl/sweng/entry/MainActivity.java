@@ -12,6 +12,7 @@ import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.caching.Cache;
+import epfl.sweng.caching.CacheException;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.patterns.ICheckBoxTask;
 import epfl.sweng.patterns.ProxyHttpClient;
@@ -30,7 +31,7 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 public class MainActivity extends Activity {
 	private ICheckBoxTask myCheckBoxTask = null;
 	private boolean checkBoxInUse = false;
-	
+
 	/**
 	 * Method who is called for modify each buttons when the user isn't
 	 * authenticated
@@ -41,7 +42,7 @@ public class MainActivity extends Activity {
 
 		Button button2 = (Button) findViewById(R.id.button2);
 		button2.setEnabled(false);
-		
+
 		Button button3 = (Button) findViewById(R.id.button3);
 		button3.setEnabled(false);
 
@@ -56,7 +57,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Cache.setDirectoryFiles(getApplicationContext().getFilesDir().getAbsolutePath());
+		Cache.setDirectoryFiles(getApplicationContext().getFilesDir()
+				.getAbsolutePath());
 		String session = StoreCredential.getInstance().getSessionId(
 				getApplicationContext());
 
@@ -66,12 +68,20 @@ public class MainActivity extends Activity {
 			modifyButtonIfNotAuthenticated();
 		} else {
 			offline.setVisibility(View.VISIBLE);
-			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
+			try {
+				offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
+			} catch (CacheException e) {
+				e.printStackTrace();
+			}
 		}
-		
+
 		myCheckBoxTask = new CheckBoxTask();
-		ProxyHttpClient.getInstance().setCheckBoxTask(myCheckBoxTask);
-		
+		try {
+			ProxyHttpClient.getInstance().setCheckBoxTask(myCheckBoxTask);
+		} catch (CacheException e) {
+			e.printStackTrace();
+		}
+
 		offline.setOnClickListener(new CompoundButton.OnClickListener() {
 			@Override
 			public void onClick(View buttonView) {
@@ -82,25 +92,34 @@ public class MainActivity extends Activity {
 				// we lock the use of the checkbox (NOT USED ANYMORE)
 				if (!isNextCheck) {
 					System.out.println("trying to goonline");
-					ProxyHttpClient.getInstance().goOnline();
+					try {
+						ProxyHttpClient.getInstance().goOnline();
+					} catch (CacheException e) {
+						e.printStackTrace();
+					}
 					System.out.println("going online submitted");
 				} else {
-					ProxyHttpClient.getInstance().goOffLine();
+					try {
+						ProxyHttpClient.getInstance().goOffLine();
+					} catch (CacheException e) {
+						e.printStackTrace();
+					}
 					check.setChecked(isNextCheck);
 				}
-//				if (!checkBoxInUse) {
-//					checkBoxInUse = true;
-//					if (!isNextCheck) {
-//						ProxyHttpClient.getInstance().goOnline();
-//					} else {
-//						ProxyHttpClient.getInstance().goOffLine();
-//						check.setChecked(isNextCheck);
-//						checkBoxInUse = false;
-//					}
-//				} else {
-//					Toast.makeText(getApplicationContext(), "Please wait, " +
-//							"busy with a previous connection request", Toast.LENGTH_SHORT).show();
-//				}
+				// if (!checkBoxInUse) {
+				// checkBoxInUse = true;
+				// if (!isNextCheck) {
+				// ProxyHttpClient.getInstance().goOnline();
+				// } else {
+				// ProxyHttpClient.getInstance().goOffLine();
+				// check.setChecked(isNextCheck);
+				// checkBoxInUse = false;
+				// }
+				// } else {
+				// Toast.makeText(getApplicationContext(), "Please wait, " +
+				// "busy with a previous connection request",
+				// Toast.LENGTH_SHORT).show();
+				// }
 			}
 		});
 	}
@@ -143,10 +162,9 @@ public class MainActivity extends Activity {
 		Intent editQuestionIntent = new Intent(this, EditQuestionActivity.class);
 		startActivity(editQuestionIntent);
 	}
-	
+
 	public void searchQuestion(View view) {
-		Intent searchActivity = new Intent(this,
-				SearchActivity.class);
+		Intent searchActivity = new Intent(this, SearchActivity.class);
 
 		startActivity(searchActivity);
 	}
@@ -157,7 +175,11 @@ public class MainActivity extends Activity {
 		super.onResume();
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
 		// put online? offline? or simply proxy state.
-		offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
+		try {
+			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
+		} catch (CacheException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -165,23 +187,25 @@ public class MainActivity extends Activity {
 		super.onStart();
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
-	
+
 	/**
 	 * Confirm and the checkbox state.
-	 * @param bool the new state.
+	 * 
+	 * @param bool
+	 *            the new state.
 	 */
 	private void confirmCheckBoxState(boolean bool) {
 		CheckBox offline = (CheckBox) findViewById(R.id.offline);
 		offline.setChecked(bool);
 	}
-	
+
 	/**
 	 * Release the use of the checkbox.
 	 */
 	private void release() {
 		checkBoxInUse = false;
 	}
-	
+
 	/**
 	 * 
 	 * Private class to interact with the checkbox.
@@ -189,11 +213,11 @@ public class MainActivity extends Activity {
 	 * @author Valentin
 	 * 
 	 */
-	private class CheckBoxTask implements ICheckBoxTask{
+	private class CheckBoxTask implements ICheckBoxTask {
 
 		@Override
 		public void releaseGoOnlineTask() {
-			release();			
+			release();
 		}
 
 		@Override

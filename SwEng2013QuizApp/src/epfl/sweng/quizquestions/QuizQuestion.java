@@ -20,11 +20,11 @@ import epfl.sweng.utils.JSONUtils;
 public class QuizQuestion implements Serializable {
 
 	private static final int TAGS_SIZE = 20;
-	
+
 	private static final int ANSWER_LENGTH = 500;
-	
+
 	private static final int ANSWERS_SIZE = 10;
-	
+
 	/**
 	 * Question id
 	 */
@@ -66,7 +66,7 @@ public class QuizQuestion implements Serializable {
 			id = -1;
 			owner = "anonymous";
 		}
-		
+
 		question = jsonQuestion.getString("question");
 		answers = JSONUtils.convertJSONArrayToArrayListString(jsonQuestion
 				.getJSONArray("answers"));
@@ -109,7 +109,7 @@ public class QuizQuestion implements Serializable {
 	public void setAnswers(List<String> answersS) {
 		this.answers = answersS;
 	}
-	
+
 	public void setAnswers(List<String> answersS, int solutionIndexS) {
 		this.answers = answersS;
 		this.solutionIndex = solutionIndexS;
@@ -180,7 +180,8 @@ public class QuizQuestion implements Serializable {
 		}
 
 		// INV N°3: 2 <= len(question.answers) <= 10
-		boolean invariant3 = (answers.size() >= 2) && (answers.size() <= ANSWERS_SIZE);
+		boolean invariant3 = (answers.size() >= 2)
+				&& (answers.size() <= ANSWERS_SIZE);
 		if (!invariant3) {
 			errors++;
 		}
@@ -212,8 +213,8 @@ public class QuizQuestion implements Serializable {
 					inv6Kpart3 = true;
 				}
 			}
-			boolean invariant6K = (tagK.length() > 0) && (tagK.length() <= TAGS_SIZE)
-					&& inv6Kpart3;
+			boolean invariant6K = (tagK.length() > 0)
+					&& (tagK.length() <= TAGS_SIZE) && inv6Kpart3;
 			if (!invariant6K) {
 				errors++;
 			}
@@ -236,8 +237,7 @@ public class QuizQuestion implements Serializable {
 		StringBuffer entity = new StringBuffer();
 		entity.append("{\n");
 		entity.append("\"id\": " + id + ",\n");
-		entity.append("\"question\": \"" + question + "\","
-				+ " \"answers\": [");
+		entity.append("\"question\": \"" + question + "\"," + " \"answers\": [");
 		entity.append(" \"" + answers.get(0) + "\"");
 		for (int i = 1; i < answers.size(); i++) {
 			entity.append(", \"" + answers.get(i) + "\"");

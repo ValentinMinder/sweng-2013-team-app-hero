@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 import android.util.Log;
 import epfl.sweng.caching.Cache;
+import epfl.sweng.caching.CacheException;
 import epfl.sweng.caching.ICacheToProxyPrivateTasks;
 import epfl.sweng.caching.IProxyToCachePrivateTasks;
 import epfl.sweng.query.EvaluateQuery;
@@ -54,8 +55,9 @@ public final class ProxyHttpClient implements IHttpClient {
 
 	/**
 	 * Private constructor of the singleton.
+	 * @throws CacheException 
 	 */
-	private ProxyHttpClient() {
+	private ProxyHttpClient() throws CacheException {
 		this.realHttpClient = RealHttpClient.getInstance();
 		myProxyToCachePrivateTasks = Cache
 				.getProxyToCachePrivateTasks(new InnerCacheToProxyPrivateTasks());
@@ -70,8 +72,9 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * Retrieve the instance of the singleton.
 	 * 
 	 * @return the instance of the singleton.
+	 * @throws CacheException 
 	 */
-	public static ProxyHttpClient getInstance() {
+	public static ProxyHttpClient getInstance() throws CacheException {
 		if (instance == null) {
 			instance = new ProxyHttpClient();
 		}
@@ -97,8 +100,9 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * If the cache is empty, goes immediately online. If the cache is not
 	 * empty, tries to sync completely with the server, and if so goes online by
 	 * calling the goOnlineDefinitely method.
+	 * @throws CacheException 
 	 */
-	public void goOnline() {
+	public void goOnline() throws CacheException {
 		if (offline) {
 			myProxyToCachePrivateTasks.sendOutBox();
 		}
@@ -172,10 +176,11 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * <p>
 	 * Retrieve a question and stores into the cache. If online, redirect also
 	 * the request to the real subject.
+	 * @throws CacheException 
 	 */
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
-			ClientProtocolException {
+			ClientProtocolException, CacheException {
 		HttpResponse serverResponse = null;
 		boolean previousOfflineStatus = getOfflineStatus();
 		boolean onlineSuccesfulComm = false;
@@ -293,10 +298,11 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * <p>
 	 * Redirect the call to the real subject or the cache, depending on the
 	 * offline boolean.
+	 * @throws CacheException 
 	 */
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
-			throws IOException, ClientProtocolException {
+			throws IOException, ClientProtocolException, CacheException {
 		// online, we fetch from server
 		if (!offline) {
 			try {
@@ -351,12 +357,8 @@ public final class ProxyHttpClient implements IHttpClient {
 					String clearQuery = Parenthesis.parenthesis(query);
 					ArrayList<String> listJSONQuestions = EvaluateQuery
 							.evaluate(clearQuery);
-					/*for (int i = 0; i < listJSONQuestions.size(); i++) {
-						Log.e("test", "question" + i);
-						Log.e("test", listJSONQuestions.get(i));
-					}*/
+
 					String ret = "{\n \"questions\": ";
-					// TODO: there is an error there...
 					ret += (new JSONArray(listJSONQuestions).toString());
 					ret += ", \n\"next\": \"null\"\n}";
 					System.out.println(ret);
@@ -376,8 +378,9 @@ public final class ProxyHttpClient implements IHttpClient {
 
 	/**
 	 * An async task can notify when it's done.
+	 * @throws CacheException 
 	 */
-	private void aSyncCounter() {
+	private void aSyncCounter() throws CacheException {
 		aSyncCounter--;
 		System.out.println(aSyncCounter);
 		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
@@ -462,12 +465,13 @@ public final class ProxyHttpClient implements IHttpClient {
 				e.printStackTrace();
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
-				return HttpStatus.SC_BAD_GATEWAY;
 			} catch (IOException e) {
 				// en particulier si y a pas de réseau!!
 				e.printStackTrace();
-				return HttpStatus.SC_BAD_GATEWAY;
+			} catch (CacheException e) {
+				e.printStackTrace();
 			}
+			
 			// to-do code de failure
 			return HttpStatus.SC_BAD_GATEWAY;
 		}
@@ -492,7 +496,12 @@ public final class ProxyHttpClient implements IHttpClient {
 				System.out.println("async fail " + myQuestion.toPostEntity());
 
 			}
-			aSyncCounter();
+			
+			try {
+				aSyncCounter();
+			} catch (CacheException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

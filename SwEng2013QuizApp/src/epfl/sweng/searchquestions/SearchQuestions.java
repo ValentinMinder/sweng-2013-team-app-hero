@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import epfl.sweng.caching.CacheException;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.utils.JSONUtils;
@@ -110,6 +111,8 @@ public class SearchQuestions {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (CacheException e1) {
+				e1.printStackTrace();
 			}
 
 			return null;

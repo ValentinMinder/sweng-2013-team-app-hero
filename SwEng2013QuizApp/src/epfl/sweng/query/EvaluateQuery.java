@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import android.util.Log;
 
 import epfl.sweng.caching.Cache;
+import epfl.sweng.caching.CacheException;
 
 public class EvaluateQuery {
 	/**
@@ -39,12 +40,13 @@ public class EvaluateQuery {
 	 * it really works the way that is should. Some operation are probably not
 	 * optimized, the idea was to develop an algorithm to evaluate a query, the
 	 * question of performance has not been thought at this point.
+	 * @throws CacheException 
 	 * 
 	 * 
 	 * 
 	 * 
 	 */
-	public static ArrayList<String> evaluate(String query) {
+	public static ArrayList<String> evaluate(String query) throws CacheException {
 		System.out.println("Evaluating " + query);
 		HashMap<Integer, Integer> parenthesisLevel = getLevels(query);
 		ArrayList<Set<String>> results = new ArrayList<Set<String>>();

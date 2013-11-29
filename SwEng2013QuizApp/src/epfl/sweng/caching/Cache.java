@@ -53,36 +53,50 @@ public final class Cache {
 	 * Use getProxyToCachePrivateTasks instead.
 	 * 
 	 * @param innerCacheToProxyPrivateTasks
+	 * @throws CacheException 
 	 */
-	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
+	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) throws CacheException {
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
 
 		initCache();
 	}
 
-	private Cache() {
+	private Cache() throws CacheException {
 		initCache();
 	}
 
-	private void initCache() {
+	private void initCache() throws CacheException {
 		this.failBox = new ArrayList<QuizQuestion>();
 
+		File dirFiles = new File(directoryFiles);
+		if (!dirFiles.exists()) {
+			if (!dirFiles.mkdir()) {
+				throw new CacheException("Not possible to create directory files : " + directoryFiles);
+			}
+		}
+		
 		File dirUtils = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS);
 		if (!dirUtils.exists()) {
-			dirUtils.mkdir();
+			if (!dirUtils.mkdir()) {
+				throw new CacheException("Not possible to create directory utils : " + dirUtils.getAbsolutePath());
+			}
 		}
 
 		File dirQuestions = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_QUESTIONS);
 		if (!dirQuestions.exists()) {
-			dirQuestions.mkdir();
+			if (!dirQuestions.mkdir()) {
+				throw new CacheException("Not possible to create directory questions : " + dirQuestions.getAbsolutePath());
+			}
 		}
 
 		File dirTags = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS);
 		if (!dirTags.exists()) {
-			dirTags.mkdir();
+			if (!dirTags.mkdir()) {
+				throw new CacheException("Not possible to create directory tags : " + dirTags.getAbsolutePath());
+			}
 		}
 	}
 
@@ -101,9 +115,10 @@ public final class Cache {
 	 * @param innerCacheToProxyPrivateTasks
 	 *            a private task to interact from the cache to the proxy
 	 * @return a private task to interact from the proxy to the cache
+	 * @throws CacheException 
 	 */
 	public static synchronized IProxyToCachePrivateTasks getProxyToCachePrivateTasks(
-			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) {
+			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) throws CacheException {
 		if (instance == null) {
 			instance = new Cache(innerCacheToProxyPrivateTasks);
 		}
@@ -111,7 +126,7 @@ public final class Cache {
 
 	}
 
-	public static Cache getInstance() {
+	public static Cache getInstance() throws CacheException {
 		if (instance == null) {
 			instance = new Cache();
 		}
@@ -135,8 +150,9 @@ public final class Cache {
 	 * @param hashCodes
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	public ArrayList<String> getArrayOfJSONQuestions(Set<String> hashCodes) {
+	public ArrayList<String> getArrayOfJSONQuestions(Set<String> hashCodes) throws CacheException {
 		ArrayList<String> result = new ArrayList<String>();
 		Iterator<String> itHashCode = hashCodes.iterator();
 		while (itHashCode.hasNext()) {
@@ -149,8 +165,9 @@ public final class Cache {
 
 	/**
 	 * Fetch a question from the cache.
+	 * @throws CacheException 
 	 */
-	public String getRandomQuestionFromCache() {
+	public String getRandomQuestionFromCache() throws CacheException {
 		File dir = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_QUESTIONS);
 
@@ -179,8 +196,9 @@ public final class Cache {
 	 * @param myQuizQuestion
 	 *            QuizQuestion to add
 	 * @return
+	 * @throws CacheException 
 	 */
-	public boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
+	public boolean addQuestionToCache(QuizQuestion myQuizQuestion) throws CacheException {
 		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
 		String jsonQuestion = myQuizQuestion.toPostEntity();
 		File file = new File(directoryFiles + File.separator
@@ -199,9 +217,9 @@ public final class Cache {
 
 				return true;
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			}
 		}
 
@@ -217,8 +235,9 @@ public final class Cache {
 	 * @param hashQuestion
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	private boolean addQuestionToTagFile(String tag, String hashQuestion) {
+	private boolean addQuestionToTagFile(String tag, String hashQuestion) throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
@@ -233,9 +252,9 @@ public final class Cache {
 				fileOutput.close();
 				return true;
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			}
 		}
 
@@ -248,8 +267,9 @@ public final class Cache {
 	 * @param myQuizQuestion
 	 *            QuizQuestion to add
 	 * @return
+	 * @throws CacheException 
 	 */
-	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
+	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -268,12 +288,10 @@ public final class Cache {
 
 			return true;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new CacheException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CacheException(e);
 		}
-
-		return false;
 	}
 
 	/**
@@ -281,8 +299,9 @@ public final class Cache {
 	 * 
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	public ArrayList<QuizQuestion> getListOutBox() {
+	public ArrayList<QuizQuestion> getListOutBox() throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -294,8 +313,9 @@ public final class Cache {
 	 * 
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file) {
+	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file) throws CacheException {
 		ArrayList<QuizQuestion> outbox = null;
 
 		if (!file.exists()) {
@@ -308,20 +328,20 @@ public final class Cache {
 				input.close();
 				fis.close();
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (StreamCorruptedException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			}
 		}
 
 		return outbox;
 	}
 
-	public String getJSONQuestion(String hashCode) {
+	public String getJSONQuestion(String hashCode) throws CacheException {
 		String result = "";
 		try {
 			BufferedReader buffReader = new BufferedReader(new FileReader(
@@ -338,9 +358,9 @@ public final class Cache {
 
 			buffReader.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new CacheException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CacheException(e);
 		}
 
 		return result;
@@ -352,8 +372,9 @@ public final class Cache {
 	 * @param outbox
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) {
+	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -366,12 +387,10 @@ public final class Cache {
 
 			return true;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new CacheException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CacheException(e);
 		}
-
-		return false;
 	}
 
 	/**
@@ -381,8 +400,9 @@ public final class Cache {
 	 * @param tag
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	public Set<String> getSetTag(String tag) {
+	public Set<String> getSetTag(String tag) throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
@@ -397,8 +417,9 @@ public final class Cache {
 	 * @param file
 	 * @return
 	 * @author AntoineW
+	 * @throws CacheException 
 	 */
-	private Set<String> getSetTagWithFile(File file) {
+	private Set<String> getSetTagWithFile(File file) throws CacheException {
 		Set<String> setHash = null;
 		if (!file.exists()) {
 			setHash = new HashSet<String>();
@@ -411,13 +432,13 @@ public final class Cache {
 				input.close();
 				fis.close();
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (StreamCorruptedException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				throw new CacheException(e);
 			}
 		}
 
@@ -431,8 +452,9 @@ public final class Cache {
 	 * subject.
 	 * 
 	 * @return
+	 * @throws CacheException 
 	 */
-	private boolean sendOutBox() {
+	private boolean sendOutBox() throws CacheException {
 		ArrayList<QuizQuestion> outbox = getListOutBox();
 
 		if (outbox.size() == 0) { // && failBox.size() == 0) {
@@ -465,8 +487,9 @@ public final class Cache {
 	 * Checks if all questions have been sent.
 	 * 
 	 * @return true if not question was in the failBox.
+	 * @throws CacheException 
 	 */
-	private boolean getSentStatus() {
+	private boolean getSentStatus() throws CacheException {
 		boolean status = failBox.size() == 0;
 		ArrayList<QuizQuestion> outBox = getListOutBox();
 		outBox.addAll(0, failBox);
@@ -487,17 +510,17 @@ public final class Cache {
 	private class InnerProxyToCachePrivateTask implements
 			IProxyToCachePrivateTasks {
 		@Override
-		public boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
+		public boolean addQuestionToCache(QuizQuestion myQuizQuestion) throws CacheException {
 			return instance.addQuestionToCache(myQuizQuestion);
 		}
 
 		@Override
-		public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
+		public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) throws CacheException {
 			return instance.addQuestionToOutBox(myQuizQuestion);
 		}
 
 		@Override
-		public boolean sendOutBox() {
+		public boolean sendOutBox() throws CacheException {
 			return instance.sendOutBox();
 		}
 
@@ -507,12 +530,12 @@ public final class Cache {
 		}
 
 		@Override
-		public boolean getSentStatus() {
+		public boolean getSentStatus() throws CacheException {
 			return instance.getSentStatus();
 		}
 
 		@Override
-		public String getRandomQuestionFromCache() {
+		public String getRandomQuestionFromCache() throws CacheException {
 			return instance.getRandomQuestionFromCache();
 		}
 
