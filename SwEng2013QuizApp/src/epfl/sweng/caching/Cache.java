@@ -1,9 +1,11 @@
 package epfl.sweng.caching;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -335,41 +337,21 @@ public final class Cache {
 	}
 
 	private String getJSONQuestion(String hashCode) {
-		String result = null;
+		String result = "";
 		try {
-			FileInputStream fis = new FileInputStream(
-					contextApplication.getFilesDir() + File.separator
-							+ NAME_DIRECTORY_QUESTIONS + File.separator
-							+ hashCode);
-
-			StringBuffer fileContent = new StringBuffer("");
-
-			byte[] buffer = new byte[SIZE_BUFFER];
-
-			while (fis.read(buffer) != -1) {
-				fileContent.append(new String(buffer));
-			}
-
-			fis.close();
-
-			result = fileContent.toString();
-
-			// Other solution
-			/*
-			 * Path path = Paths.get(contextApplication.getFilesDir() +
-			 * File.separator + NAME_DIRECTORY_QUESTIONS + File.separator +
-			 * hashCode); InputStream in = Files.newInputStream(file);
-			 * BufferedReader reader = new BufferedReader(new
-			 * InputStreamReader(in))) { String line = null; while ((line =
-			 * reader.readLine()) != null) { System.out.println(line); }
-			 */
-
-			// Other solution
-			/*
-			 * Path path = Paths.get(contextApplication.getFilesDir() +
-			 * File.separator + NAME_DIRECTORY_QUESTIONS + File.separator +
-			 * hashCode); return Files.readAllLines(path, ENCODING);
-			 */
+			BufferedReader buffReader = new BufferedReader(new FileReader(contextApplication.getFilesDir() + File.separator
+					+ NAME_DIRECTORY_QUESTIONS + File.separator
+					+ hashCode));
+            String line = buffReader.readLine();
+            while(line != null){
+                result += line;
+                line = buffReader.readLine();
+                if (line != null) {
+                	result += '\n';
+                }
+            }
+			
+            buffReader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
