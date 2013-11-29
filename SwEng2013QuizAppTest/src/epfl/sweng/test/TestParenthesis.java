@@ -56,6 +56,37 @@ public class TestParenthesis extends TestCase {
 		query = Parenthesis.parenthesis("a+(b*c)+(v+d)*c+g+(a*b+c*(g+d))");
 		assertTrue("Big query",
 				query.equals("((((a+(b*c))+((v+d)*c))+g)+((a*b)+(c*(g+d))))"));
+		
+		// handling multiple spaces
+		query = Parenthesis.parenthesis("a b");
+		assertTrue("handling implicit spaces: 2 var",
+				query.equals("(a*b)"));
+		
+		// this one is buggy!!!
+		query = Parenthesis.parenthesis("a b c");
+		assertTrue("handling implicit spaces: 3 var, 2 spaces",
+				query.equals("((a*b)*c)"));
+		
+		query = Parenthesis.parenthesis("a b+c");
+		assertTrue("handling implicit spaces: 3 var, 1 space 1",
+				query.equals("((a*b)+c)"));
+		
+		query = Parenthesis.parenthesis("a+b c");
+		assertTrue("handling implicit spaces: 3 var, 1 space 2",
+				query.equals("(a+(b*c))"));
+		
+		query = Parenthesis.parenthesis("a*b c");
+		assertTrue("handling implicit spaces: 3 var, 1 space 3",
+				query.equals("((a*b)*c)"));
+		
+		// this one is buggy
+		query = Parenthesis.parenthesis("a b c d");
+		assertTrue("handling implicit spaces: 4 var, 3 spaces",
+				query.equals("(((a*b)*c)*d)"));
+		
+		query = Parenthesis.parenthesis("a b+c d");
+		assertTrue("handling implicit spaces: 4 var, 2 spaces",
+				query.equals("((a*b)+(c*d))"));
 	}
 
 }

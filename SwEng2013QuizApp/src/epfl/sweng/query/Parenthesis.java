@@ -195,8 +195,9 @@ public class Parenthesis {
 			queryClone = queryClone.replaceAll(pattern, "$1*$3");
 			pattern = "([)])(\\s+)([(])";
 			queryClone = queryClone.replaceAll(pattern, "$1*$3");
-			queryClone = queryClone.replaceAll("\\s+", "");
 		}
+		// remove all space at the end only... avoid multiple space inline like "a b c"
+		queryClone = queryClone.replaceAll("\\s+", "");
 		return queryClone;
 	}
 
