@@ -7,30 +7,36 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import epfl.sweng.R;
+import epfl.sweng.query.QueryChecker;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class SearchActivity extends Activity {
 
-	EditText editQuery;
-	
+	private EditText editQuery;
+	private Button searchButton;
+	private QueryChecker queryChecker = QueryChecker.getInstance();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
 		editQuery = (EditText) findViewById(R.id.searchText);
 		editQuery.addTextChangedListener(textListener);
+		searchButton = (Button) findViewById(R.id.searchButton);
+		searchButton.setEnabled(false);
 		TestCoordinator.check(TTChecks.SEARCH_ACTIVITY_SHOWN);
 	}
 
 	public void search(View view) {
 
 		String search = editQuery.getText().toString();
-		
-		
+
+
 		Intent showQuestionIntent = new Intent(this,
 				ShowQuestionsActivity.class);
 		showQuestionIntent.putExtra("Type", "Search"); // hardcoded car il faut des strings, pas des int!
@@ -52,6 +58,9 @@ public class SearchActivity extends Activity {
 
 		@Override
 		public void afterTextChanged(Editable s) {
+
+			searchController(searchButton);
+
 			TestCoordinator.check(TTChecks.QUERY_EDITED);
 		}
 
@@ -68,5 +77,22 @@ public class SearchActivity extends Activity {
 		}
 
 	};
+
+	private int auditSearchButton() {
+		String query = editQuery.getText().toString();
+		queryChecker.setQuery(query);
+		if(queryChecker.checkQuery()) 
+			return 0;
+		else
+			return 1;
+	}
+
+	private void searchController(Button search) {
+		if (auditSearchButton() == 0) {
+			search.setEnabled(true);
+		} else {
+			search.setEnabled(false);
+		}
+	}
 
 }

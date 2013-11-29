@@ -33,7 +33,7 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 	public void testSearch() {
 		solo.sleep(DODO);
 		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
-		assertFalse("button is not enabled", !solo.getButton("Search").isEnabled());
+		assertFalse("button is not enabled", solo.getButton("Search").isEnabled());
 		
 		
 		String querry = "fruit";
