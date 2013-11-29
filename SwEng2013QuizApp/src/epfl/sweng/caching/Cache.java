@@ -34,10 +34,8 @@ public final class Cache {
 	private final static String NAME_DIRECTORY_TAGS = "tags";
 	private final static String NAME_DIRECTORY_UTILS = "utils";
 	private final static String NAME_FILE_OUTBOX = "outbox";
-	private final static int SIZE_BUFFER = 1024;
 
-	private static Context contextApplication = null;
-
+	private static String directoryFiles = null;
 	private static Cache instance = null;
 	private ICacheToProxyPrivateTasks myCacheToProxyPrivateTasks = null;
 
@@ -68,19 +66,19 @@ public final class Cache {
 	private void initCache() {
 		this.failBox = new ArrayList<QuizQuestion>();
 
-		File dirUtils = new File(contextApplication.getFilesDir()
+		File dirUtils = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_UTILS);
 		if (!dirUtils.exists()) {
 			dirUtils.mkdir();
 		}
 
-		File dirQuestions = new File(contextApplication.getFilesDir()
+		File dirQuestions = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_QUESTIONS);
 		if (!dirQuestions.exists()) {
 			dirQuestions.mkdir();
 		}
 
-		File dirTags = new File(contextApplication.getFilesDir()
+		File dirTags = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_TAGS);
 		if (!dirTags.exists()) {
 			dirTags.mkdir();
@@ -152,7 +150,7 @@ public final class Cache {
 	 * Fetch a question from the cache.
 	 */
 	public String getRandomQuestionFromCache() {
-		File dir = new File(contextApplication.getFilesDir() + File.separator
+		File dir = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_QUESTIONS);
 
 		String[] children = dir.list();
@@ -169,9 +167,9 @@ public final class Cache {
 		// offline and empty cache
 		return null;
 	}
-
-	public static void setContextApplication(Context context) {
-		contextApplication = context;
+	
+	public static void setDirectoryFiles(String directory) {
+		directoryFiles = directory;
 	}
 
 	/**
@@ -184,7 +182,7 @@ public final class Cache {
 	private boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
 		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
 		String jsonQuestion = myQuizQuestion.toPostEntity();
-		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+		File file = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_QUESTIONS + File.separator
 				+ hashQuestion);
 		if (!file.exists()) {
@@ -221,7 +219,7 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	private boolean addQuestionToTagFile(String tag, String hashQuestion) {
-		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+		File file = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
 
@@ -263,7 +261,7 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	private boolean addQuestionToOutBoxFile(QuizQuestion question) {
-		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+		File file = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
 				+ NAME_FILE_OUTBOX);
 
@@ -297,7 +295,7 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	public ArrayList<QuizQuestion> getListOutBox() {
-		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+		File file = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
 				+ NAME_FILE_OUTBOX);
 
@@ -339,7 +337,7 @@ public final class Cache {
 	private String getJSONQuestion(String hashCode) {
 		String result = "";
 		try {
-			BufferedReader buffReader = new BufferedReader(new FileReader(contextApplication.getFilesDir() + File.separator
+			BufferedReader buffReader = new BufferedReader(new FileReader(directoryFiles + File.separator
 					+ NAME_DIRECTORY_QUESTIONS + File.separator
 					+ hashCode));
             String line = buffReader.readLine();
@@ -369,7 +367,7 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) {
-		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+		File file = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
 				+ NAME_FILE_OUTBOX);
 
@@ -399,7 +397,7 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	public Set<String> getSetTag(String tag) {
-		File file = new File(contextApplication.getFilesDir().getAbsoluteFile()
+		File file = new File(directoryFiles
 				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
 

@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Cache.setContextApplication(getApplicationContext());
+		Cache.setDirectoryFiles(getApplicationContext().getFilesDir().getAbsolutePath());
 		String session = StoreCredential.getInstance().getSessionId(
 				getApplicationContext());
 
