@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import android.content.Context;
+import android.util.Log;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -66,20 +67,20 @@ public final class Cache {
 	private void initCache() {
 		this.failBox = new ArrayList<QuizQuestion>();
 
-		File dirUtils = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_UTILS);
+		File dirUtils = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_UTILS);
 		if (!dirUtils.exists()) {
 			dirUtils.mkdir();
 		}
 
-		File dirQuestions = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_QUESTIONS);
+		File dirQuestions = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_QUESTIONS);
 		if (!dirQuestions.exists()) {
 			dirQuestions.mkdir();
 		}
 
-		File dirTags = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_TAGS);
+		File dirTags = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_TAGS);
 		if (!dirTags.exists()) {
 			dirTags.mkdir();
 		}
@@ -167,7 +168,7 @@ public final class Cache {
 		// offline and empty cache
 		return null;
 	}
-	
+
 	public static void setDirectoryFiles(String directory) {
 		directoryFiles = directory;
 	}
@@ -179,12 +180,11 @@ public final class Cache {
 	 *            QuizQuestion to add
 	 * @return
 	 */
-	private boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
+	public boolean addQuestionToCache(QuizQuestion myQuizQuestion) {
 		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
 		String jsonQuestion = myQuizQuestion.toPostEntity();
-		File file = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_QUESTIONS + File.separator
-				+ hashQuestion);
+		File file = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_QUESTIONS + File.separator + hashQuestion);
 		if (!file.exists()) {
 			try {
 				FileOutputStream fos = new FileOutputStream(file);
@@ -219,8 +219,8 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	private boolean addQuestionToTagFile(String tag, String hashQuestion) {
-		File file = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
+		File file = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
 
 		if (!setHash.contains(hashQuestion)) {
@@ -250,27 +250,15 @@ public final class Cache {
 	 * @return
 	 */
 	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) {
-		return addQuestionToOutBoxFile(myQuizQuestion);
-	}
-
-	/**
-	 * Add a question to the outbox
-	 * 
-	 * @param question
-	 * @return
-	 * @author AntoineW
-	 */
-	private boolean addQuestionToOutBoxFile(QuizQuestion question) {
-		File file = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
-				+ NAME_FILE_OUTBOX);
+		File file = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
 		ArrayList<QuizQuestion> outbox = getListOutBoxWithFile(file);
 		if (outbox == null) {
 			outbox = new ArrayList<QuizQuestion>();
 		}
 
-		outbox.add(question);
+		outbox.add(myQuizQuestion);
 		try {
 			FileOutputStream fileOutput = new FileOutputStream(file, false);
 			ObjectOutput output = new ObjectOutputStream(fileOutput);
@@ -295,9 +283,8 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	public ArrayList<QuizQuestion> getListOutBox() {
-		File file = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
-				+ NAME_FILE_OUTBOX);
+		File file = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
 		return getListOutBoxWithFile(file);
 	}
@@ -334,22 +321,22 @@ public final class Cache {
 		return outbox;
 	}
 
-	private String getJSONQuestion(String hashCode) {
+	public String getJSONQuestion(String hashCode) {
 		String result = "";
 		try {
-			BufferedReader buffReader = new BufferedReader(new FileReader(directoryFiles + File.separator
-					+ NAME_DIRECTORY_QUESTIONS + File.separator
-					+ hashCode));
-            String line = buffReader.readLine();
-            while(line != null){
-                result += line;
-                line = buffReader.readLine();
-                if (line != null) {
-                	result += '\n';
-                }
-            }
-			
-            buffReader.close();
+			BufferedReader buffReader = new BufferedReader(new FileReader(
+					directoryFiles + File.separator + NAME_DIRECTORY_QUESTIONS
+							+ File.separator + hashCode));
+			String line = buffReader.readLine();
+			while (line != null) {
+				result += line;
+				line = buffReader.readLine();
+				if (line != null) {
+					result += '\n';
+				}
+			}
+
+			buffReader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -367,9 +354,8 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) {
-		File file = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_UTILS + File.separator
-				+ NAME_FILE_OUTBOX);
+		File file = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
 		try {
 			FileOutputStream fileOutput = new FileOutputStream(file, false);
@@ -397,8 +383,8 @@ public final class Cache {
 	 * @author AntoineW
 	 */
 	public Set<String> getSetTag(String tag) {
-		File file = new File(directoryFiles
-				+ File.separator + NAME_DIRECTORY_TAGS + File.separator + tag);
+		File file = new File(directoryFiles + File.separator
+				+ NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
 
 		return setHash;
