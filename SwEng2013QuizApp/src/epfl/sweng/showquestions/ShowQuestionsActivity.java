@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -92,7 +93,6 @@ public class ShowQuestionsActivity extends Activity {
 		setContentView(R.layout.activity_show_question);
 		Intent showQuestionIntent = getIntent();
 		String type = showQuestionIntent.getStringExtra("Type");
-
 		if (type != null && type.equals("Search")) {
 			isSearch = true;
 			String search = showQuestionIntent.getStringExtra("Request");

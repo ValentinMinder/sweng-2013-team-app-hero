@@ -81,8 +81,9 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 			
 	}
 	
-	/*public void testSubmitQuestion() {
+	public void testSubmitQuestion() {
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+		solo.sleep(DODO);
 		Button submit = (Button) solo.getView(R.id.submit_question);
 		Button add = (Button) solo.getView(R.id.add);
 		solo.clickOnView(add);
@@ -101,8 +102,8 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		
 		solo.clickOnView(submit);
 		solo.sleep(DODO*10);
-		getActivityAndWaitFor(TTChecks.QUESTION_EDITED);
-	}*/
+		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+	}
 	
 //	public void testEditQuestion() {
 //		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);

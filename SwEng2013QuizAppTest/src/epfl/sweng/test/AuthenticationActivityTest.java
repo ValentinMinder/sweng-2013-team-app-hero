@@ -15,7 +15,8 @@ import epfl.sweng.testing.TestingTransaction;
 
 public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2<AuthenticationActivity> {
 	private Solo solo;
-	private String token = "917c2be62cb949b6b47022123b4d0f8e";
+	private String token = "68ecb58237a84ef2b2bc8d7737ff918b";
+	
 	
 	public AuthenticationActivityTest() {
 		super(AuthenticationActivity.class);
@@ -26,7 +27,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		solo = new Solo(getInstrumentation());
 	}
 
-	public void testAuthentification() {
+	public void testAuthentificationFail() {
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 
 		EditText username = (EditText) solo.getView(R.id.gaspar_username);
@@ -37,6 +38,10 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		Button authentication = (Button) solo.getView(R.id.log_in_tekila);
 		solo.clickOnView(authentication);
 		solo.sleep(3000);
+	}
+	public void testAuthentificationToken() {
+		StoreCredential.getInstance().storeSessionId(token, getActivity());
+		
 	}
 	
 

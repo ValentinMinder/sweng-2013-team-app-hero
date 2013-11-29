@@ -5,6 +5,7 @@ import com.jayway.android.robotium.solo.Solo;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 import android.widget.EditText;
+import epfl.sweng.authentication.StoreCredential;
 import epfl.sweng.searchquestions.SearchActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -18,6 +19,7 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 	private Solo solo;
 	private MockHttpClient httpClient;
 	public static final int DODO = 3000;
+	private String token = "68ecb58237a84ef2b2bc8d7737ff918b";
 	
 	public SearchActivityTest() {
 		super(SearchActivity.class);
@@ -43,6 +45,10 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 		
 		//getActivityAndWaitFor(TTChecks.QUERY_EDITED);
 		assertTrue("button is enabled", solo.getButton("Search").isEnabled());
+		
+		
+		StoreCredential.getInstance().storeSessionId(token, getActivity());
+		solo.sleep(DODO);
 		
 		//solo.clickOnButton("Search");
 		solo.sleep(DODO);
