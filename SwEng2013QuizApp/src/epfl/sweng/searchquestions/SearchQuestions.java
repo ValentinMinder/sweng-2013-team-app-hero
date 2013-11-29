@@ -20,7 +20,6 @@ import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.utils.JSONUtils;
 
 public class SearchQuestions {
-	private static SearchQuestions instance = null;
 	private String nextID = null;
 	private String request = null;
 	private ArrayList<QuizQuestion> cachedRequestArray = null;
@@ -31,6 +30,7 @@ public class SearchQuestions {
 	}
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
+		Log.e("cache", "size cacheRequestArray : " + cachedRequestArray.size());
 		if (cachedRequestArray.isEmpty() && (nextID == null || !nextID.equals("null"))) {
 			GetQuestionTask task = new GetQuestionTask();
 			task.execute(sessionID);
@@ -44,8 +44,8 @@ public class SearchQuestions {
 		}
 		// if we have a remaining array of question.
 		if (!cachedRequestArray.isEmpty()) {
-			QuizQuestion question = cachedRequestArray.get(0);
-			cachedRequestArray.remove(0);
+			QuizQuestion question = cachedRequestArray.remove(0);
+			
 			return question;
 		}
 		// if the array was empty and the server didn't get any more question.
@@ -101,18 +101,14 @@ public class SearchQuestions {
 						cachedRequestArray.add(new QuizQuestion(s));
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

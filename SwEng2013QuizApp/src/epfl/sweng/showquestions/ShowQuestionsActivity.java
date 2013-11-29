@@ -1,6 +1,7 @@
 package epfl.sweng.showquestions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
@@ -48,6 +49,20 @@ public class ShowQuestionsActivity extends Activity {
 	 * Method who is called if error occurred
 	 */
 	private void errorDisplayQuestion() {
+		//Reset the differents fields
+		ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1,
+				new ArrayList<String>());
+
+		possibleAnswers.setAdapter(adapter);
+		
+		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
+		questionTitle.setText("");
+		
+		TextView tags = (TextView) findViewById(R.id.tags);
+		tags.setText("");
+		
 		Toast.makeText(getBaseContext(), R.string.error_retrieving_question,
 				Toast.LENGTH_SHORT).show();
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
