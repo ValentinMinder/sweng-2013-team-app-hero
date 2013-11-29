@@ -31,14 +31,20 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 	public void testSearch() {
 		solo.sleep(DODO);
 		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
+		assertFalse("button is not enabled", !solo.getButton("Search").isEnabled());
+		
 		
 		String querry = "fruit";
+		EditText querryText = (EditText) solo.getView(R.id.searchText);
+		solo.enterText((EditText) querryText, querry);
+		solo.sleep(DODO);
+		assertTrue("querry edited", querryText.getText().toString().equals("fruit"));
 		
-		solo.enterText((EditText) solo.getView(R.id.searchText), querry);
+		
 		//getActivityAndWaitFor(TTChecks.QUERY_EDITED);
+		assertTrue("button is enabled", solo.getButton("Search").isEnabled());
 		
-		
-		solo.clickOnButton("Search");
+		//solo.clickOnButton("Search");
 		solo.sleep(DODO);
 		
 	}

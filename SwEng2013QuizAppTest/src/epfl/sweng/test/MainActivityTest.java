@@ -56,15 +56,15 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 //		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
 //	}
 	
-	public void test3() {
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		solo.sleep(DODO);
-		Button show = (Button) solo.getView(R.id.button1);
-		solo.clickOnView(show);
-		
-		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);	
-	
-	}
+//	public void test3() {
+//		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+//		solo.sleep(DODO);
+//		Button show = (Button) solo.getView(R.id.button1);
+//		solo.clickOnView(show);
+//		
+//		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);	
+//	
+//	}
 	
 //	public void test4() {
 //		

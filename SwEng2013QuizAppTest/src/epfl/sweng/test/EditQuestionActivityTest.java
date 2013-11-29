@@ -32,6 +32,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 
 	public void testQuestionEdited(){
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+		solo.sleep(DODO*3);
 		Button submit = (Button) solo.getView(R.id.submit_question);
 		assertFalse("Submit is disabled", submit.isEnabled());
 		
@@ -56,7 +57,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo.enterText(question,s );
 		Log.e("Test",s+" = " +question.getText() + " " + question.getText().equals(s));
 		solo.sleep(DODO);
-		assertTrue("title edited", !question.getText().equals("test question, please ignore"));
+		assertTrue("title edited", question.getText().toString().equals("test question, please ignore"));
 		
 		
 		EditText tags = (EditText) solo.getView(R.id.tags);
