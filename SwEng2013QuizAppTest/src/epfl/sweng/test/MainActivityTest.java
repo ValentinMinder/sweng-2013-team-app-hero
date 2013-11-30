@@ -49,16 +49,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 //		getActivityAndWaitFor(TTChecks.LOGGED_OUT);	
 //	}
 	
-	public void testSuccessAuthentification() {
-		solo.sleep(DODO);
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		solo.sleep(DODO*3);
-		Button show = (Button) solo.getView(R.id.button2);
-		solo.clickOnView(show);
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-	}
+//	public void testSuccessAuthentification() {
+//		solo.sleep(DODO);
+//		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+//		solo.sleep(DODO*3);
+//		Button show = (Button) solo.getView(R.id.button2);
+//		solo.clickOnView(show);
+//		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+//	}
 	
 	public void test3() {
+		solo.sleep(DODO);
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo.sleep(DODO*3);
 		Button show = (Button) solo.getView(R.id.button1);

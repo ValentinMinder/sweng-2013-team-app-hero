@@ -54,8 +54,8 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
 		
 		solo.sleep(DODO*3);
-		Button submit = (Button) solo.getView(R.id.submit_question);
-		assertFalse("Submit is disabled", submit.isEnabled());
+		
+		
 		
 		Button add = (Button) solo.getView(R.id.add);
 		solo.clickOnView(add);
@@ -70,6 +70,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo.sleep(DODO);
 		assertTrue("Correct typo", correct.getText().equals("✔") /*&& notCorrect.getText().equals("✘")*/);
 		
+		Button submit = (Button) solo.getView(R.id.submit_question);
 		assertFalse("Submit is disabled", submit.isEnabled());
 		
 		
@@ -116,6 +117,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		
 		solo.clickOnView(submit);
 		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+
 		solo.sleep(DODO*10);
 		Button remove = (Button) solo.getView(REM);
 		solo.clickOnView(remove);
@@ -125,6 +127,8 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 
 	
 
+
+	
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {

@@ -42,8 +42,8 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
                                               + " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
                                               + " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
                               "application/json");
-
-              getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+        solo.sleep(DODO);
+        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		Button nextQuestionButton = (Button) solo.getView(R.id.next_question_button);
 		assertFalse("Next question button is disabled",
 				nextQuestionButton.isEnabled()); 
@@ -62,7 +62,7 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 		assertTrue("Next question button is enabled",
 				nextQuestionButton.isEnabled()); 
 		Button bouton = (Button) solo.getView(R.id.next_question_button);
-		solo.clickOnView(bouton);
+		//solo.clickOnView(bouton);
 
 	}
 
