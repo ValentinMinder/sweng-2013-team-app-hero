@@ -3,7 +3,6 @@ package epfl.sweng.caching;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,14 +10,11 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import android.content.Context;
-import android.util.Log;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -226,8 +222,6 @@ public final class Cache {
 				}
 
 				return true;
-			} catch (FileNotFoundException e) {
-				throw new CacheException(e);
 			} catch (IOException e) {
 				throw new CacheException(e);
 			}
@@ -261,8 +255,6 @@ public final class Cache {
 				output.close();
 				fileOutput.close();
 				return true;
-			} catch (FileNotFoundException e) {
-				throw new CacheException(e);
 			} catch (IOException e) {
 				throw new CacheException(e);
 			}
@@ -279,7 +271,7 @@ public final class Cache {
 	 * @return
 	 * @throws CacheException 
 	 */
-	private boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) throws CacheException {
+	public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -297,8 +289,6 @@ public final class Cache {
 			fileOutput.close();
 
 			return true;
-		} catch (FileNotFoundException e) {
-			throw new CacheException(e);
 		} catch (IOException e) {
 			throw new CacheException(e);
 		}
@@ -337,10 +327,6 @@ public final class Cache {
 				outbox = (ArrayList<QuizQuestion>) input.readObject();
 				input.close();
 				fis.close();
-			} catch (FileNotFoundException e) {
-				throw new CacheException(e);
-			} catch (StreamCorruptedException e) {
-				throw new CacheException(e);
 			} catch (IOException e) {
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
@@ -367,8 +353,6 @@ public final class Cache {
 			}
 
 			buffReader.close();
-		} catch (FileNotFoundException e) {
-			throw new CacheException(e);
 		} catch (IOException e) {
 			throw new CacheException(e);
 		}
@@ -396,8 +380,6 @@ public final class Cache {
 			fileOutput.close();
 
 			return true;
-		} catch (FileNotFoundException e) {
-			throw new CacheException(e);
 		} catch (IOException e) {
 			throw new CacheException(e);
 		}
@@ -441,10 +423,6 @@ public final class Cache {
 				setHash = (HashSet<String>) input.readObject();
 				input.close();
 				fis.close();
-			} catch (FileNotFoundException e) {
-				throw new CacheException(e);
-			} catch (StreamCorruptedException e) {
-				throw new CacheException(e);
 			} catch (IOException e) {
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
