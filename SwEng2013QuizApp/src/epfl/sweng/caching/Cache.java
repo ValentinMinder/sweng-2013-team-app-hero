@@ -92,6 +92,13 @@ public final class Cache {
 			}
 		}
 	}
+	
+	/**
+	 * Delete the instance (usefull for test)
+	 */
+	public static void deleteInstance() {
+		instance = null;
+	}
 
 	/**
 	 * Create a unique instance of the cache. Return a ProxyToCachePrivateTasks
@@ -340,9 +347,10 @@ public final class Cache {
 	public String getJSONQuestion(String hashCode) throws CacheException {
 		String result = "";
 		try {
-			BufferedReader buffReader = new BufferedReader(new FileReader(
+			FileReader fr = new FileReader(
 					directoryFiles + File.separator + NAME_DIRECTORY_QUESTIONS
-							+ File.separator + hashCode));
+					+ File.separator + hashCode);
+			BufferedReader buffReader = new BufferedReader(fr);
 			String line = buffReader.readLine();
 			while (line != null) {
 				result += line;
@@ -353,6 +361,7 @@ public final class Cache {
 			}
 
 			buffReader.close();
+			fr.close();
 		} catch (IOException e) {
 			throw new CacheException(e);
 		}
@@ -419,7 +428,7 @@ public final class Cache {
 			try {
 				FileInputStream fis = new FileInputStream(file);
 				ObjectInput input = new ObjectInputStream(fis);
-				// deserialize the List
+				
 				setHash = (HashSet<String>) input.readObject();
 				input.close();
 				fis.close();

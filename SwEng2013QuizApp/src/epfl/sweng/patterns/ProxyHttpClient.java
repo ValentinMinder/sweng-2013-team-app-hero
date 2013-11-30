@@ -80,6 +80,13 @@ public final class ProxyHttpClient implements IHttpClient {
 		}
 		return instance;
 	}
+	
+	/**
+	 * Delete the instance (usefull for test)
+	 */
+	public static void deleteInstance() {
+		instance = null;
+	}
 
 	/**
 	 * Set boolean offline to true, only if it was false before, and calls the

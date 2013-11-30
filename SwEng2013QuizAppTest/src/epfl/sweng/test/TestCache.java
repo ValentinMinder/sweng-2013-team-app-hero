@@ -10,10 +10,10 @@ import java.util.Set;
 import android.test.AndroidTestCase;
 import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.CacheException;
+import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 public class TestCache extends AndroidTestCase {
-	private static boolean first = true;
 	private String directoryFiles;
 	private QuizQuestion question;
 	private String jsonQuestion;
@@ -29,11 +29,10 @@ public class TestCache extends AndroidTestCase {
 	private void initTest() {
 		//TODO probleme à cause du cache qui est instancié et comme les fichiers sont détruit existe plus
 		directoryFiles = getContext().getFilesDir().getAbsolutePath();
-		if (first) {
-			first = false;
 			deleteDirectory();
-		}
 
+		Cache.deleteInstance();
+		ProxyHttpClient.deleteInstance();
 		Cache.setDirectoryFiles(directoryFiles);
 		
 		List<String> answers = new ArrayList<String>();
