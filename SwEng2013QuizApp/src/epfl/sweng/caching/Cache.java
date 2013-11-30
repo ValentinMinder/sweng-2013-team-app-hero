@@ -19,6 +19,7 @@ import java.util.Set;
 
 import android.content.Context;
 import android.util.Log;
+import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -58,10 +59,6 @@ public final class Cache {
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) throws CacheException {
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
 
-		initCache();
-	}
-
-	private Cache() throws CacheException {
 		initCache();
 	}
 
@@ -126,9 +123,22 @@ public final class Cache {
 
 	}
 
+	/**
+	 * Returns the singleton cache object, for testing purposes.
+	 * Creates a proxy and a cache if not created so far.
+	 * @return
+	 * @throws CacheException
+	 */
 	public static Cache getInstance() throws CacheException {
+		// creates the proxy, and the proxy creates the cache!
+		ProxyHttpClient.getInstance();
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if (instance == null) {
-			instance = new Cache();
+			throw new CacheException("Proxy only should instance the cache!");
 		}
 
 		return instance;
