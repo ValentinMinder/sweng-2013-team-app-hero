@@ -260,4 +260,67 @@ public class QuizQuestion implements Serializable {
 		return entity.toString();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((answers == null) ? 0 : answers.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result
+				+ ((question == null) ? 0 : question.hashCode());
+		result = prime * result + solutionIndex;
+		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		QuizQuestion other = (QuizQuestion) obj;
+		if (answers == null) {
+			if (other.answers != null) {
+				return false;
+			}
+		} else if (!answers.equals(other.answers)) {
+			return false;
+		}
+		if (id != other.id) {
+			return false;
+		}
+		if (owner == null) {
+			if (other.owner != null) {
+				return false;
+			}
+		} else if (!owner.equals(other.owner)) {
+			return false;
+		}
+		if (question == null) {
+			if (other.question != null) {
+				return false;
+			}
+		} else if (!question.equals(other.question)) {
+			return false;
+		}
+		if (solutionIndex != other.solutionIndex) {
+			return false;
+		}
+		if (tags == null) {
+			if (other.tags != null) {
+				return false;
+			}
+		} else if (!tags.equals(other.tags)) {
+			return false;
+		}
+		return true;
+	}
+
 }
