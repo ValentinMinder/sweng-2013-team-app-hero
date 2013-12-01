@@ -11,14 +11,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
 
 import epfl.sweng.patterns.ProxyHttpClient;
-import epfl.sweng.query.EvaluateQuery;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -53,9 +50,10 @@ public final class Cache {
 	 * Use getProxyToCachePrivateTasks instead.
 	 * 
 	 * @param innerCacheToProxyPrivateTasks
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
-	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) throws CacheException {
+	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks)
+		throws CacheException {
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
 
 		initCache();
@@ -67,15 +65,19 @@ public final class Cache {
 		File dirFiles = new File(directoryFiles);
 		if (!dirFiles.exists()) {
 			if (!dirFiles.mkdir()) {
-				throw new CacheException("Not possible to create directory files : " + directoryFiles);
+				throw new CacheException(
+						"Not possible to create directory files : "
+								+ directoryFiles);
 			}
 		}
-		
+
 		File dirUtils = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS);
 		if (!dirUtils.exists()) {
 			if (!dirUtils.mkdir()) {
-				throw new CacheException("Not possible to create directory utils : " + dirUtils.getAbsolutePath());
+				throw new CacheException(
+						"Not possible to create directory utils : "
+								+ dirUtils.getAbsolutePath());
 			}
 		}
 
@@ -83,7 +85,9 @@ public final class Cache {
 				+ NAME_DIRECTORY_QUESTIONS);
 		if (!dirQuestions.exists()) {
 			if (!dirQuestions.mkdir()) {
-				throw new CacheException("Not possible to create directory questions : " + dirQuestions.getAbsolutePath());
+				throw new CacheException(
+						"Not possible to create directory questions : "
+								+ dirQuestions.getAbsolutePath());
 			}
 		}
 
@@ -91,11 +95,13 @@ public final class Cache {
 				+ NAME_DIRECTORY_TAGS);
 		if (!dirTags.exists()) {
 			if (!dirTags.mkdir()) {
-				throw new CacheException("Not possible to create directory tags : " + dirTags.getAbsolutePath());
+				throw new CacheException(
+						"Not possible to create directory tags : "
+								+ dirTags.getAbsolutePath());
 			}
 		}
 	}
-	
+
 	/**
 	 * Delete the instance (usefull for test)
 	 */
@@ -118,10 +124,11 @@ public final class Cache {
 	 * @param innerCacheToProxyPrivateTasks
 	 *            a private task to interact from the cache to the proxy
 	 * @return a private task to interact from the proxy to the cache
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
 	public static synchronized IProxyToCachePrivateTasks getProxyToCachePrivateTasks(
-			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks) throws CacheException {
+			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks)
+		throws CacheException {
 		if (instance == null) {
 			instance = new Cache(innerCacheToProxyPrivateTasks);
 		}
@@ -130,8 +137,9 @@ public final class Cache {
 	}
 
 	/**
-	 * Returns the singleton cache object, for testing purposes.
-	 * Creates a proxy and a cache if not created so far.
+	 * Returns the singleton cache object, for testing purposes. Creates a proxy
+	 * and a cache if not created so far.
+	 * 
 	 * @return
 	 * @throws CacheException
 	 */
@@ -159,92 +167,10 @@ public final class Cache {
 		return new InnerProxyToCachePrivateTask();
 	}
 
-	private LinkedList<String> previousHashSetAsLinkedList;
-	private String previousQuery;
-	private String previousToken;
-	public static final int RETURN_ARRAY_SIZE = 10;
-	private void resetPreviousState() {
-		previousHashSetAsLinkedList = null;
-		previousQuery = null;
-		previousToken = null;
-	}
-	
-	/**
-	 * Return the previous token (the hash of the next questions in the search).
-	 * @return
-	 */
-	public String getPreviousToken() {
-		return previousToken;
-	}
-	
-	public ArrayList<String> getArrayOfJSONQuestions (String query, String token) throws CacheException {
-		if (query.equals(previousQuery) && token.equals(previousToken)) {
-			return getArrayOfJSONQuestionsPartial();
-		} else {
-			resetPreviousState();
-			HashSet<String> set = EvaluateQuery.evaluate(query);
-			System.out.println("found questions: " + set.size());
-			if (set.size() > RETURN_ARRAY_SIZE) {
-				previousQuery = query;
-				previousHashSetAsLinkedList = new LinkedList<String>(set);
-				return getArrayOfJSONQuestionsPartial();
-			} else {
-				return getArrayOfJSONQuestionsALL(set);
-			}
-		}
-	}
-
-	/**
-	 * Return a ArrayList of string corresponding to some next questions in JSON format.
-	 * Used for a huge quantity of questions.
-	 * Questions are identified by the LinkedList of hashCode in the cache.
-	 * 
-	 * @return
-	 * @author AntoineW
-	 * @throws CacheException 
-	 */
-	private ArrayList<String> getArrayOfJSONQuestionsPartial () throws CacheException {
-		ArrayList<String> result = new ArrayList<String>(RETURN_ARRAY_SIZE);
-		boolean flag = true;
-		for (int i = 0; i < RETURN_ARRAY_SIZE && flag; i++) {
-			String hashCode = previousHashSetAsLinkedList.poll();
-			if (hashCode != null) {
-				result.add(getJSONQuestion(hashCode));
-			} else {
-				flag = false;
-			}
-		}
-		if (flag) {
-			previousToken = previousHashSetAsLinkedList.peek();
-		} else {
-			previousToken = "null";
-		}
-		return result;
-	}
-
-	/**
-	 * Return a ArrayList of string corresponding to all the questions (identify
-	 * by the set of hashCode in parameter) in JSON format.
-	 * Used only for a few questions.
-	 * 
-	 * @param hashCodes a set of hash representing the questions
-	 * @return
-	 * @author AntoineW
-	 * @throws CacheException 
-	 */
-	private ArrayList<String> getArrayOfJSONQuestionsALL(HashSet<String> hashCodes) throws CacheException {
-		ArrayList<String> result = new ArrayList<String>();
-		Iterator<String> itHashCode = hashCodes.iterator();
-		while (itHashCode.hasNext()) {
-			String hashCode = itHashCode.next();
-			result.add(getJSONQuestion(hashCode));
-		}
-		return result;
-	}
-
 	/**
 	 * Fetch a question from the cache.
-	 * @throws CacheException 
+	 * 
+	 * @throws CacheException
 	 */
 	public String getRandomQuestionFromCache() throws CacheException {
 		File dir = new File(directoryFiles + File.separator
@@ -275,9 +201,10 @@ public final class Cache {
 	 * @param myQuizQuestion
 	 *            QuizQuestion to add
 	 * @return
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
-	public boolean addQuestionToCache(QuizQuestion myQuizQuestion) throws CacheException {
+	public boolean addQuestionToCache(QuizQuestion myQuizQuestion)
+		throws CacheException {
 		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
 		String jsonQuestion = myQuizQuestion.toPostEntity();
 		File file = new File(directoryFiles + File.separator
@@ -312,9 +239,10 @@ public final class Cache {
 	 * @param hashQuestion
 	 * @return
 	 * @author AntoineW
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
-	private boolean addQuestionToTagFile(String tag, String hashQuestion) throws CacheException {
+	private boolean addQuestionToTagFile(String tag, String hashQuestion)
+		throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS + File.separator + tag);
 		Set<String> setHash = getSetTagWithFile(file);
@@ -342,9 +270,10 @@ public final class Cache {
 	 * @param myQuizQuestion
 	 *            QuizQuestion to add
 	 * @return
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
-	public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) throws CacheException {
+	public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion)
+		throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -372,7 +301,7 @@ public final class Cache {
 	 * 
 	 * @return
 	 * @author AntoineW
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
 	public ArrayList<QuizQuestion> getListOutBox() throws CacheException {
 		File file = new File(directoryFiles + File.separator
@@ -386,9 +315,10 @@ public final class Cache {
 	 * 
 	 * @return
 	 * @author AntoineW
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
-	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file) throws CacheException {
+	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file)
+		throws CacheException {
 		ArrayList<QuizQuestion> outbox = null;
 
 		if (!file.exists()) {
@@ -413,9 +343,8 @@ public final class Cache {
 	public String getJSONQuestion(String hashCode) throws CacheException {
 		String result = "";
 		try {
-			FileReader fr = new FileReader(
-					directoryFiles + File.separator + NAME_DIRECTORY_QUESTIONS
-					+ File.separator + hashCode);
+			FileReader fr = new FileReader(directoryFiles + File.separator
+					+ NAME_DIRECTORY_QUESTIONS + File.separator + hashCode);
 			BufferedReader buffReader = new BufferedReader(fr);
 			String line = buffReader.readLine();
 			while (line != null) {
@@ -441,9 +370,10 @@ public final class Cache {
 	 * @param outbox
 	 * @return
 	 * @author AntoineW
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
-	private boolean saveOutBox(ArrayList<QuizQuestion> outbox) throws CacheException {
+	private boolean saveOutBox(ArrayList<QuizQuestion> outbox)
+		throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -467,7 +397,7 @@ public final class Cache {
 	 * @param tag
 	 * @return
 	 * @author AntoineW
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
 	public HashSet<String> getSetTag(String tag) throws CacheException {
 		File file = new File(directoryFiles + File.separator
@@ -484,7 +414,7 @@ public final class Cache {
 	 * @param file
 	 * @return
 	 * @author AntoineW
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
 	private HashSet<String> getSetTagWithFile(File file) throws CacheException {
 		HashSet<String> setHash = null;
@@ -494,7 +424,6 @@ public final class Cache {
 			try {
 				FileInputStream fis = new FileInputStream(file);
 				ObjectInput input = new ObjectInputStream(fis);
-				
 				setHash = (HashSet<String>) input.readObject();
 				input.close();
 				fis.close();
@@ -515,7 +444,7 @@ public final class Cache {
 	 * subject.
 	 * 
 	 * @return
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
 	private boolean sendOutBox() throws CacheException {
 		ArrayList<QuizQuestion> outbox = getListOutBox();
@@ -550,7 +479,7 @@ public final class Cache {
 	 * Checks if all questions have been sent.
 	 * 
 	 * @return true if not question was in the failBox.
-	 * @throws CacheException 
+	 * @throws CacheException
 	 */
 	private boolean getSentStatus() throws CacheException {
 		boolean status = failBox.size() == 0;
@@ -573,12 +502,14 @@ public final class Cache {
 	private class InnerProxyToCachePrivateTask implements
 			IProxyToCachePrivateTasks {
 		@Override
-		public boolean addQuestionToCache(QuizQuestion myQuizQuestion) throws CacheException {
+		public boolean addQuestionToCache(QuizQuestion myQuizQuestion)
+			throws CacheException {
 			return instance.addQuestionToCache(myQuizQuestion);
 		}
 
 		@Override
-		public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion) throws CacheException {
+		public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion)
+			throws CacheException {
 			return instance.addQuestionToOutBox(myQuizQuestion);
 		}
 

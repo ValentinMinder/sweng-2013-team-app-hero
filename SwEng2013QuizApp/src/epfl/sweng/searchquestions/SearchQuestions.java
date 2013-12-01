@@ -69,7 +69,7 @@ public class SearchQuestions {
 			post.setHeader("Content-type", "application/json");
 			post.setHeader("Authorization", "Tequila " + questionElement[0]);
 			String jsonQuery = "{\n\"query\": \"" + request + "\"\n}";
-			if (nextID != null) {
+			if (nextID != null && !nextID.equals("null")) {
 				jsonQuery = "{\n\"query\": \"" + request + "\",\n" +
 						"\"from\": \"" + nextID + "\"\n}";
 			}

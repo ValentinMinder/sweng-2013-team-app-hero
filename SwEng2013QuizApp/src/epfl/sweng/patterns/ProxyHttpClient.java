@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.CacheException;
+import epfl.sweng.caching.HandleOfflineQuery;
 import epfl.sweng.caching.ICacheToProxyPrivateTasks;
 import epfl.sweng.caching.IProxyToCachePrivateTasks;
 import epfl.sweng.query.EvaluateQuery;
@@ -369,12 +370,12 @@ public final class ProxyHttpClient implements IHttpClient {
 					}
 					Log.e("test", query);
 					String clearQuery = Parenthesis.parenthesis(query);
-					ArrayList<String> listJSONQuestions = Cache.getInstance()
-							.getArrayOfJSONQuestions(clearQuery, next);
+					ArrayList<String> listJSONQuestions = HandleOfflineQuery.getInstance()
+							.query(clearQuery, next);
 
 					String ret = "{\n \"questions\": ";
 					ret += (new JSONArray(listJSONQuestions).toString());
-					String token = Cache.getInstance().getPreviousToken();
+					String token = HandleOfflineQuery.getInstance().getPreviousToken();
 					if (token == null){
 						token = "null";
 					}
