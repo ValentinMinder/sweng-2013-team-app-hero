@@ -3,6 +3,7 @@ package epfl.sweng.test;
 import org.apache.http.HttpStatus;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -18,35 +19,40 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
 
 public class ShowQuestionsActivityTest extends
-ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
+		ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 	private Solo solo;
-	  public static final int DODO = 3000;
-      private MockHttpClient httpClient;
+	public static final int DODO = 3000;
+	private MockHttpClient mockHttpClient;
 
-      public ShowQuestionsActivityTest() {
-              super(ShowQuestionsActivity.class);
-      }
+	public ShowQuestionsActivityTest() {
+		super(ShowQuestionsActivity.class);
+	}
 
-      @Override
-      protected void setUp() {
-              httpClient = new MockHttpClient();
-              SwengHttpClientFactory.setInstance(httpClient);
-              solo = new Solo(getInstrumentation());
-      }
-      public void testShowQuestion() {
-    	  Cache.setDirectoryFiles(getActivity().getApplicationContext().getFilesDir().getAbsolutePath());
-              httpClient.pushCannedResponse(
-                              "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
-                              HttpStatus.SC_OK,
-                              "{\"question\": \"What is the answer to life, the universe, and everything?\","
-                                              + " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
-                                              + " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-                              "application/json");
-        solo.sleep(DODO);
-        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		Button nextQuestionButton = (Button) solo.getView(R.id.next_question_button);
+	@Override
+	protected void setUp() {
+		this.mockHttpClient = new MockHttpClient();
+		SwengHttpClientFactory.setInstance(this.mockHttpClient);
+		this.mockHttpClient
+				.pushCannedResponse(
+						"GET (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/quizquestions/random\\b",
+						HttpStatus.SC_OK,
+						"{\"question\": \"What is the answer to life, the universe, and everything?\","
+								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
+								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+						"application/json");
+		Cache.setDirectoryFiles(getActivity().getApplicationContext()
+				.getFilesDir().getAbsolutePath());
+		solo = new Solo(getInstrumentation());
+	}
+
+	public void testShowQuestion() {
+		//getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		solo.sleep(DODO*4);
+		
+		Button nextQuestionButton = (Button) solo
+				.getView(R.id.next_question_button);
 		assertFalse("Next question button is disabled",
-				nextQuestionButton.isEnabled()); 
+				nextQuestionButton.isEnabled());
 		ListView answers = (ListView) solo.getView(R.id.multiple_choices);
 		int i = 0;
 		solo.sleep(DODO);
@@ -60,12 +66,11 @@ ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 		} while (!nextQuestionButton.isEnabled());
 
 		assertTrue("Next question button is enabled",
-				nextQuestionButton.isEnabled()); 
+				nextQuestionButton.isEnabled());
 		Button bouton = (Button) solo.getView(R.id.next_question_button);
-		//solo.clickOnView(bouton);
+		solo.clickOnView(bouton);
 
 	}
-
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {

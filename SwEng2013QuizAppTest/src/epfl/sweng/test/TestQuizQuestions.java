@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONException;
+
 import junit.framework.TestCase;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -139,6 +141,19 @@ public class TestQuizQuestions extends TestCase {
 			}
 		}
 		assertTrue(true);
+	}
+	
+	public void testJSONConstruct() {
+		QuizQuestion q = createNewQuizQuestion();
+		
+		QuizQuestion q2 = null;
+		try {
+			q2 = new QuizQuestion(q.toPostEntity());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+				
+		assertTrue(q.equals(q2));
 	}
 	
 	public void testAudit() {

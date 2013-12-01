@@ -142,13 +142,11 @@ public class ShowQuestionsActivity extends Activity {
 	public void displayQuestion() {
 		Button nextQuestion = (Button) findViewById(R.id.next_question_button);
 		nextQuestion.setEnabled(false);
-
 		if (question != null) {
 			TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
 			questionTitle.setText(question.getQuestion());
 
 			ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
-
 			if (possibleAnswers != null) {
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 						android.R.layout.simple_list_item_1,

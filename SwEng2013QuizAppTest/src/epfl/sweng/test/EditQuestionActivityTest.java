@@ -42,8 +42,6 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo = new Solo(getInstrumentation());
 		this.mockHttpClient = new MockHttpClient();
 		SwengHttpClientFactory.setInstance(this.mockHttpClient);
-		
-		
 	}
 
 	public void testQuestionEdited(){
@@ -53,13 +51,10 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
 		
-		solo.sleep(DODO*3);
-		
-		
+		solo.sleep(DODO*4);
 		
 		Button add = (Button) solo.getView(R.id.add);
 		solo.clickOnView(add);
-		
 		
 		Button correct = (Button) solo.getView(0);
 		//Button notCorrect = (Button) solo.getView(1);
@@ -114,6 +109,8 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		QuizQuestion Q = new QuizQuestion(s, answer,0, tags1, 0, "moi");
 		Cache.setDirectoryFiles(getActivity().getApplicationContext().getFilesDir().getAbsolutePath());
 		this.mockHttpClient.pushCannedResponse("POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/quizquestions\\b", HttpStatus.SC_OK, Q.toPostEntity(), "application/json");
+		
+		solo.sleep(DODO);
 		
 		solo.clickOnView(submit);
 		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);

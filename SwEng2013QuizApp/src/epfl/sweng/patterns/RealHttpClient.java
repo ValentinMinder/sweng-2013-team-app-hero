@@ -6,8 +6,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.AbstractHttpClient;
-
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 /**
@@ -19,13 +17,12 @@ import epfl.sweng.servercomm.SwengHttpClientFactory;
 public final class RealHttpClient implements IHttpClient {
 
 	private static RealHttpClient instance = null;
-	private AbstractHttpClient swengServer = null;
 
 	/**
 	 * Private constructor of the singleton.
 	 */
 	private RealHttpClient() {
-		swengServer = SwengHttpClientFactory.getInstance();
+		
 	}
 
 	/**
@@ -46,7 +43,7 @@ public final class RealHttpClient implements IHttpClient {
 	@Override
 	public HttpResponse execute(HttpUriRequest request) throws IOException,
 			ClientProtocolException {
-		return swengServer.execute(request);
+		return SwengHttpClientFactory.getInstance().execute(request);
 	}
 
 	/**
@@ -55,6 +52,6 @@ public final class RealHttpClient implements IHttpClient {
 	@Override
 	public <T> T execute(HttpUriRequest arg0, ResponseHandler<? extends T> arg1)
 		throws IOException, ClientProtocolException {
-		return swengServer.execute(arg0, arg1);
+		return SwengHttpClientFactory.getInstance().execute(arg0, arg1);
 	}
 }
