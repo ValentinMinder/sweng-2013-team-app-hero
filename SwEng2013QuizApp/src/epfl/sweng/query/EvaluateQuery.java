@@ -46,10 +46,10 @@ public class EvaluateQuery {
 	 * 
 	 * 
 	 */
-	public static ArrayList<String> evaluate(String query) throws CacheException {
+	public static HashSet<String> evaluate(String query) throws CacheException {
 		System.out.println("Evaluating " + query);
 		HashMap<Integer, Integer> parenthesisLevel = getLevels(query);
-		ArrayList<Set<String>> results = new ArrayList<Set<String>>();
+		ArrayList<HashSet<String>> results = new ArrayList<HashSet<String>>();
 		int count = 0;
 
 		while (parenthesisLevel.size() != 0) {
@@ -98,7 +98,7 @@ public class EvaluateQuery {
 				op2Set = Cache.getInstance().getSetTag(operand2);
 			}
 
-			Set<String> setResult = new HashSet<String>(op1Set);
+			HashSet<String> setResult = new HashSet<String>(op1Set);
 			if (operator.equals("+")) {
 				setResult.addAll(op2Set);
 			} else {
@@ -112,12 +112,10 @@ public class EvaluateQuery {
 		}
 		// results.get(count - 1).print();
 		if (count != 0) {
-			return Cache.getInstance().getArrayOfJSONQuestions(
-					results.get(count - 1));
+			return 	results.get(count - 1);
 		} else {
 			Log.e("test", query);
-			return Cache.getInstance().getArrayOfJSONQuestions(
-					Cache.getInstance().getSetTag(query));
+			return Cache.getInstance().getSetTag(query);
 			// return new ArrayList<String>();
 		}
 	}

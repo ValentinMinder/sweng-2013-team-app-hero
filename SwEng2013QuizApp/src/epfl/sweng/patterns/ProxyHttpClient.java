@@ -360,14 +360,25 @@ public final class ProxyHttpClient implements IHttpClient {
 				try {
 					JSONObject json = new JSONObject(jsonString);
 					String query = json.getString("query");
+					String next = "null";
+					System.out.println("im here");
+					try {
+						next = json.getString("from");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 					Log.e("test", query);
 					String clearQuery = Parenthesis.parenthesis(query);
-					ArrayList<String> listJSONQuestions = EvaluateQuery
-							.evaluate(clearQuery);
+					ArrayList<String> listJSONQuestions = Cache.getInstance()
+							.getArrayOfJSONQuestions(clearQuery, next);
 
 					String ret = "{\n \"questions\": ";
 					ret += (new JSONArray(listJSONQuestions).toString());
-					ret += ", \n\"next\": \"null\"\n}";
+					String token = Cache.getInstance().getPreviousToken();
+					if (token == null){
+						token = "null";
+					}
+					ret += ", \n\"next\": \"" + token + "\"\n}";
 					System.out.println(ret);
 					return (T) ret;
 				} catch (JSONException e) {

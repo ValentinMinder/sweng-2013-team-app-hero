@@ -11,11 +11,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import epfl.sweng.patterns.ProxyHttpClient;
+import epfl.sweng.query.EvaluateQuery;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -156,23 +159,86 @@ public final class Cache {
 		return new InnerProxyToCachePrivateTask();
 	}
 
+	private LinkedList<String> previousHashSetAsLinkedList;
+	private String previousQuery;
+	private String previousToken;
+	public static final int RETURN_ARRAY_SIZE = 10;
+	private void resetPreviousState() {
+		previousHashSetAsLinkedList = null;
+		previousQuery = null;
+		previousToken = null;
+	}
+	
 	/**
-	 * Return a ArrayList of string corresponding to all the questions (identify
-	 * by the set of hashCode in parameter) in JSON format
+	 * Return the previous token (the hash of the next questions in the search).
+	 * @return
+	 */
+	public String getPreviousToken() {
+		return previousToken;
+	}
+	
+	public ArrayList<String> getArrayOfJSONQuestions (String query, String token) throws CacheException {
+		if (query.equals(previousQuery) && token.equals(previousToken)) {
+			return getArrayOfJSONQuestionsPartial();
+		} else {
+			resetPreviousState();
+			HashSet<String> set = EvaluateQuery.evaluate(query);
+			System.out.println("found questions: " + set.size());
+			if (set.size() > RETURN_ARRAY_SIZE) {
+				previousQuery = query;
+				previousHashSetAsLinkedList = new LinkedList<String>(set);
+				return getArrayOfJSONQuestionsPartial();
+			} else {
+				return getArrayOfJSONQuestionsALL(set);
+			}
+		}
+	}
+
+	/**
+	 * Return a ArrayList of string corresponding to some next questions in JSON format.
+	 * Used for a huge quantity of questions.
+	 * Questions are identified by the LinkedList of hashCode in the cache.
 	 * 
-	 * @param hashCodes
 	 * @return
 	 * @author AntoineW
 	 * @throws CacheException 
 	 */
-	public ArrayList<String> getArrayOfJSONQuestions(Set<String> hashCodes) throws CacheException {
+	private ArrayList<String> getArrayOfJSONQuestionsPartial () throws CacheException {
+		ArrayList<String> result = new ArrayList<String>(RETURN_ARRAY_SIZE);
+		boolean flag = true;
+		for (int i = 0; i < RETURN_ARRAY_SIZE && flag; i++) {
+			String hashCode = previousHashSetAsLinkedList.poll();
+			if (hashCode != null) {
+				result.add(getJSONQuestion(hashCode));
+			} else {
+				flag = false;
+			}
+		}
+		if (flag) {
+			previousToken = previousHashSetAsLinkedList.peek();
+		} else {
+			previousToken = "null";
+		}
+		return result;
+	}
+
+	/**
+	 * Return a ArrayList of string corresponding to all the questions (identify
+	 * by the set of hashCode in parameter) in JSON format.
+	 * Used only for a few questions.
+	 * 
+	 * @param hashCodes a set of hash representing the questions
+	 * @return
+	 * @author AntoineW
+	 * @throws CacheException 
+	 */
+	private ArrayList<String> getArrayOfJSONQuestionsALL(HashSet<String> hashCodes) throws CacheException {
 		ArrayList<String> result = new ArrayList<String>();
 		Iterator<String> itHashCode = hashCodes.iterator();
 		while (itHashCode.hasNext()) {
 			String hashCode = itHashCode.next();
 			result.add(getJSONQuestion(hashCode));
 		}
-
 		return result;
 	}
 
@@ -403,10 +469,10 @@ public final class Cache {
 	 * @author AntoineW
 	 * @throws CacheException 
 	 */
-	public Set<String> getSetTag(String tag) throws CacheException {
+	public HashSet<String> getSetTag(String tag) throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS + File.separator + tag);
-		Set<String> setHash = getSetTagWithFile(file);
+		HashSet<String> setHash = getSetTagWithFile(file);
 
 		return setHash;
 	}
@@ -420,8 +486,8 @@ public final class Cache {
 	 * @author AntoineW
 	 * @throws CacheException 
 	 */
-	private Set<String> getSetTagWithFile(File file) throws CacheException {
-		Set<String> setHash = null;
+	private HashSet<String> getSetTagWithFile(File file) throws CacheException {
+		HashSet<String> setHash = null;
 		if (!file.exists()) {
 			setHash = new HashSet<String>();
 		} else {
