@@ -108,6 +108,10 @@ public final class Cache {
 	public static void deleteInstance() {
 		instance = null;
 	}
+	
+	public static String getDirectoryFiles() {
+		return directoryFiles;
+	}
 
 	/**
 	 * Create a unique instance of the cache. Return a ProxyToCachePrivateTasks

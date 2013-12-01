@@ -122,6 +122,8 @@ public class MainActivity extends Activity {
 				// }
 			}
 		});
+		
+		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
 	@Override
@@ -185,7 +187,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+		//TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
 	/**

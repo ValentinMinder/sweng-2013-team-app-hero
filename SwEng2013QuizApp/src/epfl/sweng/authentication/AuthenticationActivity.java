@@ -40,10 +40,6 @@ public class AuthenticationActivity extends Activity {
 	
 	private String authenticationToken = null;
 
-	public static enum appState {
-		AUTHENTICATED, NOT_AUTHENTICATED;
-	}
-
 	/**
 	 * Method who is called if authentication failed, clear the text values of
 	 * the text view

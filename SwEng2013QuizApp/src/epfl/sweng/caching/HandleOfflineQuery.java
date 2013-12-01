@@ -135,7 +135,7 @@ public final class HandleOfflineQuery {
 	 * @author AntoineW
 	 * @throws CacheException
 	 */
-	private ArrayList<String> getArrayOfJSONQuestionsALL(
+	public ArrayList<String> getArrayOfJSONQuestionsALL(
 			HashSet<String> hashCodes) throws CacheException {
 		ArrayList<String> result = new ArrayList<String>();
 		Iterator<String> itHashCode = hashCodes.iterator();

@@ -46,9 +46,9 @@ public class ShowQuestionsActivityTest extends
 	}
 
 	public void testShowQuestion() {
-		//getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		solo.sleep(DODO*4);
-		
+		// getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		solo.sleep(DODO * 4);
+
 		Button nextQuestionButton = (Button) solo
 				.getView(R.id.next_question_button);
 		assertFalse("Next question button is disabled",

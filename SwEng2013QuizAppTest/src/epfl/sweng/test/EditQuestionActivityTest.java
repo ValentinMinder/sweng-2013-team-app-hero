@@ -39,9 +39,9 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 
 	@Override
 	protected void setUp() {
-		solo = new Solo(getInstrumentation());
 		this.mockHttpClient = new MockHttpClient();
 		SwengHttpClientFactory.setInstance(this.mockHttpClient);
+		solo = new Solo(getInstrumentation());
 	}
 
 	public void testQuestionEdited(){

@@ -29,7 +29,6 @@ import epfl.sweng.caching.CacheException;
 import epfl.sweng.caching.HandleOfflineQuery;
 import epfl.sweng.caching.ICacheToProxyPrivateTasks;
 import epfl.sweng.caching.IProxyToCachePrivateTasks;
-import epfl.sweng.query.EvaluateQuery;
 import epfl.sweng.query.Parenthesis;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.testing.TestCoordinator;

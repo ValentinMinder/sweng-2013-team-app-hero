@@ -10,6 +10,7 @@ import java.util.Set;
 import android.test.AndroidTestCase;
 import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.CacheException;
+import epfl.sweng.caching.HandleOfflineQuery;
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -27,7 +28,6 @@ public class TestCache extends AndroidTestCase {
 	}
 	
 	private void initTest() {
-		//TODO probleme à cause du cache qui est instancié et comme les fichiers sont détruit existe plus
 		directoryFiles = getContext().getFilesDir().getAbsolutePath();
 			deleteDirectory();
 
@@ -127,12 +127,12 @@ public class TestCache extends AndroidTestCase {
 		assertTrue("JSON string not correspond",
 				jsonQuestion.equals(jsonQuestionCache));
 		
-		Set<String> hashCodes = new HashSet<String>();
+		HashSet<String> hashCodes = new HashSet<String>();
 		hashCodes.add(hashCodeSetFirstQuestion);
 		
 		List<String> listQuestionsJSON = null;
 		try {
-			listQuestionsJSON = Cache.getInstance().getArrayOfJSONQuestions(hashCodes);
+			listQuestionsJSON = HandleOfflineQuery.getInstance().getArrayOfJSONQuestionsALL(hashCodes);
 		} catch (CacheException e) {
 			assertTrue("Cache exception for getArrayOfJSONQuestions", false);
 		}
