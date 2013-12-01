@@ -120,13 +120,6 @@ public class EvaluateQuery {
 		}
 	}
 
-	public static Set<String> simulate(String s) {
-		HashSet<String> hash = new HashSet<String>();
-		for (int i = 0; i < 10; ++i) {
-			hash.add(s + "" + i);
-		}
-		return hash;
-	}
 
 	private static Entry<Integer, Integer> max(
 			Set<Entry<Integer, Integer>> entrySet) {

@@ -160,12 +160,10 @@ public final class ProxyHttpClient implements IHttpClient {
 	 * @return true if it's consistent.
 	 */
 	private boolean checkBasicAuthentificationSpecification(String authToken) {
-		if (authToken == null) {
+		if (authToken == null || !authToken.startsWith("Tequila ")) {
 			return false;
 		}
-		if (!authToken.startsWith("Tequila ")) {
-			return false;
-		}
+
 		int specifiedLength = "Tequila dvoon4y2wp1r2biq052dppkxghyrob14"
 				.length();
 		if (authToken.length() != specifiedLength) {
@@ -197,10 +195,7 @@ public final class ProxyHttpClient implements IHttpClient {
 			try {
 				serverResponse = realHttpClient.execute(request);
 				statusCode = serverResponse.getStatusLine().getStatusCode();
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-				goOffline = true;
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				goOffline = true;
 			}
@@ -479,14 +474,7 @@ public final class ProxyHttpClient implements IHttpClient {
 				response.getEntity().consumeContent();
 				System.out.println("statzus " + statusCode);
 				return statusCode;
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				// en particulier si y a pas de réseau!!
-				e.printStackTrace();
-			} catch (CacheException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			

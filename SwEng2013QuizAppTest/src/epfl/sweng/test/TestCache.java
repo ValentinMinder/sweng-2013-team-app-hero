@@ -12,6 +12,8 @@ import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.CacheException;
 import epfl.sweng.caching.HandleOfflineQuery;
 import epfl.sweng.patterns.ProxyHttpClient;
+import epfl.sweng.query.EvaluateQuery;
+import epfl.sweng.query.Parenthesis;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 public class TestCache extends AndroidTestCase {
@@ -154,6 +156,7 @@ public class TestCache extends AndroidTestCase {
 				questionTemp.equals(jsonQuestion));
 	}
 	
+
 	public void testOutbox() {
 		try {
 			Cache.getInstance().addQuestionToOutBox(question);
@@ -175,5 +178,19 @@ public class TestCache extends AndroidTestCase {
 				outbox.get(0).toPostEntity().equals(jsonQuestion));
 		
 		deleteDirectory();
-	}	
+	}
+	
+	public void testEvaluationOfQuery() {
+		deleteDirectory();
+		String query = Parenthesis.parenthesis("non2+nonexistenttag");
+		try {
+			HashSet<String> result = EvaluateQuery.evaluate(query);
+			assertTrue(result.size() == 0);
+		} catch (CacheException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 }

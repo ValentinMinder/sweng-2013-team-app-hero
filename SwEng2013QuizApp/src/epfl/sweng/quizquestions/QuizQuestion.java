@@ -279,47 +279,60 @@ public class QuizQuestion implements Serializable {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
+
 		QuizQuestion other = (QuizQuestion) obj;
-		if (answers == null) {
-			if (other.answers != null) {
-				return false;
-			}
-		} else if (!answers.equals(other.answers)) {
+		if ((answers == null && other.answers != null) || !answers.equals(other.answers)) {
 			return false;
 		}
+//		if ((answers == null ) {
+//			if (other.answers != null) {
+//				return false;
+//			}
+//		} else if (!answers.equals(other.answers)) {
+//			return false;
+//		}
+		
 		if (id != other.id) {
 			return false;
 		}
-		if (owner == null) {
-			if (other.owner != null) {
-				return false;
-			}
-		} else if (!owner.equals(other.owner)) {
+		
+		if ((owner == null && other.owner != null) || !owner.equals(other.owner)) {
 			return false;
 		}
-		if (question == null) {
-			if (other.question != null) {
-				return false;
-			}
-		} else if (!question.equals(other.question)) {
+//		if (owner == null) {
+//			if (other.owner != null) {
+//				return false;
+//			}
+//		} else if (!owner.equals(other.owner)) {
+//			return false;
+//		}
+		if ((question == null && other.question != null) || !question.equals(other.question)) {
 			return false;
 		}
+//		if (question == null) {
+//			if (other.question != null) {
+//				return false;
+//			}
+//		} else if (!question.equals(other.question)) {
+//			return false;
+//		}
 		if (solutionIndex != other.solutionIndex) {
 			return false;
 		}
-		if (tags == null) {
-			if (other.tags != null) {
-				return false;
-			}
-		} else if (!tags.equals(other.tags)) {
+		
+		if ((tags == null && other.tags != null) || !tags.equals(other.tags)) {
 			return false;
 		}
+//		if (tags == null) {
+//			if (other.tags != null) {
+//				return false;
+//			}
+//		} else if (!tags.equals(other.tags)) {
+//			return false;
+//		}
 		return true;
 	}
 

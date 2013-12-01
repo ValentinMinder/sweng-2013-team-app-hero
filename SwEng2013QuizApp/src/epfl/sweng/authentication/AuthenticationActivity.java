@@ -232,11 +232,7 @@ public class AuthenticationActivity extends Activity {
 				} else {
 					return "failed";
 				}
-			} catch (UnsupportedEncodingException e1) {
-				e1.printStackTrace();
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 

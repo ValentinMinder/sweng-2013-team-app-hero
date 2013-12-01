@@ -1,18 +1,21 @@
 package epfl.sweng.test;
 
+import android.test.ActivityInstrumentationTestCase2;
+import android.widget.CheckBox;
+import android.widget.EditText;
+
 import com.jayway.android.robotium.solo.Solo;
 
-import android.test.ActivityInstrumentationTestCase2;
-import android.widget.Button;
-import android.widget.EditText;
+import epfl.sweng.R;
 import epfl.sweng.authentication.StoreCredential;
+import epfl.sweng.caching.CacheException;
+import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.searchquestions.SearchActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
-import epfl.sweng.R;
 
 
 public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchActivity> {
@@ -49,7 +52,6 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 		
 		StoreCredential.getInstance().storeSessionId(token, getActivity());
 		solo.sleep(DODO);
-		
 		//solo.clickOnButton("Search");
 		solo.sleep(DODO);
 		

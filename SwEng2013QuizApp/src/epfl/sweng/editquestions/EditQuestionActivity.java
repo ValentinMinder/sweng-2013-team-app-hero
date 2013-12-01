@@ -509,9 +509,7 @@ public class EditQuestionActivity extends Activity {
 	private void submitQuestion(String questionAsEntity) {
 		try {
 			new SubmitQuestionTask().execute(questionAsEntity).get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -547,11 +545,7 @@ public class EditQuestionActivity extends Activity {
 //				e.printStackTrace();
 //			} catch (HttpResponseException e) {
 //				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (CacheException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
