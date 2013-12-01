@@ -244,7 +244,7 @@ public final class Cache {
 	private boolean addQuestionToTagFile(String tag, String hashQuestion)
 		throws CacheException {
 		File file = new File(directoryFiles + File.separator
-				+ NAME_DIRECTORY_TAGS + File.separator + tag);
+				+ NAME_DIRECTORY_TAGS + File.separator + tag.toLowerCase());
 		Set<String> setHash = getSetTagWithFile(file);
 
 		if (!setHash.contains(hashQuestion)) {
@@ -401,7 +401,7 @@ public final class Cache {
 	 */
 	public HashSet<String> getSetTag(String tag) throws CacheException {
 		File file = new File(directoryFiles + File.separator
-				+ NAME_DIRECTORY_TAGS + File.separator + tag);
+				+ NAME_DIRECTORY_TAGS + File.separator + tag.toLowerCase());
 		HashSet<String> setHash = getSetTagWithFile(file);
 
 		return setHash;
