@@ -16,7 +16,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -51,20 +50,19 @@ public class ShowQuestionsActivity extends Activity {
 	 * Method who is called if error occurred
 	 */
 	private void errorDisplayQuestion() {
-		//Reset the differents fields
+		// Reset the differents fields
 		ListView possibleAnswers = (ListView) findViewById(R.id.multiple_choices);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1,
-				new ArrayList<String>());
+				android.R.layout.simple_list_item_1, new ArrayList<String>());
 
 		possibleAnswers.setAdapter(adapter);
-		
+
 		TextView questionTitle = (TextView) findViewById(R.id.displayed_text);
 		questionTitle.setText("");
-		
+
 		TextView tags = (TextView) findViewById(R.id.tags);
 		tags.setText("");
-		
+
 		Toast.makeText(getBaseContext(), R.string.error_retrieving_question,
 				Toast.LENGTH_SHORT).show();
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);

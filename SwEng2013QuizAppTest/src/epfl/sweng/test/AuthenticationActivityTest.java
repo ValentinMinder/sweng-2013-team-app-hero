@@ -156,21 +156,35 @@ public class AuthenticationActivityTest extends
 
 		solo.clickOnView(show_random_question);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		
+		Button nextQuestionButton = (Button) solo
+				.getView(R.id.next_question_button);
+		
+		solo.clickOnText("Twenty-seven");
+		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
+		
+		assertFalse("Next question button is enabled",
+				nextQuestionButton.isEnabled());
+		
+		solo.clickOnText("Forty-two");
+		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 
-		solo.goBack();
-		solo.sleep(DODO);
-
-		// Submit question
-		solo.clickOnView(submit_quiz_question);
-		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-
-		solo.goBack();
-		solo.sleep(DODO);
-
-		// Search
-		solo.clickOnView(search_quiz);
-		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
-
+		assertTrue("Next question button is disabled",
+				nextQuestionButton.isEnabled());
+		
+		this.mockHttpClient
+		.pushCannedResponse(
+				"GET (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/quizquestions/random\\b",
+				HttpStatus.SC_OK,
+				"{\"question\": \"Question?\","
+						+ " \"answers\": [\"answer1\", \"answer2\"], \"owner\": \"sweng\","
+						+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+				"application/json");
+		
+		solo.clickOnView(nextQuestionButton);
+		
+		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		
 		solo.goBack();
 		solo.sleep(DODO);
 
@@ -286,36 +300,104 @@ public class AuthenticationActivityTest extends
 			assertTrue("Cache exception for getListOutBox", false);
 		}
 		
-		/*solo.clickOnView(offline);
 		
-		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);*/
-		
-		
-		/*solo.clickOnView(search_quiz);
+		solo.clickOnView(search_quiz);
 		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
 
-		solo.sleep(DODO);*/
+		solo.sleep(DODO);
 		
 		//TEMP START
-		/*String querry = "fruit";
+		String querry = "fruit";
 		EditText querryText = (EditText) solo.getView(R.id.searchText);
 		solo.enterText((EditText) querryText, querry);
 		solo.sleep(DODO);	
 		
 		assertTrue("button is enabled", solo.getButton("Search").isEnabled());
 		
+		String jsonQuestion = "{ \"id\": \"7654765\", \"owner\": \"fruitninja\", " +
+				"\"question\": \"How many calories are in a banana?\"," +
+			      "\"answers\": [ \"Just enough\", \"Too many\" ]," +
+			      "\"solutionIndex\": 0," +
+			      "\"tags\": [ \"fruit\", \"banana\", \"trivia\" ] }";
+		
+		String response = "{ \"questions\": [ " + jsonQuestion + " ]," +
+			  "\"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"	} ";
+		
+		this.mockHttpClient
+		.pushCannedResponse(
+				"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
+				HttpStatus.SC_OK, response, "application/json");
+		
 		solo.clickOnButton("Search");
 		
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN*/
+		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		
+		assertTrue("Wrong question", solo.searchText("How many calories are in a banana?"));
+		
+		Button nextQuestion = (Button) solo
+				.getView(R.id.next_question_button);
+
+		solo.clickOnText("Just enough");
+		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
+		
+		assertTrue("Next question button is disabled",
+				nextQuestion.isEnabled());
+		
+		String jsonQuestion2 = "{ \"id\": \"7654765\", \"owner\": \"fruitninja\", " +
+				"\"question\": \"How many calories are in a apple?\"," +
+			      "\"answers\": [ \"Just enough\", \"Too many\" ]," +
+			      "\"solutionIndex\": 0," +
+			      "\"tags\": [ \"fruit\", \"apple\", \"trivia\" ] }";
+		
+		String response2 = "{ \"questions\": [ " + jsonQuestion2 + " ]," +
+			  "\"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"	} ";
+		
+		this.mockHttpClient
+		.pushCannedResponse(
+				"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
+				HttpStatus.SC_OK, response2, "application/json");
+		
+		solo.clickOnView(nextQuestion);
+		
+		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		
+		assertTrue("Wrong question", solo.searchText("How many calories are in a apple?"));
 		
 		//TEMP END
 		
-		//solo.goBack();
-		//solo.sleep(DODO);
+		solo.goBack();
+		solo.sleep(DODO);
 		
-		/*solo.clickOnView(offline);
+		solo.goBack();
+		solo.sleep(DODO);
 		
-		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_DISABLED);*/
+		solo.clickOnView(offline);
+		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+		
+		solo.clickOnView(search_quiz);
+		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
+
+		solo.sleep(DODO);
+		
+		querryText = (EditText) solo.getView(R.id.searchText);
+		solo.enterText((EditText) querryText, querry);
+		solo.sleep(DODO);
+		
+		solo.clickOnButton("Search");
+		
+		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		
+		assertTrue("Wrong question", solo.searchText("How many calories are in a banana?"));
+		
+		solo.goBack();
+		solo.sleep(DODO);
+		
+		solo.goBack();
+		solo.sleep(DODO);
+		
+		solo.clickOnView(offline);
+		
+		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 		
 		
 		Button logout = (Button) solo.getView(R.id.button_log);
