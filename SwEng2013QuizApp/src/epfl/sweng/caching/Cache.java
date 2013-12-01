@@ -150,11 +150,6 @@ public final class Cache {
 	public static Cache getInstance() throws CacheException {
 		// creates the proxy, and the proxy creates the cache!
 		ProxyHttpClient.getInstance();
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		if (instance == null) {
 			throw new CacheException("Proxy only should instance the cache!");
 		}

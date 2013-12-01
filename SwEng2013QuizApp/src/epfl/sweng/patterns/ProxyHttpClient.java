@@ -233,13 +233,14 @@ public final class ProxyHttpClient implements IHttpClient {
 					// owner/id are needed to construct quizquestion and set as
 					// default values
 					myQuizQuestion = new QuizQuestion(jsonContent);
-					myProxyToCachePrivateTasks
-							.addQuestionToCache(myQuizQuestion);
 					if (previousOfflineStatus || !onlineSuccesfulComm) {
 						// if we are offline we add it to ToSendBox
 						// if we are online and there was an error
 						myProxyToCachePrivateTasks
 								.addQuestionToOutBox(myQuizQuestion);
+					} else {
+						myProxyToCachePrivateTasks
+						.addQuestionToCache(myQuizQuestion);
 					}
 					// if proxy accepted the question, reply okay (201) and
 					// return
@@ -368,9 +369,9 @@ public final class ProxyHttpClient implements IHttpClient {
 							.query(clearQuery, next);
 
 					String ret = "{\n \"questions\": ";
-					ret += (new JSONArray(listJSONQuestions).toString());
+					ret += new JSONArray(listJSONQuestions).toString();
 					String token = HandleOfflineQuery.getInstance().getPreviousToken();
-					if (token == null){
+					if (token == null) {
 						token = "null";
 					}
 					ret += ", \n\"next\": \"" + token + "\"\n}";
@@ -489,6 +490,11 @@ public final class ProxyHttpClient implements IHttpClient {
 		protected void onPostExecute(Integer result) {
 			if (result.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
 				// je sais, y a rien, mais pas touche à mon if!
+				try {
+					myProxyToCachePrivateTasks.addQuestionToCache(myQuestion);
+				} catch (CacheException e) {
+					e.printStackTrace();
+				}
 			} else if (!getOfflineStatus()
 					&& result.compareTo(Integer
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
