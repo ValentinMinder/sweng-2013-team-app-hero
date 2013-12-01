@@ -1,12 +1,10 @@
 package epfl.sweng.test;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.apache.http.HttpStatus;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,7 +15,6 @@ import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.CacheException;
-import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -30,7 +27,6 @@ public class AuthenticationActivityTest extends
 	public static final int DODO = 3000;
 	public static final int ID1 = 2000;
 	public static final int ID2 = 2001;
-	private String directoryFiles;
 	private Solo solo;
 	private String token = "68ecb58237a84ef2b2bc8d7737ff918b";
 	private MockHttpClient mockHttpClient;
@@ -38,46 +34,12 @@ public class AuthenticationActivityTest extends
 	public AuthenticationActivityTest() {
 		super(AuthenticationActivity.class);
 	}
-	
-	private void deleteRecursive(File fileOrDirectory) {
-		if (fileOrDirectory.isDirectory())
-			for (File child : fileOrDirectory.listFiles())
-				deleteRecursive(child);
-
-		fileOrDirectory.delete();
-	}
-	
-	private void initTest() {
-		directoryFiles = this.getInstrumentation().getTargetContext().getApplicationContext().getFilesDir().getAbsolutePath();
-			deleteDirectory();
-
-		Cache.deleteInstance();
-		ProxyHttpClient.deleteInstance();
-		Cache.setDirectoryFiles(directoryFiles);
-	}
-	
-	private void deleteDirectory() {
-		String directoryFilesQuestions = directoryFiles + File.separator
-				+ "questions";
-		File directoryQuestions = new File(directoryFilesQuestions);
-		deleteRecursive(directoryQuestions);
-		
-		String directoryFilesTags = directoryFiles + File.separator + "tags";
-		File directoryTags = new File(directoryFilesTags);
-		deleteRecursive(directoryTags);
-		
-		String directoryFilesUtils = directoryFiles + File.separator + "utils";
-		File directoryUtils = new File(directoryFilesUtils);
-		deleteRecursive(directoryUtils);
-	}
 
 	@Override
 	protected void setUp() {
 		this.mockHttpClient = new MockHttpClient();
 		SwengHttpClientFactory.setInstance(this.mockHttpClient);
 		solo = new Solo(getInstrumentation());
-		/*Cache.deleteInstance();
-		ProxyHttpClient.deleteInstance();*/
 	}
 
 	public void testAuthentificationFail() {
@@ -156,35 +118,35 @@ public class AuthenticationActivityTest extends
 
 		solo.clickOnView(show_random_question);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
+
 		Button nextQuestionButton = (Button) solo
 				.getView(R.id.next_question_button);
-		
+
 		solo.clickOnText("Twenty-seven");
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
-		
+
 		assertFalse("Next question button is enabled",
 				nextQuestionButton.isEnabled());
-		
+
 		solo.clickOnText("Forty-two");
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 
 		assertTrue("Next question button is disabled",
 				nextQuestionButton.isEnabled());
-		
+
 		this.mockHttpClient
-		.pushCannedResponse(
-				"GET (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/quizquestions/random\\b",
-				HttpStatus.SC_OK,
-				"{\"question\": \"Question?\","
-						+ " \"answers\": [\"answer1\", \"answer2\"], \"owner\": \"sweng\","
-						+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-				"application/json");
-		
+				.pushCannedResponse(
+						"GET (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/quizquestions/random\\b",
+						HttpStatus.SC_OK,
+						"{\"question\": \"Question?\","
+								+ " \"answers\": [\"answer1\", \"answer2\"], \"owner\": \"sweng\","
+								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+						"application/json");
+
 		solo.clickOnView(nextQuestionButton);
-		
+
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
+
 		solo.goBack();
 		solo.sleep(DODO);
 
@@ -192,7 +154,7 @@ public class AuthenticationActivityTest extends
 		solo.clickOnView(offline);
 
 		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
-		
+
 		// Submit question
 		solo.clickOnView(submit_quiz_question);
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
@@ -273,22 +235,23 @@ public class AuthenticationActivityTest extends
 		} catch (CacheException e) {
 			assertTrue("Cache exception for getListOutBox", false);
 		}
-		
-		//Display question stored but not submitted
+
+		// Display question stored but not submitted
 		solo.clickOnView(show_random_question);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
+
 		solo.goBack();
 		solo.sleep(DODO);
-		
+
 		QuizQuestion Q = new QuizQuestion(s, answer, 0, tags1, 0, "moi");
 		this.mockHttpClient
 				.pushCannedResponse(
 						"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/quizquestions\\b",
-						HttpStatus.SC_CREATED, Q.toPostEntity(), "application/json");
+						HttpStatus.SC_CREATED, Q.toPostEntity(),
+						"application/json");
 
 		solo.clickOnView(offline);
-		
+
 		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 
 		solo.sleep(DODO);
@@ -299,107 +262,106 @@ public class AuthenticationActivityTest extends
 		} catch (CacheException e) {
 			assertTrue("Cache exception for getListOutBox", false);
 		}
-		
-		
+
 		solo.clickOnView(search_quiz);
 		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
 
 		solo.sleep(DODO);
-		
-		//TEMP START
+
+		// TEMP START
 		String querry = "fruit";
 		EditText querryText = (EditText) solo.getView(R.id.searchText);
 		solo.enterText((EditText) querryText, querry);
-		solo.sleep(DODO);	
-		
+		solo.sleep(DODO);
+
 		assertTrue("button is enabled", solo.getButton("Search").isEnabled());
-		
-		String jsonQuestion = "{ \"id\": \"7654765\", \"owner\": \"fruitninja\", " +
-				"\"question\": \"How many calories are in a banana?\"," +
-			      "\"answers\": [ \"Just enough\", \"Too many\" ]," +
-			      "\"solutionIndex\": 0," +
-			      "\"tags\": [ \"fruit\", \"banana\", \"trivia\" ] }";
-		
-		String response = "{ \"questions\": [ " + jsonQuestion + " ]," +
-			  "\"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"	} ";
-		
+
+		String jsonQuestion = "{ \"id\": \"7654765\", \"owner\": \"fruitninja\", "
+				+ "\"question\": \"How many calories are in a banana?\","
+				+ "\"answers\": [ \"Just enough\", \"Too many\" ],"
+				+ "\"solutionIndex\": 0,"
+				+ "\"tags\": [ \"fruit\", \"banana\", \"trivia\" ] }";
+
+		String response = "{ \"questions\": [ " + jsonQuestion + " ],"
+				+ "\"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"	} ";
+
 		this.mockHttpClient
-		.pushCannedResponse(
-				"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
-				HttpStatus.SC_OK, response, "application/json");
-		
+				.pushCannedResponse(
+						"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
+						HttpStatus.SC_OK, response, "application/json");
+
 		solo.clickOnButton("Search");
-		
+
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
-		assertTrue("Wrong question", solo.searchText("How many calories are in a banana?"));
-		
-		Button nextQuestion = (Button) solo
-				.getView(R.id.next_question_button);
+
+		assertTrue("Wrong question",
+				solo.searchText("How many calories are in a banana?"));
+
+		Button nextQuestion = (Button) solo.getView(R.id.next_question_button);
 
 		solo.clickOnText("Just enough");
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
-		
-		assertTrue("Next question button is disabled",
-				nextQuestion.isEnabled());
-		
-		String jsonQuestion2 = "{ \"id\": \"7654765\", \"owner\": \"fruitninja\", " +
-				"\"question\": \"How many calories are in a apple?\"," +
-			      "\"answers\": [ \"Just enough\", \"Too many\" ]," +
-			      "\"solutionIndex\": 0," +
-			      "\"tags\": [ \"fruit\", \"apple\", \"trivia\" ] }";
-		
-		String response2 = "{ \"questions\": [ " + jsonQuestion2 + " ]," +
-			  "\"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"	} ";
-		
+
+		assertTrue("Next question button is disabled", nextQuestion.isEnabled());
+
+		String jsonQuestion2 = "{ \"id\": \"7654765\", \"owner\": \"fruitninja\", "
+				+ "\"question\": \"How many calories are in a apple?\","
+				+ "\"answers\": [ \"Just enough\", \"Too many\" ],"
+				+ "\"solutionIndex\": 0,"
+				+ "\"tags\": [ \"fruit\", \"apple\", \"trivia\" ] }";
+
+		String response2 = "{ \"questions\": [ " + jsonQuestion2 + " ],"
+				+ "\"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\"	} ";
+
 		this.mockHttpClient
-		.pushCannedResponse(
-				"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
-				HttpStatus.SC_OK, response2, "application/json");
-		
+				.pushCannedResponse(
+						"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
+						HttpStatus.SC_OK, response2, "application/json");
+
 		solo.clickOnView(nextQuestion);
-		
+
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
-		assertTrue("Wrong question", solo.searchText("How many calories are in a apple?"));
-		
-		//TEMP END
-		
+
+		assertTrue("Wrong question",
+				solo.searchText("How many calories are in a apple?"));
+
+		// TEMP END
+
 		solo.goBack();
 		solo.sleep(DODO);
-		
+
 		solo.goBack();
 		solo.sleep(DODO);
-		
+
 		solo.clickOnView(offline);
 		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
-		
+
 		solo.clickOnView(search_quiz);
 		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
 
 		solo.sleep(DODO);
-		
+
 		querryText = (EditText) solo.getView(R.id.searchText);
 		solo.enterText((EditText) querryText, querry);
 		solo.sleep(DODO);
-		
+
 		solo.clickOnButton("Search");
-		
+
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
-		assertTrue("Wrong question", solo.searchText("How many calories are in a banana?"));
-		
+
+		assertTrue("Wrong question",
+				solo.searchText("How many calories are in a banana?"));
+
 		solo.goBack();
 		solo.sleep(DODO);
-		
+
 		solo.goBack();
 		solo.sleep(DODO);
-		
+
 		solo.clickOnView(offline);
-		
+
 		getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_DISABLED);
-		
-		
+
 		Button logout = (Button) solo.getView(R.id.button_log);
 		solo.clickOnView(logout);
 
@@ -410,7 +372,7 @@ public class AuthenticationActivityTest extends
 		assertFalse("Button submit quiz question enabled",
 				submit_quiz_question.isEnabled());
 		assertFalse("Button search quiz enabled", search_quiz.isEnabled());
-		
+
 		solo.clickOnView(logout);
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
