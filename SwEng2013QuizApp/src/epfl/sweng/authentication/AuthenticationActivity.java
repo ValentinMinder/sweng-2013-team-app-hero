@@ -192,6 +192,8 @@ public class AuthenticationActivity extends Activity {
 						authenticationFailed();
 					}
 				} catch (JSONException e) {
+					Logger.getLogger("epfl.sweng.authentification").log(Level.INFO,
+							"authentification fail", e);	
 					authenticationToken = null;
 					authenticationFailed();
 				}
