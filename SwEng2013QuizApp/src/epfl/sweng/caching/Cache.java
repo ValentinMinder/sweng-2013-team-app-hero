@@ -340,17 +340,18 @@ public final class Cache {
 	}
 
 	public String getJSONQuestion(String hashCode) throws CacheException {
-		String result = "";
+		StringBuffer buff = new StringBuffer();
 		try {
 			FileReader fr = new FileReader(directoryFiles + File.separator
 					+ NAME_DIRECTORY_QUESTIONS + File.separator + hashCode);
 			BufferedReader buffReader = new BufferedReader(fr);
 			String line = buffReader.readLine();
+			buff.append(line);
 			while (line != null) {
-				result += line;
+				buff.append(line);
 				line = buffReader.readLine();
 				if (line != null) {
-					result += '\n';
+					buff.append('\n');
 				}
 			}
 
@@ -360,7 +361,7 @@ public final class Cache {
 			throw new CacheException(e);
 		}
 
-		return result;
+		return buff.toString();
 	}
 
 	/**
