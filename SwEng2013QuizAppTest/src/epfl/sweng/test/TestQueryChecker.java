@@ -10,13 +10,13 @@ public class TestQueryChecker extends TestCase {
 	}
 	
 	public void testCheckLengthTooLong() {
-		String test = "";
+		StringBuffer buff = new StringBuffer();
 		for (int i = 1; i < 600; ++i) {
-			test += i;
+			buff.append("" + i);
 		}
 
 		QueryChecker q = QueryChecker.getInstance();
-		q.setQuery(test);
+		q.setQuery(buff.toString());
 		assertTrue("Length condition is not respected", !q.checkQuery());
 	}
 	

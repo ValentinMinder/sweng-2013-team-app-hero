@@ -185,18 +185,19 @@ public class ShowQuestionsActivity extends Activity {
 
 			TextView tags = (TextView) findViewById(R.id.tags);
 			if (tags != null) {
-				String stringTags = "Tags : ";
+				StringBuffer buff = new StringBuffer();
+				buff.append("Tags : ");
 				Iterator<String> itTag = question.getTags().iterator();
 				while (itTag.hasNext()) {
 					String tag = itTag.next();
 					if (itTag.hasNext()) {
-						stringTags += tag + ", ";
+						buff.append(tag + ", ");
 					} else {
-						stringTags += tag;
+						buff.append(tag);
 					}
 				}
 
-				tags.setText(stringTags);
+				tags.setText(buff.toString());
 			}
 		}
 	}

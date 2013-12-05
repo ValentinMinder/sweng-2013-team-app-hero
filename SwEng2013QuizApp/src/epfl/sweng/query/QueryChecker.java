@@ -102,12 +102,13 @@ final public class QueryChecker {
 				String subQuery = queryClone.substring(beginSub + 1, endSub);
 				boolean result = checkBlock(subQuery);
 				if (result) {
-					String copy = "";
+					StringBuffer buff = new StringBuffer();
+					buff.append("(");
 					for (int j = 0; j < subQuery.length(); ++j) {
-						copy += "z";
+						buff.append("z");
 					}
-					copy = "(" + copy + ")";
-					queryClone = queryClone.substring(0, beginSub) + copy
+					buff.append(")");
+					queryClone = queryClone.substring(0, beginSub) + buff.toString()
 							+ queryClone.substring(endSub + 1);
 					// System.out.println("new query clone " + queryClone);
 				} else {
