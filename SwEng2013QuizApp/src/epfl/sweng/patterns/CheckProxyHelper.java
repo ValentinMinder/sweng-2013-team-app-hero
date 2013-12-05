@@ -1,5 +1,8 @@
 package epfl.sweng.patterns;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import epfl.sweng.caching.CacheException;
 
 public class CheckProxyHelper implements ICheckProxyHelper {
@@ -21,6 +24,8 @@ public class CheckProxyHelper implements ICheckProxyHelper {
 		try {
 			return ProxyHttpClient.getInstance().getClass();
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+					"Proxy fail", e);
 			return null;
 		}
 	}

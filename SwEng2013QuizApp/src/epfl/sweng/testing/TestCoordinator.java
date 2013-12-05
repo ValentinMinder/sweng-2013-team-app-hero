@@ -1,5 +1,8 @@
 package epfl.sweng.testing;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.app.Instrumentation;
 import android.util.Log;
 
@@ -115,7 +118,8 @@ public final class TestCoordinator {
                         tts.wait(TRANSACTION_TIMEOUT - (currentTime - tts.startTime));
                         Log.d(TAG, String.format("Waiting for transaction %s... done", t));
                     } catch (InterruptedException e) {
-                        // Nothing...
+            			Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+            					"submitting question", e);
                     }
                     currentTime = System.currentTimeMillis();
                 }
