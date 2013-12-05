@@ -118,8 +118,8 @@ public final class TestCoordinator {
                         tts.wait(TRANSACTION_TIMEOUT - (currentTime - tts.startTime));
                         Log.d(TAG, String.format("Waiting for transaction %s... done", t));
                     } catch (InterruptedException e) {
-            			Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
-            					"submitting question", e);
+            			Logger.getLogger("epfl.sweng.testing").log(Level.INFO,
+            					"test coord fail", e);
                     }
                     currentTime = System.currentTimeMillis();
                 }

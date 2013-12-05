@@ -258,6 +258,8 @@ public final class ProxyHttpClient implements IHttpClient {
 									myQuizQuestion.toPostEntity())), goOffline,
 							onlineSuccesfulComm, serverResponse);
 				} catch (JSONException e) {
+					Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+							"httpClient fail", e);
 					// if the question is malformed, we send a 500 error code
 					return executeAtTheEnd(new BasicHttpResponse(
 							new BasicStatusLine(new ProtocolVersion("HTTP", 2,
@@ -368,8 +370,8 @@ public final class ProxyHttpClient implements IHttpClient {
 					try {
 						next = json.getString("from");
 					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+						Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+								"client fail", e);					}
 					Log.e("test", query);
 					String clearQuery = Parenthesis.parenthesis(query);
 					ArrayList<String> listJSONQuestions = HandleOfflineQuery.getInstance()
