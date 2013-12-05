@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.http.client.ClientProtocolException;
@@ -39,9 +40,10 @@ public class SearchQuestions {
 			try {
 				task.get();
 			} catch (InterruptedException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "nextQuestion Fail" ,e);
+
 			} catch (ExecutionException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "nextQuestion Fail" ,e);
 			}
 		}
 		// if we have a remaining array of question.
@@ -103,17 +105,17 @@ public class SearchQuestions {
 						cachedRequestArray.add(new QuizQuestion(s));
 					}
 				} catch (JSONException e) {
-					Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+					Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail" ,e);
 				}
 
 			} catch (UnsupportedEncodingException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail" ,e);
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail" ,e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail" ,e);
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail" ,e);
 			}
 
 			return null;

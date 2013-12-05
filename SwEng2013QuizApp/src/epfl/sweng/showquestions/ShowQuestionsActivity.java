@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.http.client.ClientProtocolException;
@@ -81,9 +82,10 @@ public class ShowQuestionsActivity extends Activity {
 					"https://sweng-quiz.appspot.com/quizquestions/random")
 					.get();
 		} catch (InterruptedException e) {
-			Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "ShowQuestion Fail" ,e);
+
 		} catch (ExecutionException e) {
-			Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "Execution Fail" ,e);
 		}
 	}
 
@@ -227,11 +229,11 @@ public class ShowQuestionsActivity extends Activity {
 				return ProxyHttpClient.getInstance().execute(firstRandom,
 						firstHandler);
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "Protocol Fail" ,e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "ShowQuestion Fail" ,e);
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "Cache Fail" ,e);
 			}
 
 			return null;
@@ -255,7 +257,7 @@ public class ShowQuestionsActivity extends Activity {
 					}
 				}
 			} catch (JSONException e) {
-				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "JSON Fail" ,e);
 				errorDisplayQuestion();
 			}
 		}

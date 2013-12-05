@@ -2,6 +2,7 @@ package epfl.sweng.query;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 final public class QueryChecker {
@@ -25,7 +26,7 @@ final public class QueryChecker {
 				try {
 					stack.pop();
 				} catch (EmptyStackException e) {
-					Logger.getLogger("epfl.sweng.query").severe(e.getMessage());
+					Logger.getLogger("epfl.sweng.query").log(Level.INFO, "checkNested Empty Stack" ,e);
 					return false;
 				}
 				break;
