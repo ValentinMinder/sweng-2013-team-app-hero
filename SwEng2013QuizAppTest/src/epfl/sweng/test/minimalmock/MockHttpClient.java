@@ -35,7 +35,7 @@ import android.util.Log;
 public class MockHttpClient extends DefaultHttpClient {
 
     /** Prepared response */
-    private class CannedResponse {
+    private static class CannedResponse {
         private final Pattern pattern;
         private final int statusCode;
         private final String responseBody;
@@ -137,7 +137,7 @@ class MockHttpResponse extends BasicHttpResponse {
                 }
                 this.setEntity(responseBodyEntity);
             } catch (UnsupportedEncodingException e) {
-                // Nothing, really...
+                throw new RuntimeException("Default HTTP charset not supported!?", e);
             }
         }
     }
