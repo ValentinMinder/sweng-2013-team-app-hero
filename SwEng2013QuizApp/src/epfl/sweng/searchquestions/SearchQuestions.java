@@ -112,7 +112,7 @@ public class SearchQuestions {
 				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			} catch (IOException e) {
 				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
-			} catch (CacheException e1) {
+			} catch (CacheException e) {
 				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			}
 
