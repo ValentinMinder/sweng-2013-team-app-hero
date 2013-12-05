@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONException;
@@ -64,7 +65,8 @@ public class QuizQuestion implements Serializable {
 			id = jsonQuestion.getLong("id");
 			owner = jsonQuestion.getString("owner");
 		} catch (JSONException e) {
-			Logger.getLogger("epfl.sweng.quizquestions").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.quizquestions").log(Level.INFO, "QuizQuestion Fail" ,e);
+
 			id = -1;
 			owner = "anonymous";
 		}
@@ -149,7 +151,7 @@ public class QuizQuestion implements Serializable {
 	public int auditErrors() {
 		int errors = 0;
 
-		// INV n°1: 0 < len(question.question) <= 500 AND there exists i SUCH
+		// INV n��1: 0 < len(question.question) <= 500 AND there exists i SUCH
 		// THAT !Character.isWhitespace(question.question.charAt(i))
 		boolean inv1part3 = false;
 		for (int i = 0; i < question.length() && !inv1part3; i++) {
@@ -163,7 +165,7 @@ public class QuizQuestion implements Serializable {
 			errors++;
 		}
 
-		// INV n°2: FOR ALL k from 0 up to len(question.answers), 0
+		// INV n��2: FOR ALL k from 0 up to len(question.answers), 0
 		// <len(question.answers[k]) <= 500 AND there exists i such that
 		// !Character.isWhitespace(question.answer[k].charAt(i))
 		for (int k = 0; k < answers.size(); k++) {
@@ -181,14 +183,14 @@ public class QuizQuestion implements Serializable {
 			}
 		}
 
-		// INV N°3: 2 <= len(question.answers) <= 10
+		// INV N��3: 2 <= len(question.answers) <= 10
 		boolean invariant3 = (answers.size() >= 2)
 				&& (answers.size() <= ANSWERS_SIZE);
 		if (!invariant3) {
 			errors++;
 		}
 
-		// INV N°4: there exists i such that
+		// INV N��4: there exists i such that
 		// isMarkedCorrect(question.answers[i])
 		boolean invariant4 = (solutionIndex >= 0)
 				&& (solutionIndex < answers.size());
@@ -196,13 +198,13 @@ public class QuizQuestion implements Serializable {
 			errors++;
 		}
 
-		// INV N°5: 1 <= len(question.tags) <= 20
+		// INV N��5: 1 <= len(question.tags) <= 20
 		boolean invariant5 = (tags.size() >= 1) && (tags.size() <= TAGS_SIZE);
 		if (!invariant5) {
 			errors++;
 		}
 
-		// INV N°6: FOR ALL k from 0 up to len(question.tags), 0
+		// INV N��6: FOR ALL k from 0 up to len(question.tags), 0
 		// <len(question.tags[k]) <= 20 AND there exists i such that
 		// !Character.isWhitespace(question.answers[k].charAt(i))
 		// (String[]) cast is permitted because we have Set<String>
