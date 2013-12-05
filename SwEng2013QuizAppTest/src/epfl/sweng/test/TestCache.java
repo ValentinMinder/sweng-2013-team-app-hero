@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import android.test.AndroidTestCase;
 import epfl.sweng.caching.Cache;
@@ -99,6 +100,7 @@ public class TestCache extends AndroidTestCase {
 		try {
 			Cache.getInstance().addQuestionToCache(question);
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for add question to cache", false);
 		}
 
@@ -108,6 +110,7 @@ public class TestCache extends AndroidTestCase {
 		try {
 			hashCodesTag = Cache.getInstance().getSetTag("test");
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for getSetTag", false);
 		}
 		
@@ -123,6 +126,7 @@ public class TestCache extends AndroidTestCase {
 			jsonQuestionCache = Cache.getInstance().getJSONQuestion(
 					hashCodeSetFirstQuestion);
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for getJSONQuestion", false);
 		}
 
@@ -136,6 +140,7 @@ public class TestCache extends AndroidTestCase {
 		try {
 			listQuestionsJSON = HandleOfflineQuery.getInstance().getArrayOfJSONQuestionsALL(hashCodes);
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for getArrayOfJSONQuestions", false);
 		}
 		
@@ -149,6 +154,7 @@ public class TestCache extends AndroidTestCase {
 		try {
 			questionTemp = Cache.getInstance().getRandomQuestionFromCache();
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for getRandomQuestionFromCache", false);
 		}
 		
@@ -161,6 +167,7 @@ public class TestCache extends AndroidTestCase {
 		try {
 			Cache.getInstance().addQuestionToOutBox(question);
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for addQuestionToOutBox : " + e.getMessage(), false);
 		}
 		
@@ -168,6 +175,7 @@ public class TestCache extends AndroidTestCase {
 		try {
 			outbox = Cache.getInstance().getListOutBox();
 		} catch (CacheException e) {
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 			assertTrue("Cache exception for getListOutBox", false);
 		}
 		
@@ -187,8 +195,7 @@ public class TestCache extends AndroidTestCase {
 			HashSet<String> result = EvaluateQuery.evaluate(query);
 			assertTrue(result.size() == 0);
 		} catch (CacheException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 		}
 		
 	}

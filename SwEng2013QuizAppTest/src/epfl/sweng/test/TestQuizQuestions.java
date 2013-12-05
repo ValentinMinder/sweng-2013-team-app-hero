@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.json.JSONException;
 
@@ -150,7 +151,7 @@ public class TestQuizQuestions extends TestCase {
 		try {
 			q2 = new QuizQuestion(q.toPostEntity());
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Logger.getLogger("epfl.sweng.test").severe(e.getMessage());
 		}
 				
 		assertTrue(q.equals(q2));
