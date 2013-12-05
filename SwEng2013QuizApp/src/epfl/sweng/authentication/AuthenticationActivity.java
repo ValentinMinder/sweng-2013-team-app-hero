@@ -3,6 +3,7 @@ package epfl.sweng.authentication;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
@@ -165,9 +166,9 @@ public class AuthenticationActivity extends Activity {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO, "Authentification task",e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO, "Authentification task",e);
 			}
 
 			return null;
