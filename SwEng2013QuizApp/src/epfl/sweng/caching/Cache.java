@@ -312,8 +312,12 @@ public final class Cache {
 			throw new CacheException(e);
 		} finally {
 			try {
-				fileOutput.close();
-				output.close();
+				if (fileOutput != null) {
+					fileOutput.close();
+				}
+				if (output != null) {
+					output.close();
+				}
 			} catch (IOException e) {
 				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
 			}
