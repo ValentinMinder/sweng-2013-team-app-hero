@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -521,7 +522,9 @@ public class EditQuestionActivity extends Activity {
 		try {
 			new SubmitQuestionTask().execute(questionAsEntity).get();
 		} catch (InterruptedException e) {
+			Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 		} catch (ExecutionException e) {
+			Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 		}
 
 	}
@@ -556,10 +559,15 @@ public class EditQuestionActivity extends Activity {
 						post);
 				return response;
 			} catch (UnsupportedEncodingException e) {
+				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 			} catch (HttpResponseException e) {
+				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 			} catch (ClientProtocolException e) {
+				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 			} catch (IOException e) {
+				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 			} catch (CacheException e) {
+				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
 			}
 
 			return null;

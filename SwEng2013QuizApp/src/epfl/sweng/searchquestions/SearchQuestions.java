@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -38,9 +39,9 @@ public class SearchQuestions {
 			try {
 				task.get();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			} catch (ExecutionException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			}
 		}
 		// if we have a remaining array of question.
@@ -102,21 +103,20 @@ public class SearchQuestions {
 						cachedRequestArray.add(new QuizQuestion(s));
 					}
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 				}
 
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			} catch (CacheException e1) {
-				e1.printStackTrace();
+				Logger.getLogger("epfl.sweng.searchquestions").severe(e.getMessage());
 			}
 
 			return null;
-
 		}
 
 		/**

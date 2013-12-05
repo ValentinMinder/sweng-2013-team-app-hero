@@ -2,6 +2,7 @@ package epfl.sweng.query;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 final public class QueryChecker {
 	private static QueryChecker instance = null;
@@ -23,7 +24,8 @@ final public class QueryChecker {
 			case ')':
 				try {
 					stack.pop();
-				} catch (EmptyStackException ese) {
+				} catch (EmptyStackException e) {
+					Logger.getLogger("epfl.sweng.query").severe(e.getMessage());
 					return false;
 				}
 				break;

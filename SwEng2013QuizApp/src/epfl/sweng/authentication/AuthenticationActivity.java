@@ -3,6 +3,7 @@ package epfl.sweng.authentication;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -164,9 +165,9 @@ public class AuthenticationActivity extends Activity {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
 			}
 
 			return null;
@@ -231,12 +232,12 @@ public class AuthenticationActivity extends Activity {
 				} else {
 					return "failed";
 				}
-			} catch (UnsupportedEncodingException e1) {
-
-			} catch (ClientProtocolException cpe) {
-
-			} catch (IOException ioe) {
-
+			} catch (UnsupportedEncodingException e) {
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+			} catch (ClientProtocolException e) {
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+			} catch (IOException e) {
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
 			}
 
 			authenticationToken = null;
@@ -282,9 +283,9 @@ public class AuthenticationActivity extends Activity {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
 			} finally {
 				authenticationToken = null;
 			}

@@ -1,5 +1,7 @@
 package epfl.sweng.entry;
 
+import java.util.logging.Logger;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -71,7 +73,7 @@ public class MainActivity extends Activity {
 			try {
 				offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 			} catch (CacheException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
 			}
 		}
 
@@ -79,7 +81,7 @@ public class MainActivity extends Activity {
 		try {
 			ProxyHttpClient.getInstance().setCheckBoxTask(myCheckBoxTask);
 		} catch (CacheException e) {
-			e.printStackTrace();
+			Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
 		}
 
 		offline.setOnClickListener(new CompoundButton.OnClickListener() {
@@ -102,7 +104,7 @@ public class MainActivity extends Activity {
 					try {
 						ProxyHttpClient.getInstance().goOffLine();
 					} catch (CacheException e) {
-						e.printStackTrace();
+						Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
 					}
 					check.setChecked(isNextCheck);
 				}
@@ -180,7 +182,7 @@ public class MainActivity extends Activity {
 		try {
 			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 		} catch (CacheException e) {
-			e.printStackTrace();
+			Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
 		}
 	}
 

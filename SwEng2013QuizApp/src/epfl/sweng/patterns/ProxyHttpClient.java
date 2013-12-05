@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -196,8 +197,10 @@ public final class ProxyHttpClient implements IHttpClient {
 				serverResponse = realHttpClient.execute(request);
 				statusCode = serverResponse.getStatusLine().getStatusCode();
 			} catch (ClientProtocolException e) {
+				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 				goOffline = true;
-			} catch (IOException ioe) {
+			} catch (IOException e) {
+				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 			}
 
 			if (statusCode.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
@@ -341,11 +344,10 @@ public final class ProxyHttpClient implements IHttpClient {
 				}
 				// check the behavior of online unsucessful exception
 			} catch (JSONException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 				goOffLine();
 			} catch (UnknownHostException e) {
-				System.out.println("we catched the exception");
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 				goOffLine();
 			}
 		} else {
@@ -378,7 +380,7 @@ public final class ProxyHttpClient implements IHttpClient {
 					System.out.println(ret);
 					return (T) ret;
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 				}
 			} else {
 				return (T) myProxyToCachePrivateTasks
@@ -476,7 +478,7 @@ public final class ProxyHttpClient implements IHttpClient {
 				System.out.println("statzus " + statusCode);
 				return statusCode;
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 			}
 			
 			// to-do code de failure
@@ -512,7 +514,7 @@ public final class ProxyHttpClient implements IHttpClient {
 			try {
 				aSyncCounter();
 			} catch (CacheException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
 			}
 		}
 	}

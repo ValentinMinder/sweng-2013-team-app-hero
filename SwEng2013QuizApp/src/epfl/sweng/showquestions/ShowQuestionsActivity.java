@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -80,9 +81,9 @@ public class ShowQuestionsActivity extends Activity {
 					"https://sweng-quiz.appspot.com/quizquestions/random")
 					.get();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
 		} catch (ExecutionException e) {
-			e.printStackTrace();
+			Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
 		}
 	}
 
@@ -226,11 +227,11 @@ public class ShowQuestionsActivity extends Activity {
 				return ProxyHttpClient.getInstance().execute(firstRandom,
 						firstHandler);
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
 			} catch (CacheException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
 			}
 
 			return null;
@@ -254,7 +255,7 @@ public class ShowQuestionsActivity extends Activity {
 					}
 				}
 			} catch (JSONException e) {
-				e.printStackTrace();
+				Logger.getLogger("epfl.sweng.showquestions").severe(e.getMessage());
 				errorDisplayQuestion();
 			}
 		}

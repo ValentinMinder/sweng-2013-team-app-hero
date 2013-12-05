@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +64,7 @@ public class QuizQuestion implements Serializable {
 			id = jsonQuestion.getLong("id");
 			owner = jsonQuestion.getString("owner");
 		} catch (JSONException e) {
+			Logger.getLogger("epfl.sweng.quizquestions").severe(e.getMessage());
 			id = -1;
 			owner = "anonymous";
 		}
