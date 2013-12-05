@@ -6,7 +6,7 @@ public class Parenthesis {
 	public static String parenthesis(String query) {
 
 		String queryClone = replaceSpace(query);
-		System.out.println("Parenthesing ... " + queryClone);
+		
 
 		queryClone = removeParenthesisAroundOneElement(queryClone);
 		String subAnd = parenthesisOperator('*', queryClone);
@@ -149,26 +149,21 @@ public class Parenthesis {
 					int left = blockLeft;
 					lastOperatorIndex = right + 1;
 					// normal case
-					System.out.println("entry" + subQuery);
 					if (right + 1 < subQuery.length() - 1 && left != 0) {
 						subQuery = subQuery.substring(0, left) + "("
 								+ subQuery.substring(left, right + 1) + ")"
 								+ subQuery.substring(right + 1);
-						System.out.println("case 1" + subQuery);
 						// left at min value but not right
 					} else if (left == 0 && right + 1 < subQuery.length() - 1) {
 						subQuery = "(" + subQuery.substring(0, right + 1) + ")"
 								+ subQuery.substring(right + 1);
-						System.out.println("case 2" + subQuery);
 						// left at min value and right at max value
 					} else if (left == 0) {
 						subQuery = "(" + subQuery + ")";
-						System.out.println("case 3" + subQuery);
 						// left not at min value but right at max value
 					} else {
 						subQuery = subQuery.substring(0, left) + "("
 								+ subQuery.substring(left) + ")";
-						System.out.println("case 4" + subQuery);
 					}
 				} else {
 					lastOperatorIndex++;
