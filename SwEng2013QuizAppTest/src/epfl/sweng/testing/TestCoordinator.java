@@ -1,5 +1,8 @@
 package epfl.sweng.testing;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.app.Instrumentation;
 import android.util.Log;
 
@@ -116,10 +119,8 @@ public final class TestCoordinator {
                         tts.wait(transactionTimeout - (currentTime - tts.startTime));
                         Log.d(TAG, String.format("Waiting for transaction %s... done", t));
                     } catch (InterruptedException e) {
-                        TestCoordinationError err = new TestCoordinationError(
-                                "Interrupted while waiting for transaction " + t);
-                        err.initCause(e);
-                        throw err;
+            			Logger.getLogger("epfl.sweng.testing").log(Level.INFO,
+            					"TestCoordinator error", e);
                     }
                     currentTime = System.currentTimeMillis();
                 }
