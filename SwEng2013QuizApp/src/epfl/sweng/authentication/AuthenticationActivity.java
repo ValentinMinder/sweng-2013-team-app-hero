@@ -37,7 +37,7 @@ public class AuthenticationActivity extends Activity {
 
 	private final static int TEQUILA_RESPONSE_AUTHENTICATION_SUCCESSFUL = 302;
 	private final static int SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL = 200;
-	
+
 	private String authenticationToken = null;
 
 	/**
@@ -157,11 +157,10 @@ public class AuthenticationActivity extends Activity {
 		protected String doInBackground(String... urls) {
 			HttpGet getAuthenticationToken = new HttpGet(urls[0]);
 			try {
-				HttpResponse response = SwengHttpClientFactory
-						.getInstance().execute(getAuthenticationToken);
-				
-				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL)
-				{
+				HttpResponse response = SwengHttpClientFactory.getInstance()
+						.execute(getAuthenticationToken);
+
+				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL) {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {
@@ -232,8 +231,12 @@ public class AuthenticationActivity extends Activity {
 				} else {
 					return "failed";
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (UnsupportedEncodingException e1) {
+
+			} catch (ClientProtocolException cpe) {
+
+			} catch (IOException ioe) {
+
 			}
 
 			authenticationToken = null;
@@ -265,17 +268,17 @@ public class AuthenticationActivity extends Activity {
 		@Override
 		protected String doInBackground(String... urls) {
 			HttpPost getAuthenticationToken = new HttpPost(urls[0]);
-			
+
 			try {
-				getAuthenticationToken.setEntity(new StringEntity("{\"token\": \""+ authenticationToken +"\"}"));
+				getAuthenticationToken.setEntity(new StringEntity(
+						"{\"token\": \"" + authenticationToken + "\"}"));
 				getAuthenticationToken.setHeader("Content-type",
 						"application/json");
-				
-				HttpResponse response = SwengHttpClientFactory
-						.getInstance().execute(getAuthenticationToken);
-				
-				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL)
-				{
+
+				HttpResponse response = SwengHttpClientFactory.getInstance()
+						.execute(getAuthenticationToken);
+
+				if (response.getStatusLine().getStatusCode() == SWENG_QUIZ_APP_RESPONSE_SUCCESSFUL) {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {

@@ -195,9 +195,9 @@ public final class ProxyHttpClient implements IHttpClient {
 			try {
 				serverResponse = realHttpClient.execute(request);
 				statusCode = serverResponse.getStatusLine().getStatusCode();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (ClientProtocolException e) {
 				goOffline = true;
+			} catch (IOException ioe) {
 			}
 
 			if (statusCode.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {

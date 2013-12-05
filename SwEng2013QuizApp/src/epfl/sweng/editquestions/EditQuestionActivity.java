@@ -1,6 +1,7 @@
 package epfl.sweng.editquestions;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
@@ -36,8 +38,7 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /**
  * 
- * @author xhanto
- *  This class is used to submit a new question to the server.
+ * @author xhanto This class is used to submit a new question to the server.
  * 
  */
 public class EditQuestionActivity extends Activity {
@@ -57,28 +58,28 @@ public class EditQuestionActivity extends Activity {
 	private int idIndex = 0;
 	private LinkedList<Integer> idList = new LinkedList<Integer>();
 	private Button submit;
-	
+
 	/**
 	 * Method who is called if error occurred on submit
 	 */
 	private void errorEditQuestion() {
-		Toast.makeText(getBaseContext(),
-				R.string.not_upload_question, Toast.LENGTH_SHORT)
-				.show();
+		Toast.makeText(getBaseContext(), R.string.not_upload_question,
+				Toast.LENGTH_SHORT).show();
 	}
+
 	/**
 	 * Method who is called if success on submit
 	 */
 	private void successEditQuestion() {
-		Toast.makeText(getBaseContext(),
-				R.string.question_submitted, Toast.LENGTH_SHORT)
-				.show();
+		Toast.makeText(getBaseContext(), R.string.question_submitted,
+				Toast.LENGTH_SHORT).show();
 	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_question);
-		
+
 		initUI();
 		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 
@@ -100,43 +101,47 @@ public class EditQuestionActivity extends Activity {
 	}
 
 	private int auditEditTexts() {
-		int editErrors=0;
+		int editErrors = 0;
 
-		//Bullet 1: The widget where the user can enter the question exists.
-		//It has its hint set to “Type in the question’s text body”. 
-		//The widget has its visibility property set to VISIBLE.
+		// Bullet 1: The widget where the user can enter the question exists.
+		// It has its hint set to “Type in the question’s text body”.
+		// The widget has its visibility property set to VISIBLE.
 
 		// != 0 because VISIBLE = 0
-		if (questionField == null || questionField.getVisibility() != View.VISIBLE 
-				|| !(questionField.getHint().equals("Type in the question's text body"))) {
+		if (questionField == null
+				|| questionField.getVisibility() != View.VISIBLE
+				|| !(questionField.getHint()
+						.equals("Type in the question's text body"))) {
 			editErrors++;
 
 		}
 
-		//Bullet 2: There exist zero or more EditText widgets to enter answers. 
-		//These have their hint set to “Type in the answer”. 
-		//Their visibility properties are set to VISIBLE.
-		boolean  zeroOrMore = answerIndex>=answerCst;
+		// Bullet 2: There exist zero or more EditText widgets to enter answers.
+		// These have their hint set to “Type in the answer”.
+		// Their visibility properties are set to VISIBLE.
+		boolean zeroOrMore = answerIndex >= answerCst;
 
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
-				EditText editCheck = (EditText) findViewById(idList.get(i) + answerCst);
-			
-				if (!zeroOrMore || !editCheck.getHint().equals("Type in the answer") 
+				EditText editCheck = (EditText) findViewById(idList.get(i)
+						+ answerCst);
+
+				if (!zeroOrMore
+						|| !editCheck.getHint().equals("Type in the answer")
 						|| editCheck.getVisibility() != View.VISIBLE) {
 					editErrors++;
-					
+
 				}
 			}
 		}
 
-		//Bullet 3: The widget where the user can enter tags exists. 
-		//This widget has its hint set to “Type in the question’s tags”. 
-		//The widget has its visibility property set to VISIBLE.
+		// Bullet 3: The widget where the user can enter tags exists.
+		// This widget has its hint set to “Type in the question’s tags”.
+		// The widget has its visibility property set to VISIBLE.
 
 		// != 0 because VISIBLE = 0
 
-		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE 
+		if (tagsText == null || tagsText.getVisibility() != View.VISIBLE
 				|| !(tagsText.getHint().equals("Type in the question's tags"))) {
 			editErrors++;
 
@@ -148,60 +153,62 @@ public class EditQuestionActivity extends Activity {
 		int buttonErrors = 0;
 		Button addButton = (Button) findViewById(R.id.add);
 
-		//Bullet 1: A button exists to add a new answer. 
-		//It has its text set to “+”, and its visibility set to VISIBLE.
+		// Bullet 1: A button exists to add a new answer.
+		// It has its text set to “+”, and its visibility set to VISIBLE.
 
 		if (addButton == null || addButton.getVisibility() != View.VISIBLE
 				|| !(addButton.getText().equals("\u002B"))) {
 			buttonErrors++;
 		}
 
-		//Bullet 2: A button exists to submit the queston. 
+		// Bullet 2: A button exists to submit the queston.
 		// It has its text set to “Submit”, and its visibility set to VISIBLE.
 		if (submit == null || submit.getVisibility() != View.VISIBLE
 				|| !(submit.getText().equals("Submit"))) {
 			buttonErrors++;
 		}
 
-		//Bullet 3: For every answer, there is a button to remove that answer. 
-		//This button has its text set to “-”, and its visibility set to VISIBLE.
-		boolean  remToAns = removeIndex-removeCst == answerIndex-answerCst;
+		// Bullet 3: For every answer, there is a button to remove that answer.
+		// This button has its text set to “-”, and its visibility set to
+		// VISIBLE.
+		boolean remToAns = removeIndex - removeCst == answerIndex - answerCst;
 
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
-				Button removeCheck = (Button) findViewById(idList.get(i) + removeCst);
-				if (!remToAns || !removeCheck.getText().equals("\u002D") ||
-						removeCheck.getVisibility() != View.VISIBLE) {
+				Button removeCheck = (Button) findViewById(idList.get(i)
+						+ removeCst);
+				if (!remToAns || !removeCheck.getText().equals("\u002D")
+						|| removeCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
 				}
 			}
 		}
-		//Bullet 4: For every answer, there is a button to toggle its correctness. 
-		//This button has its text set to “✘” or “✔”, and its visibility set to VISIBLE.
-		boolean  togToAns = correctIndex-correctCst == answerIndex-answerCst;
+		// Bullet 4: For every answer, there is a button to toggle its
+		// correctness.
+		// This button has its text set to “✘” or “✔”, and its visibility set to
+		// VISIBLE.
+		boolean togToAns = correctIndex - correctCst == answerIndex - answerCst;
 		if (idList.size() != 0) {
 			for (int i = 0; i < idList.size(); i++) {
 				Button correctCheck = (Button) findViewById(idList.get(i));
-				if (!togToAns 
-						|| !((correctCheck.getText().equals("\u2714"))  // correct
-								|| (correctCheck.getText().equals("\u2718"))) // wrong
-								|| correctCheck.getVisibility() != View.VISIBLE) {
+				if (!togToAns || !((correctCheck.getText().equals("\u2714")) // correct
+						|| (correctCheck.getText().equals("\u2718"))) // wrong
+						|| correctCheck.getVisibility() != View.VISIBLE) {
 					buttonErrors++;
 				}
 			}
 		}
-
 
 		return buttonErrors;
 	}
 
 	private int auditAnswers() {
-		int answerErrors=0;
+		int answerErrors = 0;
 		int correctCount = 0;
-		// Bullet 1: There is at most one correct answer 
-		//(that is, at most one correctness button has its text set to “✔”).
+		// Bullet 1: There is at most one correct answer
+		// (that is, at most one correctness button has its text set to “✔”).
 		for (int i = 0; i < idList.size(); i++) {
-			Button correctCheck = (Button) findViewById(idList.get(i));			
+			Button correctCheck = (Button) findViewById(idList.get(i));
 			if (correctCheck.getText().equals("\u2714")) {
 				correctCount++;
 			}
@@ -215,26 +222,27 @@ public class EditQuestionActivity extends Activity {
 	}
 
 	private int auditSubmitButton() {
-		
-		if ((audit() == 0 && submit.isEnabled()) || (audit()>0 && !submit.isEnabled())) {
+
+		if ((audit() == 0 && submit.isEnabled())
+				|| (audit() > 0 && !submit.isEnabled())) {
 			return 0;
 		} else {
 			return 1;
 		}
-		
-		
+
 	}
-	
+
 	public int auditErrors() {
 		System.out.println("audit answer " + auditAnswers());
 		System.out.println("audit button " + auditButtons());
 		System.out.println("audit edittext " + auditEditTexts());
 		System.out.println("audit submit button " + auditSubmitButton());
-		System.out.println("audit = " + audit() + " submit enabled " + submit.isEnabled());
-		return auditAnswers()+auditButtons()+auditEditTexts()+auditSubmitButton();
-		
-	}
+		System.out.println("audit = " + audit() + " submit enabled "
+				+ submit.isEnabled());
+		return auditAnswers() + auditButtons() + auditEditTexts()
+				+ auditSubmitButton();
 
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -320,7 +328,7 @@ public class EditQuestionActivity extends Activity {
 			}
 
 			((Button) findViewById(view.getId()))
-			.setText(R.string.right_answer);
+					.setText(R.string.right_answer);
 			submitControler(submit);
 			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 
@@ -445,10 +453,12 @@ public class EditQuestionActivity extends Activity {
 			}
 		}
 
-		question = new QuizQuestion(questionBody, answers,
-				solutionIndex, tags, 0, "OWNER");
-		/*QuizQuestion question = new QuizQuestion(0, questionBody, answers,
-				solutionIndex, tags);*/
+		question = new QuizQuestion(questionBody, answers, solutionIndex, tags,
+				0, "OWNER");
+		/*
+		 * QuizQuestion question = new QuizQuestion(0, questionBody, answers,
+		 * solutionIndex, tags);
+		 */
 		submitQuestion(question.toPostEntity());
 	}
 
@@ -477,7 +487,7 @@ public class EditQuestionActivity extends Activity {
 		}
 
 		for (int i = 0; i < idList.size(); i++) {
-			Button isCorrect = (Button) findViewById(idList.get(i));	
+			Button isCorrect = (Button) findViewById(idList.get(i));
 
 			if (isCorrect.getText().equals("\u2714")) {
 				oneTrue = true;
@@ -507,11 +517,13 @@ public class EditQuestionActivity extends Activity {
 	 *            question already formatted as entity
 	 */
 	private void submitQuestion(String questionAsEntity) {
+
 		try {
 			new SubmitQuestionTask().execute(questionAsEntity).get();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
 		}
+
 	}
 
 	/**
@@ -521,7 +533,8 @@ public class EditQuestionActivity extends Activity {
 	 * @author Valentin
 	 * 
 	 */
-	private class SubmitQuestionTask extends AsyncTask<String, Void, HttpResponse> {
+	private class SubmitQuestionTask extends
+			AsyncTask<String, Void, HttpResponse> {
 
 		/**
 		 * Execute and retrieve the answer from the website.
@@ -539,14 +552,14 @@ public class EditQuestionActivity extends Activity {
 
 			try {
 				post.setEntity(new StringEntity(questionElement[0]));
-				HttpResponse response = ProxyHttpClient.getInstance().execute(post);
+				HttpResponse response = ProxyHttpClient.getInstance().execute(
+						post);
 				return response;
-//			} catch (UnsupportedEncodingException e) {
-//				e.printStackTrace();
-//			} catch (HttpResponseException e) {
-//				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+			} catch (HttpResponseException e) {
+			} catch (ClientProtocolException e) {
+			} catch (IOException e) {
+			} catch (CacheException e) {
 			}
 
 			return null;
@@ -558,27 +571,28 @@ public class EditQuestionActivity extends Activity {
 		protected void onPostExecute(HttpResponse httpResponse) {
 			// if result is null, server something else than a 2xx status.
 			System.out.println(httpResponse);
-			if (httpResponse != null && httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+			if (httpResponse != null
+					&& httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 				successEditQuestion();
-				// result contain a JSON object representing the question if success on submit
-//				HttpEntity result = response.getEntity();
-//				if (result != null) {
-//					String returnContent = EntityUtils.toString(result);
-//					result.consumeContent();
-//					return returnContent;
-//				} else {
-//					return null;
-//				}
+				// result contain a JSON object representing the question if
+				// success on submit
+				// HttpEntity result = response.getEntity();
+				// if (result != null) {
+				// String returnContent = EntityUtils.toString(result);
+				// result.consumeContent();
+				// return returnContent;
+				// } else {
+				// return null;
+				// }
 			} else {
 				errorEditQuestion();
-			}		
-			// moving TTCheck to proxy, because should be check before going offline on error
-//			TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+			}
+			// moving TTCheck to proxy, because should be check before going
+			// offline on error
+			// TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 			initUI();
 		}
 
 	}
-
-
 
 }
