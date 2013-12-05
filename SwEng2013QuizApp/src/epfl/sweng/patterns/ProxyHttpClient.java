@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.http.Header;
@@ -197,10 +198,12 @@ public final class ProxyHttpClient implements IHttpClient {
 				serverResponse = realHttpClient.execute(request);
 				statusCode = serverResponse.getStatusLine().getStatusCode();
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"executing request", e);
 				goOffline = true;
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"executing request", e);
 			}
 
 			if (statusCode.compareTo(Integer.valueOf(HttpStatus.SC_CREATED)) == 0) {
@@ -344,10 +347,12 @@ public final class ProxyHttpClient implements IHttpClient {
 				}
 				// check the behavior of online unsucessful exception
 			} catch (JSONException e) {
-				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"executing request", e);
 				goOffLine();
 			} catch (UnknownHostException e) {
-				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"executing request", e);
 				goOffLine();
 			}
 		} else {
@@ -380,7 +385,8 @@ public final class ProxyHttpClient implements IHttpClient {
 					System.out.println(ret);
 					return (T) ret;
 				} catch (JSONException e) {
-					Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+					Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+							"executing request", e);
 				}
 			} else {
 				return (T) myProxyToCachePrivateTasks
@@ -478,7 +484,8 @@ public final class ProxyHttpClient implements IHttpClient {
 				System.out.println("statzus " + statusCode);
 				return statusCode;
 			} catch (Exception e) {
-				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"submitting task", e);
 			}
 			
 			// to-do code de failure
@@ -495,7 +502,8 @@ public final class ProxyHttpClient implements IHttpClient {
 				try {
 					myProxyToCachePrivateTasks.addQuestionToCache(myQuestion);
 				} catch (CacheException e) {
-					e.printStackTrace();
+					Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+							"submitting task", e);
 				}
 			} else if (!getOfflineStatus()
 					&& result.compareTo(Integer
@@ -514,7 +522,8 @@ public final class ProxyHttpClient implements IHttpClient {
 			try {
 				aSyncCounter();
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.patterns").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"submitting task", e);
 			}
 		}
 	}

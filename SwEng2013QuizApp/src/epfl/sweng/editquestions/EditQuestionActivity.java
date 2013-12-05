@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
@@ -522,9 +523,11 @@ public class EditQuestionActivity extends Activity {
 		try {
 			new SubmitQuestionTask().execute(questionAsEntity).get();
 		} catch (InterruptedException e) {
-			Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+					"submitting question", e);
 		} catch (ExecutionException e) {
-			Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+					"submitting question", e);
 		}
 
 	}
@@ -559,15 +562,20 @@ public class EditQuestionActivity extends Activity {
 						post);
 				return response;
 			} catch (UnsupportedEncodingException e) {
-				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+						"Submit question task", e);
 			} catch (HttpResponseException e) {
-				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+						"Submit question task", e);
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+						"Submit question task", e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+						"Submit question task", e);
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.editquestions").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
+						"Submit question task", e);
 			}
 
 			return null;

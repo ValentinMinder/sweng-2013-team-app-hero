@@ -1,5 +1,6 @@
 package epfl.sweng.entry;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.app.Activity;
@@ -73,7 +74,8 @@ public class MainActivity extends Activity {
 			try {
 				offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
+						"Creating main activity", e);
 			}
 		}
 
@@ -81,7 +83,8 @@ public class MainActivity extends Activity {
 		try {
 			ProxyHttpClient.getInstance().setCheckBoxTask(myCheckBoxTask);
 		} catch (CacheException e) {
-			Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
+					"Creating main activity, setting checkboxtask", e);
 		}
 
 		offline.setOnClickListener(new CompoundButton.OnClickListener() {
@@ -97,14 +100,16 @@ public class MainActivity extends Activity {
 					try {
 						ProxyHttpClient.getInstance().goOnline();
 					} catch (CacheException e) {
-						e.printStackTrace();
+						Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
+								"Creating main activity, in the offline listener", e);
 					}
 					System.out.println("going online submitted");
 				} else {
 					try {
 						ProxyHttpClient.getInstance().goOffLine();
 					} catch (CacheException e) {
-						Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
+						Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
+								"Creating main activity, in the offline listener", e);
 					}
 					check.setChecked(isNextCheck);
 				}
@@ -182,7 +187,8 @@ public class MainActivity extends Activity {
 		try {
 			offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
 		} catch (CacheException e) {
-			Logger.getLogger("epfl.sweng.entry").severe(e.getMessage());
+			Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
+					"Resuming main activity", e);
 		}
 	}
 

@@ -166,9 +166,11 @@ public class AuthenticationActivity extends Activity {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO, "Authentification task",e);
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO, "Authentification task",e);
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			}
 
 			return null;
@@ -234,11 +236,14 @@ public class AuthenticationActivity extends Activity {
 					return "failed";
 				}
 			} catch (UnsupportedEncodingException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			}
 
 			authenticationToken = null;
@@ -284,9 +289,11 @@ public class AuthenticationActivity extends Activity {
 					return EntityUtils.toString(response.getEntity());
 				}
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.authentication").severe(e.getMessage());
+				Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+						"Authentification task", e);
 			} finally {
 				authenticationToken = null;
 			}
@@ -305,6 +312,8 @@ public class AuthenticationActivity extends Activity {
 					String sessionId = (String) jsonResponse.get("session");
 					authenticationSuccessful(sessionId);
 				} catch (JSONException e) {
+					Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
+							"Authentification task", e);
 					authenticationFailed();
 				}
 			} else {
