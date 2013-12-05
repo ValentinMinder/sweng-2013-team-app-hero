@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import android.media.MediaMuxer.OutputFormat;
 
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -248,15 +252,24 @@ public final class Cache {
 
 		if (!setHash.contains(hashQuestion)) {
 			setHash.add(hashQuestion);
+			FileOutputStream fileOutput = null;
+			ObjectOutput output = null;
 			try {
-				FileOutputStream fileOutput = new FileOutputStream(file, false);
-				ObjectOutput output = new ObjectOutputStream(fileOutput);
+				fileOutput = new FileOutputStream(file, false);
+				output = new ObjectOutputStream(fileOutput);
 				output.writeObject(setHash);
 				output.close();
 				fileOutput.close();
 				return true;
 			} catch (IOException e) {
 				throw new CacheException(e);
+			} finally {
+				try {
+					fileOutput.close();
+					output.close();
+				} catch (IOException e) {
+					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
+				}
 			}
 		}
 
@@ -282,16 +295,24 @@ public final class Cache {
 		}
 
 		outbox.add(myQuizQuestion);
+		FileOutputStream fileOutput = null;
+		ObjectOutput output = null;
 		try {
-			FileOutputStream fileOutput = new FileOutputStream(file, false);
-			ObjectOutput output = new ObjectOutputStream(fileOutput);
+			fileOutput = new FileOutputStream(file, false);
+			output = new ObjectOutputStream(fileOutput);
 			output.writeObject(outbox);
 			output.close();
 			fileOutput.close();
-
 			return true;
 		} catch (IOException e) {
 			throw new CacheException(e);
+		} finally {
+			try {
+				fileOutput.close();
+				output.close();
+			} catch (IOException e) {
+				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
+			}
 		}
 	}
 
@@ -323,9 +344,11 @@ public final class Cache {
 		if (!file.exists()) {
 			outbox = new ArrayList<QuizQuestion>();
 		} else {
+			FileInputStream fis = null;
+			ObjectInput input = null;
 			try {
-				FileInputStream fis = new FileInputStream(file);
-				ObjectInput input = new ObjectInputStream(fis);
+				fis = new FileInputStream(file);
+				input = new ObjectInputStream(fis);
 				outbox = (ArrayList<QuizQuestion>) input.readObject();
 				input.close();
 				fis.close();
@@ -333,6 +356,13 @@ public final class Cache {
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
 				throw new CacheException(e);
+			} finally {
+				try {
+					fis.close();
+					input.close();
+				} catch (IOException e) {
+					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
+				}
 			}
 		}
 
@@ -377,9 +407,11 @@ public final class Cache {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
+		FileOutputStream fileOutput = null;
+		ObjectOutput output = null;
 		try {
-			FileOutputStream fileOutput = new FileOutputStream(file, false);
-			ObjectOutput output = new ObjectOutputStream(fileOutput);
+			fileOutput = new FileOutputStream(file, false);
+			output = new ObjectOutputStream(fileOutput);
 			output.writeObject(outbox);
 			output.close();
 			fileOutput.close();
@@ -387,6 +419,13 @@ public final class Cache {
 			return true;
 		} catch (IOException e) {
 			throw new CacheException(e);
+		} finally {
+			try {
+				fileOutput.close();
+				output.close();
+			} catch (IOException e) {
+				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
+			}
 		}
 	}
 
@@ -421,9 +460,11 @@ public final class Cache {
 		if (!file.exists()) {
 			setHash = new HashSet<String>();
 		} else {
+			FileInputStream fis = null;
+			ObjectInput input = null;
 			try {
-				FileInputStream fis = new FileInputStream(file);
-				ObjectInput input = new ObjectInputStream(fis);
+				fis = new FileInputStream(file);
+				input = new ObjectInputStream(fis);
 				setHash = (HashSet<String>) input.readObject();
 				input.close();
 				fis.close();
@@ -431,6 +472,13 @@ public final class Cache {
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
 				throw new CacheException(e);
+			} finally {
+				try {
+					fis.close();
+					input.close();
+				} catch (IOException e) {
+					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
+				}
 			}
 		}
 
