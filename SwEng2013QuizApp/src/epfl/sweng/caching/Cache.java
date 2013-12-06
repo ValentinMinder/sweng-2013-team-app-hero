@@ -256,15 +256,16 @@ public final class Cache {
 				output.writeObject(setHash);
 				output.close();
 			} catch (IOException e) {
-				throw new CacheException(e);
-			} finally {
 				if (output != null) {
 					try {
 						output.close();
-					} catch (IOException e) {
-						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
+					} catch (IOException e1) {
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e1);
 					}
 				}
+				throw new CacheException(e);
+			} finally {
+				
 			}
 			return true;
 
