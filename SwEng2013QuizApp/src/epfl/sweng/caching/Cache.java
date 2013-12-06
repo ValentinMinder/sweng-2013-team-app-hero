@@ -257,8 +257,8 @@ public final class Cache {
 				try {
 					output.writeObject(setHash);
 				} finally {
-//					output.close();
-					closeSilently(output);
+					output.close();
+//					closeSilently(output);
 //					org.apache.commons.io.IOUtils.closeQuietly(output)
 //					try {
 //						
@@ -280,11 +280,13 @@ public final class Cache {
 		return false;
 	}
 	
-	private static void closeSilently(ObjectOutput os) { 
-		try { os.close(); } 
-		catch(IOException ex){}
-		
-	}
+//	private static void closeSilently(ObjectOutput os) { 
+//		try { os.close(); } 
+//		catch(IOException ex){
+//			Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to create, write or close stream", ex);
+//		}
+//		
+//	}
 	
 	/**
 	 * Add a question to the outBox.
