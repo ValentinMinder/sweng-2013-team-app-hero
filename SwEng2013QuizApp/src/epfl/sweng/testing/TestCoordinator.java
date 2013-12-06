@@ -37,7 +37,8 @@ public final class TestCoordinator {
     private static final String TAG = "TestingTransaction";
 
     /** The maximum time we wait for a transaction to complete, in milliseconds */
-    private static final long TRANSACTION_TIMEOUT = 20500;
+    public static final long DEFAULT_TRANSACTION_TIMEOUT = 20500;
+    private static long transactionTimeout = DEFAULT_TRANSACTION_TIMEOUT;
 
     /** The time when the current transaction was started */
     private long startTime;
@@ -112,14 +113,14 @@ public final class TestCoordinator {
                 // 2) wait for the transaction to complete (i.e., to call check)
                 long currentTime = System.currentTimeMillis();
                 while (tts.state != TTState.COMPLETED
-                        && currentTime < tts.startTime + TRANSACTION_TIMEOUT) {
+                        && currentTime < tts.startTime + transactionTimeout) {
                     try {
                         Log.d(TAG, String.format("Waiting for transaction %s...", t));
-                        tts.wait(TRANSACTION_TIMEOUT - (currentTime - tts.startTime));
+                        tts.wait(transactionTimeout - (currentTime - tts.startTime));
                         Log.d(TAG, String.format("Waiting for transaction %s... done", t));
                     } catch (InterruptedException e) {
             			Logger.getLogger("epfl.sweng.testing").log(Level.INFO,
-            					"test coord fail", e);
+            					"TestCoordinator error", e);
                     }
                     currentTime = System.currentTimeMillis();
                 }
@@ -136,11 +137,15 @@ public final class TestCoordinator {
             // Again, we give up our lock for this, because otherwise a deadlock
             // can occur if the student code calls check() during the
             // waitForIdleSync().
+            Toast.waitForToastsToBeUpdated();
             instr.waitForIdleSync();
             t.verify(receivedCheck);
-            Log.d(TAG, String.format(
-                    "Completed transaction %s (elapsed: %d)",
-                    t, System.currentTimeMillis() - tts.startTime));
+
+            synchronized (tts) {
+                Log.d(TAG, String.format(
+                        "Completed transaction %s (elapsed: %d)", t,
+                        System.currentTimeMillis() - tts.startTime));
+            }
         } finally {
             synchronized (tts) {
                 tts.state = TTState.IDLE;
@@ -175,5 +180,10 @@ public final class TestCoordinator {
     // Retrieve the singleton instance of TestingTransaction
     private static TestCoordinator getInstance() {
         return INSTANCE;
+    }
+    
+    // Allow some transactions to have longer timeouts
+    public static void setTimeout(long timeout) {
+    	transactionTimeout = timeout;
     }
 }
