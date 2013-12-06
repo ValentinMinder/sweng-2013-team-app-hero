@@ -260,7 +260,7 @@ public final class Cache {
 					try {
 						output.close();
 					} catch (IOException e1) {
-						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e1);
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 					}
 				}
 				throw new CacheException(e);
