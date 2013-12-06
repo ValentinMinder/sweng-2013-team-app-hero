@@ -251,42 +251,32 @@ public final class Cache {
 
 		if (!setHash.contains(hashQuestion)) {
 			setHash.add(hashQuestion);
+			// WE HAVE TO DECLARE AN OBJECTOUPUTSTREAM, NOT OBJECTOUTPUT!
 			ObjectOutputStream output = null;
 			try {
 				output = new ObjectOutputStream(new FileOutputStream(file, false));
 				try {
 					output.writeObject(setHash);
 				} finally {
-//					closeSilently(output);
-//					org.apache.commons.io.IOUtils.closeQuietly(output)
-					try {
-						output.close();
-
-					} catch (IOException e1) {
-						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e1);
-					}
+					closeSilently(output);
 				}
-				
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to create, write or close stream", e);
+				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to create or write to stream", e);
 				throw new CacheException(e);
-			} finally {
-				
 			}
 			return true;
-
 		}
-
 		return false;
 	}
 	
-//	private static void closeSilently(ObjectOutput os) { 
-//		try { os.close(); } 
-//		catch(IOException ex){
-//			Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to create, write or close stream", ex);
-//		}
-//		
-//	}
+	private static void closeSilently(ObjectOutputStream os) { 
+		try {
+			os.close();
+		} catch(IOException ex){
+			Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", ex);
+		}
+		
+	}
 	
 	/**
 	 * Add a question to the outBox.
