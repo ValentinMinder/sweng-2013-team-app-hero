@@ -10,6 +10,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -250,14 +251,15 @@ public final class Cache {
 
 		if (!setHash.contains(hashQuestion)) {
 			setHash.add(hashQuestion);
-			ObjectOutput output = null;
+			ObjectOutputStream output = null;
 			try {
 				output = new ObjectOutputStream(new FileOutputStream(file, false));
 				try {
 					output.writeObject(setHash);
 				} finally {
 					output.close();
-					// org.apache.commons.io.IOUtils.closeQuietly(...)
+//					closeSilently(output);
+//					org.apache.commons.io.IOUtils.closeQuietly(output)
 //					try {
 //						
 //					} catch (IOException e1) {
@@ -276,6 +278,12 @@ public final class Cache {
 		}
 
 		return false;
+	}
+	
+	private static void closeSilently(ObjectOutput os) { 
+		try { os.close(); } 
+		catch(IOException ex){}
+		
 	}
 	
 	/**
