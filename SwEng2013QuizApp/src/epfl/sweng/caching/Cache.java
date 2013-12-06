@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import android.media.MediaMuxer.OutputFormat;
-
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -264,13 +262,7 @@ public final class Cache {
 			} catch (IOException e) {
 				throw new CacheException(e);
 			} finally {
-				try {
-					if (fileOutput != null) {
-						fileOutput.close();
-					}
-				} catch (IOException e) {
-					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
-				}
+				
 				try {
 					if (output != null) {
 						output.close();
@@ -278,6 +270,7 @@ public final class Cache {
 				} catch (IOException e) {
 					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 				}
+				
 			}
 		}
 
