@@ -250,33 +250,21 @@ public final class Cache {
 
 		if (!setHash.contains(hashQuestion)) {
 			setHash.add(hashQuestion);
-			FileOutputStream fileOutput = null;
 			ObjectOutput output = null;
 			try {
-				fileOutput = new FileOutputStream(file, false);
-				try {
-					output = new ObjectOutputStream(fileOutput);
-					output.writeObject(setHash);
-				} catch (IOException e) {
-					throw new CacheException(e);
-				} finally {
-					if (fileOutput != null) {
-						try {
-							fileOutput.close();
-						} catch (IOException e) {
-							Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
-						}
-					}
-					if (output != null) {
-						try {
-							output.close();
-						} catch (IOException e) {
-							Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
-						}
-					}
-				}
+				output = new ObjectOutputStream(new FileOutputStream(file, false));
+				output.writeObject(setHash);
+				output.close();
 			} catch (IOException e) {
 				throw new CacheException(e);
+			} finally {
+				if (output != null) {
+					try {
+						output.close();
+					} catch (IOException e) {
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
+					}
+				}
 			}
 			return true;
 
