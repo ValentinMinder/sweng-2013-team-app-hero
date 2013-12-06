@@ -259,22 +259,20 @@ public final class Cache {
 			} catch (IOException e) {
 				throw new CacheException(e);
 			} finally {
-				try {
-					if (fileOutput != null) {
+				if (fileOutput != null) {
+					try {
 						fileOutput.close();
+					} catch (IOException e) {
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 					}
-				} catch (IOException e) {
-					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 				}
-				try {
-					if (output != null) {
+				if (output != null) {
+					try {
 						output.close();
+					} catch (IOException e) {
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 					}
-				} catch (IOException e) {
-					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 				}
-				
-
 			}
 			return true;
 
