@@ -45,7 +45,7 @@ import epfl.sweng.utils.JSONUtils;
  * 
  */
 public final class ProxyHttpClient implements IHttpClient {
-	private static boolean offline = false;
+	private boolean offline = false;
 	private static ProxyHttpClient instance = null;
 	private IProxyToCachePrivateTasks myProxyToCachePrivateTasks = null;
 
