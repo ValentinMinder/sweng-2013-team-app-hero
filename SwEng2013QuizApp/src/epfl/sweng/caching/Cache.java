@@ -254,10 +254,6 @@ public final class Cache {
 			ObjectOutput output = null;
 			try {
 				fileOutput = new FileOutputStream(file, false);
-			} catch (IOException e) {
-				throw new CacheException(e);
-			}
-			if (fileOutput != null) {
 				try {
 					output = new ObjectOutputStream(fileOutput);
 					output.writeObject(setHash);
@@ -279,6 +275,8 @@ public final class Cache {
 						}
 					}
 				}
+			} catch (IOException e) {
+				throw new CacheException(e);
 			}
 			return true;
 
