@@ -43,7 +43,7 @@ public class SearchActivityTest extends ActivityInstrumentationTestCase2<SearchA
 		EditText querryText = (EditText) solo.getView(R.id.searchText);
 		solo.enterText((EditText) querryText, querry);
 		solo.sleep(DODO);
-		assertTrue("querry edited", querryText.getText().toString().equals("fruit"));
+		assertTrue("querry edited", "fruit".toString().equals(querryText.getText()));
 		
 		
 		//getActivityAndWaitFor(TTChecks.QUERY_EDITED);

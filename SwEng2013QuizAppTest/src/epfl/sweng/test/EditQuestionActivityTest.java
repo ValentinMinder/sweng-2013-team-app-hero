@@ -59,11 +59,11 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		Button correct = (Button) solo.getView(0);
 		//Button notCorrect = (Button) solo.getView(1);
 		solo.sleep(DODO);
-		assertTrue("correct Typo before clicking", correct.getText().equals("✘") /*&& notCorrect.getText().equals("✘")*/);
+		assertTrue("correct Typo before clicking", "✘".equals(correct.getText()) /*&& notCorrect.getText().equals("✘")*/);
 		
 		solo.clickOnView(correct);
 		solo.sleep(DODO);
-		assertTrue("Correct typo", correct.getText().equals("✔") /*&& notCorrect.getText().equals("✘")*/);
+		assertTrue("Correct typo", "✔".equals(correct.getText()) /*&& notCorrect.getText().equals("✘")*/);
 		
 		Button submit = (Button) solo.getView(R.id.submit_question);
 		assertFalse("Submit is disabled", submit.isEnabled());
@@ -74,7 +74,7 @@ public class EditQuestionActivityTest extends ActivityInstrumentationTestCase2<E
 		solo.enterText(question,s );
 		Log.e("Test",s+" = " +question.getText() + " " + question.getText().equals(s));
 		solo.sleep(DODO);
-		assertTrue("title edited", question.getText().toString().equals("test question, please ignore"));
+		assertTrue("title edited", "test question, please ignore".equals(question.getText().toString()));
 		
 		
 		EditText tags = (EditText) solo.getView(R.id.tags);

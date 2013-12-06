@@ -51,8 +51,8 @@ public class ShowQuestionTest extends
 		TextView tags = (TextView) solo.getView(R.id.tags);
 		
 		assertTrue(possibleAnswers.getAdapter().isEmpty());
-		assertTrue(questionTitle.getText().equals(""));
-		assertTrue(tags.getText().equals(""));
+		assertTrue("".equals(questionTitle.getText()));
+		assertTrue("".equals(tags.getText()));
 
 	}
 
