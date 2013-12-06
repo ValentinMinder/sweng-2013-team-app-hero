@@ -257,8 +257,8 @@ public final class Cache {
 				try {
 					output.writeObject(setHash);
 				} finally {
-					output.close();
-//					closeSilently(output);
+//					output.close();
+					closeSilently(output);
 //					org.apache.commons.io.IOUtils.closeQuietly(output)
 //					try {
 //						
