@@ -256,8 +256,8 @@ public final class Cache {
 				fileOutput = new FileOutputStream(file, false);
 				output = new ObjectOutputStream(fileOutput);
 				output.writeObject(setHash);
-			
-				return true;
+				output.close();
+				fileOutput.close();
 			} catch (IOException e) {
 				throw new CacheException(e);
 			} finally {
@@ -268,8 +268,10 @@ public final class Cache {
 				} catch (IOException e) {
 					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 				}
-				
+
 			}
+			return true;
+
 		}
 
 		return false;
