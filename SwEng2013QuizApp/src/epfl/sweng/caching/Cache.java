@@ -268,18 +268,22 @@ public final class Cache {
 					if (fileOutput != null) {
 						fileOutput.close();
 					}
+				} catch (IOException e) {
+					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
+				}
+				try {
 					if (output != null) {
 						output.close();
 					}
 				} catch (IOException e) {
-					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
+					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", e);
 				}
 			}
 		}
 
 		return false;
 	}
-
+	
 	/**
 	 * Add a question to the outBox.
 	 * 
@@ -375,6 +379,7 @@ public final class Cache {
 				} catch (IOException e) {
 					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
 				}
+				
 			}
 		}
 
