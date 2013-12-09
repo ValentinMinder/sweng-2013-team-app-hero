@@ -349,11 +349,11 @@ public final class Cache {
 				input = new ObjectInputStream(new FileInputStream(file));
 				outbox = (ArrayList<QuizQuestion>) input.readObject();
 			} catch (IOException e) {
-				Log.e("Error", "fail to create or read to stream");
+				Log.e("Error", "fail to create or read to stream, exception : " + e);
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
 				Log.e("Error",
-						"ClassNotFoundException in getListOutBoxWithFile");
+						"ClassNotFoundException in getListOutBoxWithFile, exception : " + e);
 				throw new CacheException(e);
 			} finally {
 				if (input != null) {
@@ -361,7 +361,7 @@ public final class Cache {
 						input.close();
 					} catch (IOException e) {
 						Log.e("Error",
-								"Failing to close input stream in getListOutBoxWithFile");
+								"Failing to close input stream in getListOutBoxWithFile, exception : " + e);
 					}
 				}
 			}
@@ -419,7 +419,7 @@ public final class Cache {
 
 			return true;
 		} catch (IOException e) {
-			Log.e("Error", "IOException in saveOutBox");
+			Log.e("Error", "IOException in saveOutBox, exception : " + e);
 			throw new CacheException(e);
 		}
 	}
@@ -468,7 +468,7 @@ public final class Cache {
 					try {
 						input.close();
 					} catch (IOException e) {
-						Log.e("Error", "file to close stream");
+						Log.e("Error", "file to close stream, exception : " + e);
 					}
 				}
 			}
