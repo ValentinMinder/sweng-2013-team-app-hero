@@ -15,8 +15,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import android.util.Log;
-
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -349,19 +347,20 @@ public final class Cache {
 				input = new ObjectInputStream(new FileInputStream(file));
 				outbox = (ArrayList<QuizQuestion>) input.readObject();
 			} catch (IOException e) {
-				Log.e("Error", "fail to create or read to stream, exception : " + e);
+				Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+						"fail to create or read to stream", e);
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
-				Log.e("Error",
-						"ClassNotFoundException in getListOutBoxWithFile, exception : " + e);
+				Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+						"classnotfound", e);
 				throw new CacheException(e);
 			} finally {
 				if (input != null) {
 					try {
 						input.close();
 					} catch (IOException e) {
-						Log.e("Error",
-								"Failing to close input stream in getListOutBoxWithFile, exception : " + e);
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+								"Failing to close input stream", e);
 					}
 				}
 			}
@@ -419,7 +418,8 @@ public final class Cache {
 
 			return true;
 		} catch (IOException e) {
-			Log.e("Error", "IOException in saveOutBox, exception : " + e);
+			Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+					"IOException in saveOutBox", e);
 			throw new CacheException(e);
 		}
 	}
@@ -468,7 +468,8 @@ public final class Cache {
 					try {
 						input.close();
 					} catch (IOException e) {
-						Log.e("Error", "file to close stream, exception : " + e);
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+								"Failed to close stream", e);
 					}
 				}
 			}
