@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.R;
-import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.test.minimalmock.MockHttpClient;

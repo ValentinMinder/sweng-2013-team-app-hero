@@ -236,7 +236,8 @@ public class AuthenticationActivityTest extends
 			assertTrue("Question not stored in cache", Cache.getInstance()
 					.getListOutBox().size() == 1);
 		} catch (CacheException e) {
-			Logger.getLogger("epfl.sweng.test").log(Level.INFO, "Fail in test" ,e);
+			Logger.getLogger("epfl.sweng.test").log(Level.INFO, "Fail in test",
+					e);
 			assertTrue("Cache exception for getListOutBox", false);
 		}
 
@@ -264,7 +265,8 @@ public class AuthenticationActivityTest extends
 			assertTrue("Question not submitted", Cache.getInstance()
 					.getListOutBox().size() == 0);
 		} catch (CacheException e) {
-			Logger.getLogger("epfl.sweng.test").log(Level.INFO, "Fail in test" ,e);
+			Logger.getLogger("epfl.sweng.test").log(Level.INFO, "Fail in test",
+					e);
 			assertTrue("Cache exception for getListOutBox", false);
 		}
 

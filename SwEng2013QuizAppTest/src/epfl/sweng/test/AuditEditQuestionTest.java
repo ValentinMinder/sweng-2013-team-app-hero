@@ -1,23 +1,10 @@
 package epfl.sweng.test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import org.apache.http.HttpStatus;
-
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.jayway.android.robotium.solo.Solo;
 
-import epfl.sweng.R;
-import epfl.sweng.caching.Cache;
-import epfl.sweng.caching.CacheException;
 import epfl.sweng.editquestions.EditQuestionActivity;
-import epfl.sweng.patterns.ProxyHttpClient;
-import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;

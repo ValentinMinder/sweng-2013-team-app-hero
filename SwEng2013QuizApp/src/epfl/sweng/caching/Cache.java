@@ -6,17 +6,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import android.util.Log;
 
 import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -56,7 +55,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks)
-		throws CacheException {
+			throws CacheException {
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
 
 		initCache();
@@ -111,7 +110,7 @@ public final class Cache {
 	public static void deleteInstance() {
 		instance = null;
 	}
-	
+
 	public static String getDirectoryFiles() {
 		return directoryFiles;
 	}
@@ -135,7 +134,7 @@ public final class Cache {
 	 */
 	public static synchronized IProxyToCachePrivateTasks getProxyToCachePrivateTasks(
 			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks)
-		throws CacheException {
+			throws CacheException {
 		if (instance == null) {
 			instance = new Cache(innerCacheToProxyPrivateTasks);
 		}
@@ -206,7 +205,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	public boolean addQuestionToCache(QuizQuestion myQuizQuestion)
-		throws CacheException {
+			throws CacheException {
 		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
 		String jsonQuestion = myQuizQuestion.toPostEntity();
 		File file = new File(directoryFiles + File.separator
@@ -244,7 +243,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private boolean addQuestionToTagFile(String tag, String hashQuestion)
-		throws CacheException {
+			throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS + File.separator + tag.toLowerCase());
 		Set<String> setHash = getSetTagWithFile(file);
@@ -254,30 +253,33 @@ public final class Cache {
 			// WE HAVE TO DECLARE AN OBJECTOUPUTSTREAM, NOT OBJECTOUTPUT!
 			ObjectOutputStream output = null;
 			try {
-				output = new ObjectOutputStream(new FileOutputStream(file, false));
+				output = new ObjectOutputStream(new FileOutputStream(file,
+						false));
 				try {
 					output.writeObject(setHash);
 				} finally {
 					closeSilently(output);
 				}
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to create or write to stream", e);
+				Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+						"fail to create or write to stream", e);
 				throw new CacheException(e);
 			}
 			return true;
 		}
 		return false;
 	}
-	
-	private static void closeSilently(ObjectOutputStream os) { 
+
+	private static void closeSilently(ObjectOutputStream os) {
 		try {
 			os.close();
-		} catch(IOException ex){
-			Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "fail to close stream", ex);
+		} catch (IOException ex) {
+			Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+					"fail to close stream", ex);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Add a question to the outBox.
 	 * 
@@ -287,7 +289,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion)
-		throws CacheException {
+			throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -297,28 +299,20 @@ public final class Cache {
 		}
 
 		outbox.add(myQuizQuestion);
-		FileOutputStream fileOutput = null;
-		ObjectOutput output = null;
+		ObjectOutputStream output = null;
 		try {
-			fileOutput = new FileOutputStream(file, false);
-			output = new ObjectOutputStream(fileOutput);
-			output.writeObject(outbox);
-			output.close();
-			fileOutput.close();
+			output = new ObjectOutputStream(new FileOutputStream(file, false));
+			try {
+				output.writeObject(outbox);
+			} finally {
+				closeSilently(output);
+			}
+
 			return true;
 		} catch (IOException e) {
+			Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+					"fail to create or write to stream", e);
 			throw new CacheException(e);
-		} finally {
-			try {
-				if (fileOutput != null) {
-					fileOutput.close();
-				}
-				if (output != null) {
-					output.close();
-				}
-			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
-			}
 		}
 	}
 
@@ -344,36 +338,32 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file)
-		throws CacheException {
+			throws CacheException {
 		ArrayList<QuizQuestion> outbox = null;
 
 		if (!file.exists()) {
 			outbox = new ArrayList<QuizQuestion>();
 		} else {
-			FileInputStream fis = null;
-			ObjectInput input = null;
+			ObjectInputStream input = null;
 			try {
-				fis = new FileInputStream(file);
-				input = new ObjectInputStream(fis);
+				input = new ObjectInputStream(new FileInputStream(file));
 				outbox = (ArrayList<QuizQuestion>) input.readObject();
-				input.close();
-				fis.close();
 			} catch (IOException e) {
+				Log.e("Error", "fail to create or read to stream");
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
+				Log.e("Error",
+						"ClassNotFoundException in getListOutBoxWithFile");
 				throw new CacheException(e);
 			} finally {
-				try {
-					if (fis != null) {
-						fis.close();
-					}
-					if (input != null) {
+				if (input != null) {
+					try {
 						input.close();
+					} catch (IOException e) {
+						Log.e("Error",
+								"Failing to close input stream in getListOutBoxWithFile");
 					}
-				} catch (IOException e) {
-					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
 				}
-				
 			}
 		}
 
@@ -387,7 +377,6 @@ public final class Cache {
 					+ NAME_DIRECTORY_QUESTIONS + File.separator + hashCode);
 			BufferedReader buffReader = new BufferedReader(fr);
 			String line = buffReader.readLine();
-			buff.append(line);
 			while (line != null) {
 				buff.append(line);
 				line = buffReader.readLine();
@@ -414,33 +403,24 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private boolean saveOutBox(ArrayList<QuizQuestion> outbox)
-		throws CacheException {
+			throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
-		FileOutputStream fileOutput = null;
-		ObjectOutput output = null;
+		ObjectOutputStream output = null;
 		try {
-			fileOutput = new FileOutputStream(file, false);
-			output = new ObjectOutputStream(fileOutput);
-			output.writeObject(outbox);
-			output.close();
-			fileOutput.close();
+			output = new ObjectOutputStream(new FileOutputStream(file, false));
+
+			try {
+				output.writeObject(outbox);
+			} finally {
+				closeSilently(output);
+			}
 
 			return true;
 		} catch (IOException e) {
+			Log.e("Error", "IOException in saveOutBox");
 			throw new CacheException(e);
-		} finally {
-			try {
-				if (fileOutput != null) {
-					fileOutput.close();
-				}
-				if (output != null) {
-					output.close();
-				}
-			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
-			}
 		}
 	}
 
@@ -475,28 +455,21 @@ public final class Cache {
 		if (!file.exists()) {
 			setHash = new HashSet<String>();
 		} else {
-			FileInputStream fis = null;
-			ObjectInput input = null;
+			ObjectInputStream input = null;
 			try {
-				fis = new FileInputStream(file);
-				input = new ObjectInputStream(fis);
+				input = new ObjectInputStream(new FileInputStream(file));
 				setHash = (HashSet<String>) input.readObject();
-				input.close();
-				fis.close();
 			} catch (IOException e) {
 				throw new CacheException(e);
 			} catch (ClassNotFoundException e) {
 				throw new CacheException(e);
 			} finally {
-				try {
-					if (fis != null) {
-						fis.close();
-					}
-					if (input != null) {
+				if (input != null) {
+					try {
 						input.close();
+					} catch (IOException e) {
+						Log.e("Error", "file to close stream");
 					}
-				} catch (IOException e) {
-					Logger.getLogger("epfl.sweng.caching").log(Level.INFO, "file to close stream", e);
 				}
 			}
 		}
@@ -570,13 +543,13 @@ public final class Cache {
 			IProxyToCachePrivateTasks {
 		@Override
 		public boolean addQuestionToCache(QuizQuestion myQuizQuestion)
-			throws CacheException {
+				throws CacheException {
 			return instance.addQuestionToCache(myQuizQuestion);
 		}
 
 		@Override
 		public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion)
-			throws CacheException {
+				throws CacheException {
 			return instance.addQuestionToOutBox(myQuizQuestion);
 		}
 

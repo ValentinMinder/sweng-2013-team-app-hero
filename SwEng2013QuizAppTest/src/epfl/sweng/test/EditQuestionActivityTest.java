@@ -14,9 +14,7 @@ import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.R;
 import epfl.sweng.caching.Cache;
-import epfl.sweng.caching.CacheException;
 import epfl.sweng.editquestions.EditQuestionActivity;
-import epfl.sweng.patterns.ProxyHttpClient;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
