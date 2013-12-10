@@ -199,7 +199,12 @@ public final class ProxyHttpClient implements IHttpClient {
 				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
 						"executing request", e);
 				goOffline = true;
+			} catch (UnknownHostException e) {
+				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
+						"executing request", e);
+				goOffline = true;
 			} catch (IOException e) {
+				Log.e("offline", "ioexecption");
 				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
 						"executing request", e);
 			}
@@ -294,7 +299,7 @@ public final class ProxyHttpClient implements IHttpClient {
 			HttpResponse serverResponse) {
 		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 		if (goOffline) {
-			offline = true;
+			goOffLine();
 		}
 		if (onlineSuccesfulComm && serverResponse != null) {
 			return serverResponse;
