@@ -491,6 +491,7 @@ public final class Cache {
 		ArrayList<QuizQuestion> outbox = getListOutBox();
 
 		if (outbox.size() == 0) { // && failBox.size() == 0) {
+			// check that network is available?
 			myCacheToProxyPrivateTasks.goOnlineResponse(true);
 		} else {
 			int k = outbox.size();
