@@ -242,10 +242,10 @@ public final class ProxyHttpClient implements IHttpClient {
 						// if we are online and there was an error
 						myProxyToCachePrivateTasks
 								.addQuestionToOutBox(myQuizQuestion);
-					} else {
-						myProxyToCachePrivateTasks
-						.addQuestionToCache(myQuizQuestion);
 					}
+					myProxyToCachePrivateTasks
+					.addQuestionToCache(myQuizQuestion);
+					
 					// if proxy accepted the question, reply okay (201) and
 					// return
 					// the question as json to confirm
