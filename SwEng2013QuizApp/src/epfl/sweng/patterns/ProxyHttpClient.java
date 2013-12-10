@@ -128,7 +128,7 @@ public final class ProxyHttpClient implements IHttpClient {
 				myCheckBoxTask.confirmCheckBoxTask(offline);
 				TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 			} else {
-				TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+				//TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 				myCheckBoxTask.releaseGoOnlineTask();
 			}
 		}
