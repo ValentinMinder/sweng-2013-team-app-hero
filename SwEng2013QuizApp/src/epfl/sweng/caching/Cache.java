@@ -53,7 +53,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private Cache(ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks)
-			throws CacheException {
+		throws CacheException {
 		myCacheToProxyPrivateTasks = innerCacheToProxyPrivateTasks;
 
 		initCache();
@@ -132,7 +132,7 @@ public final class Cache {
 	 */
 	public static synchronized IProxyToCachePrivateTasks getProxyToCachePrivateTasks(
 			ICacheToProxyPrivateTasks innerCacheToProxyPrivateTasks)
-			throws CacheException {
+		throws CacheException {
 		if (instance == null) {
 			instance = new Cache(innerCacheToProxyPrivateTasks);
 		}
@@ -203,7 +203,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	public boolean addQuestionToCache(QuizQuestion myQuizQuestion)
-			throws CacheException {
+		throws CacheException {
 		String hashQuestion = Integer.toString(myQuizQuestion.hashCode());
 		String jsonQuestion = myQuizQuestion.toPostEntity();
 		File file = new File(directoryFiles + File.separator
@@ -241,7 +241,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private boolean addQuestionToTagFile(String tag, String hashQuestion)
-			throws CacheException {
+		throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_TAGS + File.separator + tag.toLowerCase());
 		Set<String> setHash = getSetTagWithFile(file);
@@ -294,7 +294,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion)
-			throws CacheException {
+		throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -343,7 +343,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private ArrayList<QuizQuestion> getListOutBoxWithFile(File file)
-			throws CacheException {
+		throws CacheException {
 		ArrayList<QuizQuestion> outbox = null;
 
 		if (!file.exists()) {
@@ -408,7 +408,7 @@ public final class Cache {
 	 * @throws CacheException
 	 */
 	private boolean saveOutBox(ArrayList<QuizQuestion> outbox)
-			throws CacheException {
+		throws CacheException {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_UTILS + File.separator + NAME_FILE_OUTBOX);
 
@@ -546,13 +546,13 @@ public final class Cache {
 			IProxyToCachePrivateTasks {
 		@Override
 		public boolean addQuestionToCache(QuizQuestion myQuizQuestion)
-				throws CacheException {
+			throws CacheException {
 			return instance.addQuestionToCache(myQuizQuestion);
 		}
 
 		@Override
 		public boolean addQuestionToOutBox(QuizQuestion myQuizQuestion)
-				throws CacheException {
+			throws CacheException {
 			return instance.addQuestionToOutBox(myQuizQuestion);
 		}
 

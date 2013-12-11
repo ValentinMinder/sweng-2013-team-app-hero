@@ -42,7 +42,7 @@ public final class HandleOfflineQuery {
 	 * @throws CacheException
 	 */
 	public static synchronized HandleOfflineQuery getInstance()
-			throws CacheException {
+		throws CacheException {
 		if (instance == null) {
 			instance = new HandleOfflineQuery();
 		}

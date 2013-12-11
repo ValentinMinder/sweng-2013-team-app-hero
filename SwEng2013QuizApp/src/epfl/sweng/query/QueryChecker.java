@@ -19,19 +19,20 @@ final public class QueryChecker {
 		Stack<String> stack = new Stack<String>();
 		for (int i = 0; i < query.length(); ++i) {
 			switch (query.charAt(i)) {
-			case '(':
-				stack.push("(");
-				break;
-			case ')':
-				try {
-					stack.pop();
-				} catch (EmptyStackException e) {
-					Logger.getLogger("epfl.sweng.query").log(Level.INFO, "checkNested Empty Stack" ,e);
-					return false;
-				}
-				break;
-			default:
-				break;
+				case '(':
+					stack.push("(");
+					break;
+				case ')':
+					try {
+						stack.pop();
+					} catch (EmptyStackException e) {
+						Logger.getLogger("epfl.sweng.query").log(Level.INFO,
+							"checkNested Empty Stack", e);
+						return false;
+					}
+					break;
+				default:
+					break;
 			}
 		}
 		return stack.size() == 0;
@@ -108,7 +109,8 @@ final public class QueryChecker {
 						buff.append("z");
 					}
 					buff.append(")");
-					queryClone = queryClone.substring(0, beginSub) + buff.toString()
+					queryClone = queryClone.substring(0, beginSub)
+							+ buff.toString()
 							+ queryClone.substring(endSub + 1);
 					// System.out.println("new query clone " + queryClone);
 				} else {

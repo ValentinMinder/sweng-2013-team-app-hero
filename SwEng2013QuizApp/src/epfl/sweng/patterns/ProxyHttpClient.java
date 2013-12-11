@@ -374,7 +374,8 @@ public final class ProxyHttpClient implements IHttpClient {
 						next = json.getString("from");
 					} catch (JSONException e) {
 						Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
-								"client fail", e);					}
+								"client fail", e);
+					}
 					Log.e("test", query);
 					String clearQuery = Parenthesis.parenthesis(query);
 					ArrayList<String> listJSONQuestions = HandleOfflineQuery.getInstance()

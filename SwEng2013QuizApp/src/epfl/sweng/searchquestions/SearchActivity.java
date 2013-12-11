@@ -81,10 +81,11 @@ public class SearchActivity extends Activity {
 	private int auditSearchButton() {
 		String query = editQuery.getText().toString();
 		queryChecker.setQuery(query);
-		if(queryChecker.checkQuery()) 
+		if (queryChecker.checkQuery()) {
 			return 0;
-		else
+		} else {
 			return 1;
+		}
 	}
 
 	private void searchController(Button search) {
