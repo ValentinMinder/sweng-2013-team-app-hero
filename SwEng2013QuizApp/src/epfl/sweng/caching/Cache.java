@@ -248,7 +248,6 @@ public final class Cache {
 
 		if (!setHash.contains(hashQuestion)) {
 			setHash.add(hashQuestion);
-			// WE HAVE TO DECLARE AN OBJECTOUPUTSTREAM, NOT OBJECTOUTPUT!
 			ObjectOutputStream output = null;
 			try {
 				output = new ObjectOutputStream(new FileOutputStream(file,
@@ -273,9 +272,17 @@ public final class Cache {
 			os.close();
 		} catch (IOException ex) {
 			Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
-					"fail to close stream", ex);
+					"fail to close output stream", ex);
 		}
-
+	}
+	
+	private static void closeSilently(ObjectInputStream os) {
+		try {
+			os.close();
+		} catch (IOException ex) {
+			Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+					"fail to close input stream", ex);
+		}
 	}
 
 	/**
@@ -356,12 +363,7 @@ public final class Cache {
 				throw new CacheException(e);
 			} finally {
 				if (input != null) {
-					try {
-						input.close();
-					} catch (IOException e) {
-						Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
-								"Failing to close input stream", e);
-					}
+					closeSilently(input);
 				}
 			}
 		}
@@ -371,10 +373,10 @@ public final class Cache {
 
 	public String getJSONQuestion(String hashCode) throws CacheException {
 		StringBuffer buff = new StringBuffer();
+		BufferedReader buffReader = null;
 		try {
-			FileReader fr = new FileReader(directoryFiles + File.separator
-					+ NAME_DIRECTORY_QUESTIONS + File.separator + hashCode);
-			BufferedReader buffReader = new BufferedReader(fr);
+			buffReader = new BufferedReader(new FileReader(directoryFiles + File.separator
+					+ NAME_DIRECTORY_QUESTIONS + File.separator + hashCode));
 			String line = buffReader.readLine();
 			while (line != null) {
 				buff.append(line);
@@ -383,11 +385,15 @@ public final class Cache {
 					buff.append('\n');
 				}
 			}
-
-			buffReader.close();
-			fr.close();
 		} catch (IOException e) {
 			throw new CacheException(e);
+		} finally {
+			if (buffReader != null){
+				try {
+					buffReader.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 
 		return buff.toString();
@@ -465,12 +471,7 @@ public final class Cache {
 				throw new CacheException(e);
 			} finally {
 				if (input != null) {
-					try {
-						input.close();
-					} catch (IOException e) {
-						Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
-								"Failed to close stream", e);
-					}
+					closeSilently(input);
 				}
 			}
 		}
