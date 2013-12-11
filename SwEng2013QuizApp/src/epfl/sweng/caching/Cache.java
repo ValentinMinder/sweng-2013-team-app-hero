@@ -209,10 +209,10 @@ public final class Cache {
 		File file = new File(directoryFiles + File.separator
 				+ NAME_DIRECTORY_QUESTIONS + File.separator + hashQuestion);
 		if (!file.exists()) {
+			FileOutputStream fos = null;
 			try {
-				FileOutputStream fos = new FileOutputStream(file);
+				fos = new FileOutputStream(file);
 				fos.write(jsonQuestion.getBytes());
-				fos.close();
 
 				Iterator<String> itTag = myQuizQuestion.getTags().iterator();
 				while (itTag.hasNext()) {
@@ -223,6 +223,15 @@ public final class Cache {
 				return true;
 			} catch (IOException e) {
 				throw new CacheException(e);
+			} finally {
+				if (fos != null) {
+					try {
+						fos.close();
+					} catch (IOException e) {
+						Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+								"fail to close file output stream", e);
+					}
+				}
 			}
 		}
 
@@ -388,10 +397,12 @@ public final class Cache {
 		} catch (IOException e) {
 			throw new CacheException(e);
 		} finally {
-			if (buffReader != null){
+			if (buffReader != null) {
 				try {
 					buffReader.close();
 				} catch (IOException e) {
+					Logger.getLogger("epfl.sweng.caching").log(Level.INFO,
+							"fail to close buffered reader on file " + hashCode, e);
 				}
 			}
 		}
