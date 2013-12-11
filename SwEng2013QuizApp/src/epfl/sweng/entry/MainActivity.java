@@ -4,16 +4,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.StoreCredential;
+import epfl.sweng.authentication.AuthenticationActivity.GetAuthenticationTokenTask;
 import epfl.sweng.caching.Cache;
 import epfl.sweng.caching.CacheException;
 import epfl.sweng.editquestions.EditQuestionActivity;
@@ -90,20 +95,29 @@ public class MainActivity extends Activity {
 		offline.setOnClickListener(new CompoundButton.OnClickListener() {
 			@Override
 			public void onClick(View buttonView) {
-				// we save the previous state, and restablish the previous one
+				// we save the next state, and restablish the previous one
 				CheckBox check = (CheckBox) findViewById(R.id.offline);
 				boolean isNextCheck = check.isChecked();
 				check.setChecked(!isNextCheck);
 				// we lock the use of the checkbox (NOT USED ANYMORE)
 				if (!isNextCheck) {
-					System.out.println("trying to goonline");
-					try {
-						ProxyHttpClient.getInstance().goOnline();
-					} catch (CacheException e) {
-						Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
-								"Creating main activity, in the offline listener", e);
+					ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+					NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+					// Test network connection
+					if (networkInfo != null && networkInfo.isConnected()) {
+						System.out.println("trying to goonline");
+						try {
+							ProxyHttpClient.getInstance().goOnline();
+						} catch (CacheException e) {
+							Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
+									"Creating main activity, in the offline listener", e);
+						}
+						System.out.println("going online submitted");
+					} else {
+						Toast.makeText(getBaseContext(), R.string.no_network,
+								Toast.LENGTH_LONG).show();
 					}
-					System.out.println("going online submitted");
 				} else {
 					try {
 						ProxyHttpClient.getInstance().goOffLine();
