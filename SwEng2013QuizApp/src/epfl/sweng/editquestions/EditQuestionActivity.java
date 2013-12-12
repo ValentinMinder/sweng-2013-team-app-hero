@@ -235,12 +235,6 @@ public class EditQuestionActivity extends Activity {
 	}
 
 	public int auditErrors() {
-		System.out.println("audit answer " + auditAnswers());
-		System.out.println("audit button " + auditButtons());
-		System.out.println("audit edittext " + auditEditTexts());
-		System.out.println("audit submit button " + auditSubmitButton());
-		System.out.println("audit = " + audit() + " submit enabled "
-				+ submit.isEnabled());
 		return auditAnswers() + auditButtons() + auditEditTexts()
 				+ auditSubmitButton();
 
@@ -586,7 +580,6 @@ public class EditQuestionActivity extends Activity {
 		 */
 		protected void onPostExecute(HttpResponse httpResponse) {
 			// if result is null, server something else than a 2xx status.
-			System.out.println(httpResponse);
 			if (httpResponse != null
 					&& httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 				successEditQuestion();

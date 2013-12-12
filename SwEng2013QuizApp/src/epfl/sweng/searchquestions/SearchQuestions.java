@@ -100,7 +100,6 @@ public class SearchQuestions {
 					}
 					
 					for (String s : arrayString) {
-						System.out.println(s);
 						cachedRequestArray.add(new QuizQuestion(s));
 					}
 				} catch (JSONException e) {
