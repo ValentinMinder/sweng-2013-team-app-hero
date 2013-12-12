@@ -47,7 +47,6 @@ public class EvaluateQuery {
 	 * 
 	 */
 	public static HashSet<String> evaluate(String query) throws CacheException {
-		System.out.println("Evaluating " + query);
 		HashMap<Integer, Integer> parenthesisLevel = getLevels(query);
 		ArrayList<HashSet<String>> results = new ArrayList<HashSet<String>>();
 		int count = 0;
@@ -110,13 +109,12 @@ public class EvaluateQuery {
 			count++;
 			parenthesisLevel = getLevels(query);
 		}
-		// results.get(count - 1).print();
+
 		if (count != 0) {
 			return 	results.get(count - 1);
 		} else {
 			Log.e("test", query);
 			return Cache.getInstance().getSetTag(query);
-			// return new ArrayList<String>();
 		}
 	}
 

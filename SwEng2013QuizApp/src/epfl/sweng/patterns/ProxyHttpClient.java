@@ -128,7 +128,6 @@ public final class ProxyHttpClient implements IHttpClient {
 				myCheckBoxTask.confirmCheckBoxTask(offline);
 				TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 			} else {
-				//TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 				myCheckBoxTask.releaseGoOnlineTask();
 			}
 		}
@@ -368,10 +367,9 @@ public final class ProxyHttpClient implements IHttpClient {
 				try {
 					JSONObject json = new JSONObject(jsonString);
 					String query = json.getString("query");
-					String next = "null";
-					System.out.println("im here");
+					String from = "null";
 					try {
-						next = json.getString("from");
+						from = json.getString("from");
 					} catch (JSONException e) {
 						Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
 								"client fail", e);
@@ -379,7 +377,7 @@ public final class ProxyHttpClient implements IHttpClient {
 					Log.e("test", query);
 					String clearQuery = Parenthesis.parenthesis(query);
 					ArrayList<String> listJSONQuestions = HandleOfflineQuery.getInstance()
-							.query(clearQuery, next);
+							.query(clearQuery, from);
 
 					String ret = "{\n \"questions\": ";
 					ret += new JSONArray(listJSONQuestions).toString();
@@ -388,7 +386,6 @@ public final class ProxyHttpClient implements IHttpClient {
 						token = "null";
 					}
 					ret += ", \n\"next\": \"" + token + "\"\n}";
-					System.out.println(ret);
 					return (T) ret;
 				} catch (JSONException e) {
 					Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
@@ -410,9 +407,7 @@ public final class ProxyHttpClient implements IHttpClient {
 	 */
 	private void aSyncCounter() throws CacheException {
 		aSyncCounter--;
-		System.out.println(aSyncCounter);
-		if (aSyncCounter == 0) { // && toSendBox.size() == 0) {
-			System.out.println("asny 0");
+		if (aSyncCounter == 0) { 
 			goOnlineResponse(myProxyToCachePrivateTasks.getSentStatus());
 		}
 
@@ -487,7 +482,6 @@ public final class ProxyHttpClient implements IHttpClient {
 				HttpResponse response = realHttpClient.execute(post);
 				Integer statusCode = response.getStatusLine().getStatusCode();
 				response.getEntity().consumeContent();
-				System.out.println("statzus " + statusCode);
 				return statusCode;
 			} catch (Exception e) {
 				Logger.getLogger("epfl.sweng.patterns").log(Level.INFO,
@@ -516,12 +510,9 @@ public final class ProxyHttpClient implements IHttpClient {
 							.valueOf(HttpStatus.SC_INTERNAL_SERVER_ERROR)) >= 0) {
 				addToFailBox(myQuestion);
 				goOffLine();
-				System.out.println("async fail + offline "
-						+ myQuestion.toPostEntity());
 
 			} else {
 				addToFailBox(myQuestion);
-				System.out.println("async fail " + myQuestion.toPostEntity());
 
 			}
 			

@@ -105,14 +105,14 @@ public class MainActivity extends Activity {
 
 					// Test network connection
 					if (networkInfo != null && networkInfo.isConnected()) {
-						System.out.println("trying to goonline");
+						// trying to goonline
 						try {
 							ProxyHttpClient.getInstance().goOnline();
 						} catch (CacheException e) {
 							Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
 									"Creating main activity, in the offline listener", e);
 						}
-						System.out.println("going online submitted");
+						// going online submitted
 					} else {
 						Toast.makeText(getBaseContext(), R.string.no_network,
 								Toast.LENGTH_LONG).show();

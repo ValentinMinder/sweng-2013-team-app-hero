@@ -84,7 +84,6 @@ public final class HandleOfflineQuery {
 		} else {
 			resetPreviousState();
 			HashSet<String> set = EvaluateQuery.evaluate(query);
-			System.out.println("found questions: " + set.size());
 			if (set.size() > RETURN_ARRAY_SIZE) {
 				previousQuery = query;
 				previousHashSetAsLinkedList = new LinkedList<String>(set);

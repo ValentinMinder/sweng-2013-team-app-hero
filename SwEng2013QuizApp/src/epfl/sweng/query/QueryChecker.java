@@ -38,9 +38,12 @@ final public class QueryChecker {
 		return stack.size() == 0;
 	}
 
-	private boolean checkValid() {
-		// should only be called by checkQuery once the pre-condition are
+	/**
+	 * should only be called by checkQuery once the pre-condition are
 		// checked
+	 * @return
+	 */
+	private boolean checkValid() {
 
 		// remove useless space, replace useful one by the * operator
 		String pattern = "([[a-zA-Z0-9]])(\\s+)([\\w])";
@@ -53,7 +56,6 @@ final public class QueryChecker {
 		pattern = "([)])(\\s+)([(])";
 		queryClone = queryClone.replaceAll(pattern, "$1*$3");
 		queryClone = queryClone.replaceAll("\\s+", "");
-		System.out.println("Checking ... " + queryClone);
 
 		// beginSub, endSub delimiter of the queries delimited by parenthesis
 		// countParenthesisFound count how many nested level of parenthesis we
@@ -197,13 +199,12 @@ final public class QueryChecker {
 		if (query == null || query.length() > MAXLENGTH) {
 			return false;
 		}
-
+		// check that it includes only autorised character
 		if (!query.matches(patternIncluded)) {
 			return false;
 		}
-
+		// check it contains AT LEAST one alphanum character
 		String patternAlphaNum = ".*[a-zA-Z0-9]+.*";
-
 		if (!query.matches(patternAlphaNum)) {
 			return false;
 		}
