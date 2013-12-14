@@ -544,7 +544,7 @@ public class EditQuestionActivity extends Activity {
 		protected HttpResponse doInBackground(String... questionElement) {
 			String serverURL = "https://sweng-quiz.appspot.com/";
 			HttpPost post = new HttpPost(serverURL + "quizquestions/");
-			post.setHeader("Content-type", "application/json");
+			post.setHeader("Content-type", "application/json; charset=utf-8");
 			post.setHeader(
 					"Authorization",
 					"Tequila "
@@ -552,7 +552,7 @@ public class EditQuestionActivity extends Activity {
 									getApplicationContext()));
 
 			try {
-				post.setEntity(new StringEntity(questionElement[0]));
+				post.setEntity(new StringEntity(questionElement[0], "UTF-8"));
 				HttpResponse response = ProxyHttpClient.getInstance().execute(
 						post);
 				return response;
