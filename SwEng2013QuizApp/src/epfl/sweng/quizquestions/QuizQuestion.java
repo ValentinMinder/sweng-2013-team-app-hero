@@ -89,6 +89,7 @@ public class QuizQuestion implements Serializable {
 		this.tags = tags;
 		this.id = id;
 		this.owner = owner;
+		
 	}
 
 	public long getId() {
@@ -118,6 +119,7 @@ public class QuizQuestion implements Serializable {
 	public void setAnswers(List<String> answersS, int solutionIndexS) {
 		this.answers = answersS;
 		this.solutionIndex = solutionIndexS;
+		
 	}
 
 	public int getSolutionIndex() {
@@ -240,35 +242,45 @@ public class QuizQuestion implements Serializable {
 	 */
 	public String toPostEntity() {
 		StringBuffer entity = new StringBuffer();
-		entity.append("{\n");
-		entity.append("\"id\": " + id + ",\n");
-		entity.append("\"question\": \"" + question + "\"," + " \"answers\": [");
-		entity.append(" \"" + answers.get(0) + "\"");
+		entity.append("{\n"); 
+		
+		entity.append("\"id\": " + clone(id + "") + ",\n"); 
+		entity.append("\"question\": \"" + clone(question) + "\"," 
+				+ " \"answers\": ["); 
+		entity.append(" \"" + clone(answers.get(0)) + "\""); 
+		
 		for (int i = 1; i < answers.size(); i++) {
-			entity.append(", \"" + answers.get(i) + "\"");
+			entity.append(", \"" + clone(answers.get(i)) + "\"");
 		}
-		entity.append(" ]," + " \"solutionIndex\": " + solutionIndex + ","
-				+ " \"tags\": [");
+		
+		entity.append(" ]," + " \"solutionIndex\": "
+				+ clone(solutionIndex + "") + "," + " \"tags\": ["); 
 
+		
 		Iterator<String> itTags = tags.iterator();
 		while (itTags.hasNext()) {
-			String tag = itTags.next();
-			if (itTags.hasNext()) {
+			String tag = clone(itTags.next());
+			if (itTags.hasNext()) { 
 				entity.append(" \"" + tag + "\", ");
-			} else {
+			} else { 
 				entity.append("\"" + tag + "\"");
 			}
 		}
 		entity.append(" ],");
-		entity.append("\n\"owner\": \"" + owner + "\"");
-		entity.append("\n}");
+		entity.append("\n\"owner\": \"" + clone(owner) + "\"");
+		entity.append("\n}");  
 		return entity.toString();
+	}
+
+	private String clone(String string) {
+		return string.replaceAll("\"", "\\\\\"");
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		
 		result = prime * result + ((answers == null) ? 0 : answers.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
@@ -316,10 +328,12 @@ public class QuizQuestion implements Serializable {
 		// } else if (!owner.equals(other.owner)) {
 		// return false;
 		// }
+		
 		if ((question == null && other.question != null)
 				|| (question != null && !question.equals(other.question))) {
 			return false;
 		}
+		
 		// if (question == null) {
 		// if (other.question != null) {
 		// return false;
@@ -327,6 +341,7 @@ public class QuizQuestion implements Serializable {
 		// } else if (!question.equals(other.question)) {
 		// return false;
 		// }
+		
 		if (solutionIndex != other.solutionIndex) {
 			return false;
 		}
@@ -335,6 +350,7 @@ public class QuizQuestion implements Serializable {
 				|| (tags != null && !tags.equals(other.tags))) {
 			return false;
 		}
+		
 		// if (tags == null) {
 		// if (other.tags != null) {
 		// return false;
@@ -342,6 +358,7 @@ public class QuizQuestion implements Serializable {
 		// } else if (!tags.equals(other.tags)) {
 		// return false;
 		// }
+		
 		return true;
 	}
 
