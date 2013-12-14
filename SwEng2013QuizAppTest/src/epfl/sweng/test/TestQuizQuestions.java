@@ -14,8 +14,9 @@ import junit.framework.TestCase;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 public class TestQuizQuestions extends TestCase {
-	
+
 	private QuizQuestion createNewQuizQuestion() {
+		
 		String question = "Coucou";
 		ArrayList<String> answers = new ArrayList<String>();
 		int solutionIndex = 1;
@@ -26,6 +27,7 @@ public class TestQuizQuestions extends TestCase {
 		QuizQuestion q;
 		answers.add("answers 1");
 		answers.add("answ 2");
+		
 		q = new QuizQuestion(question, answers, solutionIndex,
 				new HashSet<String>(Arrays.asList(tags.split("\\W+"))), id,
 				owner);
@@ -67,8 +69,9 @@ public class TestQuizQuestions extends TestCase {
 		 */
 
 		/* To be implemented in exercise 5 */
-		QuizQuestion q = createNewQuizQuestion();
 		
+		QuizQuestion q = createNewQuizQuestion();
+
 		String newO = "new Onwer";
 		q.setOwner(newO);
 
@@ -92,12 +95,12 @@ public class TestQuizQuestions extends TestCase {
 		/* To be implemented in exercise 5 */
 
 		QuizQuestion q = createNewQuizQuestion();
-		
+
 		ArrayList<String> ans = new ArrayList<String>();
 		int solutionIndex = 1;
 		ans.add("ans 1");
 		ans.add("ans 2");
-		
+
 		q.setAnswers(ans, solutionIndex);
 
 		boolean eqAnswers = true;
@@ -129,7 +132,7 @@ public class TestQuizQuestions extends TestCase {
 
 		/* To be implemented in exercise 5 */
 		QuizQuestion q = createNewQuizQuestion();
-		
+
 		String ttags = "test atgs";
 		Set<String> newTags = new HashSet<String>(Arrays.asList(ttags
 				.split("\\W+")));
@@ -142,22 +145,24 @@ public class TestQuizQuestions extends TestCase {
 				assertTrue(false);
 			}
 		}
+		
 		assertTrue(true);
 	}
-	
+
 	public void testJSONConstruct() {
 		QuizQuestion q = createNewQuizQuestion();
-		
 		QuizQuestion q2 = null;
+		
 		try {
 			q2 = new QuizQuestion(q.toPostEntity());
 		} catch (JSONException e) {
-			Logger.getLogger("epfl.sweng.test").log(Level.INFO, "Fail in test" ,e);
+			Logger.getLogger("epfl.sweng.test").log(Level.INFO, "Fail in test",
+					e);
 		}
-				
+
 		assertTrue(q.equals(q2));
 	}
-	
+
 	public void testAudit() {
 		QuizQuestion q = createNewQuizQuestion();
 		assertTrue(q.auditErrors() == 0);

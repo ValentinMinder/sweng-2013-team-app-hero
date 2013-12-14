@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.http.HttpStatus;
-
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-
 import com.jayway.android.robotium.solo.Solo;
-
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.caching.Cache;
@@ -205,9 +201,7 @@ public class AuthenticationActivityTest extends
 
 		solo.sleep(DODO);
 		assertFalse("Submit is disabled", submit.isEnabled());
-
 		solo.enterText(tags, "test");
-
 		solo.sleep(DODO);
 		assertTrue("Submit is disabled", submit.isEnabled());
 
@@ -336,7 +330,6 @@ public class AuthenticationActivityTest extends
 
 		solo.goBack();
 		solo.sleep(DODO);
-
 		solo.goBack();
 		solo.sleep(DODO);
 
@@ -361,7 +354,6 @@ public class AuthenticationActivityTest extends
 
 		solo.goBack();
 		solo.sleep(DODO);
-
 		solo.goBack();
 		solo.sleep(DODO);
 
@@ -386,6 +378,7 @@ public class AuthenticationActivityTest extends
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
+
 			@Override
 			public void initiate() {
 				getActivity();

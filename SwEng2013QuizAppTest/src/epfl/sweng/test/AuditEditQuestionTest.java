@@ -1,9 +1,7 @@
 package epfl.sweng.test;
 
 import android.test.ActivityInstrumentationTestCase2;
-
 import com.jayway.android.robotium.solo.Solo;
-
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -15,6 +13,7 @@ public class AuditEditQuestionTest extends
 		ActivityInstrumentationTestCase2<EditQuestionActivity> {
 
 	private Solo solo;
+
 	public static final int ID1 = 2000;
 	public static final int ID2 = 2001;
 	public static final int DODO = 1000;
@@ -38,12 +37,12 @@ public class AuditEditQuestionTest extends
 		// solo.clickOnView(solo.getView(R.id.button1));
 
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-
 		assertTrue(getActivity().auditErrors() == 0);
 	}
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
+
 			@Override
 			public void initiate() {
 				getActivity();
