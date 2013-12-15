@@ -98,10 +98,42 @@ public class EditQuestionActivity extends Activity {
 	 */
 	private void submitControler(Button sub) {
 		if (audit() == 0) {
-			sub.setEnabled(true);
-		} else {
-			sub.setEnabled(false);
+			constructQuestion();
+			if (question != null && question.auditErrors() == 0) {
+				sub.setEnabled(true);
+				return;
+			}
+			
+		} 
+		sub.setEnabled(false);
+	}
+		
+	/**
+	 * construct a question;
+	 */
+	private void constructQuestion () {
+		EditText editQuestion = (EditText) findViewById(R.id.type_question);
+		EditText tagText = (EditText) findViewById(R.id.tags);
+		ArrayList<String> answers = new ArrayList<String>();
+
+		int solutionIndex = -1;
+		String questionBody = editQuestion.getText().toString();
+		String tagString = tagText.getText().toString();
+
+		Set<String> tags = new HashSet<String>(Arrays.asList(tagString
+				.split("[^a-zA-Z0-9]+")));
+
+		for (int i = 0; i < idList.size(); i++) {
+			EditText ans = (EditText) findViewById(idList.get(i) + answerCst);
+			String ansString = ans.getText().toString();
+			answers.add(ansString);
+			Button correct = (Button) findViewById(idList.get(i));
+			if ("\u2714".equals(correct.getText())) {
+				solutionIndex = i;
+			}
 		}
+		question = new QuizQuestion(questionBody, answers, solutionIndex, tags,
+				0, "OWNER");
 	}
 
 	private int auditEditTexts() {
@@ -423,40 +455,15 @@ public class EditQuestionActivity extends Activity {
 	}
 
 	/**
-	 * Method to create and submit a question.
+	 * Method to submit an already created question.
 	 * 
 	 * @param view
 	 */
 	// View a faire
 	public void submitQuestion(View view) {
-		EditText editQuestion = (EditText) findViewById(R.id.type_question);
-		EditText tagText = (EditText) findViewById(R.id.tags);
-		ArrayList<String> answers = new ArrayList<String>();
-
-		int solutionIndex = -1;
-		String questionBody = editQuestion.getText().toString();
-		String tagString = tagText.getText().toString();
-
-		Set<String> tags = new HashSet<String>(Arrays.asList(tagString
-				.split("[^a-zA-Z0-9]+")));
-
-		for (int i = 0; i < idList.size(); i++) {
-			EditText ans = (EditText) findViewById(idList.get(i) + answerCst);
-			String ansString = ans.getText().toString();
-			answers.add(ansString);
-			Button correct = (Button) findViewById(idList.get(i));
-			if ("\u2714".equals(correct.getText())) {
-				solutionIndex = i;
-			}
+		if (question != null) {
+			submitQuestion(question.toPostEntity());
 		}
-		question = new QuizQuestion(questionBody, answers, solutionIndex, tags,
-				0, "OWNER");
-		/*
-		 * QuizQuestion question = new QuizQuestion(0, questionBody, answers,
-		 * solutionIndex, tags);
-		 */
-
-		submitQuestion(question.toPostEntity());
 	}
 
 	/**
