@@ -454,7 +454,7 @@ public class EditQuestionActivity extends Activity {
 		 * QuizQuestion question = new QuizQuestion(0, questionBody, answers,
 		 * solutionIndex, tags);
 		 */
-		
+
 		submitQuestion(question.toPostEntity());
 	}
 
@@ -464,17 +464,17 @@ public class EditQuestionActivity extends Activity {
 	 * 
 	 * @return
 	 */
-	
+
 	public int audit() {
-		
+
 		int checkErrors = 0;
 		boolean oneTrue = false;
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
-		String questionText = editQuestion.getText().toString(); 
+		String questionText = editQuestion.getText().toString();
 
 		EditText editTags = (EditText) findViewById(R.id.tags);
-		String tagsToString = editTags.getText().toString(); 
-		if (tagsToString.trim().length() == 0) { 
+		String tagsToString = editTags.getText().toString();
+		if (tagsToString.trim().length() == 0) {
 			checkErrors++;
 
 		}
@@ -489,11 +489,11 @@ public class EditQuestionActivity extends Activity {
 
 			if ("\u2714".equals(isCorrect.getText())) {
 				oneTrue = true;
-			} 
+			}
 
 			EditText isFull = (EditText) findViewById(idList.get(i) + answerCst);
 			if (isFull.getText().toString().trim().length() == 0) {
-				checkErrors++;  
+				checkErrors++;
 			}
 		}
 
@@ -516,7 +516,7 @@ public class EditQuestionActivity extends Activity {
 	private void submitQuestion(String questionAsEntity) {
 
 		try {
-			new SubmitQuestionTask().execute(questionAsEntity).get(); 
+			new SubmitQuestionTask().execute(questionAsEntity).get();
 		} catch (InterruptedException e) {
 			Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
 					"submitting question", e);
@@ -535,7 +535,7 @@ public class EditQuestionActivity extends Activity {
 	 * 
 	 */
 	private class SubmitQuestionTask extends
-			AsyncTask<String, Void, HttpResponse> { 
+			AsyncTask<String, Void, HttpResponse> {
 
 		/**
 		 * Execute and retrieve the answer from the website.
@@ -558,7 +558,7 @@ public class EditQuestionActivity extends Activity {
 				return response;
 			} catch (UnsupportedEncodingException e) {
 				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
-						"Submit question task", e); 
+						"Submit question task", e);
 			} catch (HttpResponseException e) {
 				Logger.getLogger("epfl.sweng.editquestions").log(Level.INFO,
 						"Submit question task", e);
@@ -579,11 +579,11 @@ public class EditQuestionActivity extends Activity {
 		/**
 		 * Execute and retrieve the answer from the website.
 		 */
-		protected void onPostExecute(HttpResponse httpResponse) { 
+		protected void onPostExecute(HttpResponse httpResponse) {
 			// if result is null, server something else than a 2xx status.
 			if (httpResponse != null
 					&& httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-				successEditQuestion(); 
+				successEditQuestion();
 				// result contain a JSON object representing the question if
 				// success on submit
 				// HttpEntity result = response.getEntity();
@@ -595,7 +595,7 @@ public class EditQuestionActivity extends Activity {
 				// return null;
 				// }
 			} else {
-				errorEditQuestion(); 
+				errorEditQuestion();
 			}
 			// moving TTCheck to proxy, because should be check before going
 			// offline on error

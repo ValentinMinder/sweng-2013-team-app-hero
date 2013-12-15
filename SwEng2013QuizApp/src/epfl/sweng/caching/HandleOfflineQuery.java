@@ -42,7 +42,7 @@ public final class HandleOfflineQuery {
 	 * @throws CacheException
 	 */
 	public static synchronized HandleOfflineQuery getInstance()
-		throws CacheException {
+			throws CacheException {
 		if (instance == null) {
 			instance = new HandleOfflineQuery();
 		}
@@ -78,7 +78,7 @@ public final class HandleOfflineQuery {
 	 * @throws CacheException
 	 */
 	public ArrayList<String> query(String query, String token)
-		throws CacheException {
+			throws CacheException {
 		if (query.equals(previousQuery) && token.equals(previousToken)) {
 			return getArrayOfJSONQuestionsPartial();
 		} else {
@@ -104,7 +104,7 @@ public final class HandleOfflineQuery {
 	 * @throws CacheException
 	 */
 	private ArrayList<String> getArrayOfJSONQuestionsPartial()
-		throws CacheException {
+			throws CacheException {
 		ArrayList<String> result = new ArrayList<String>(RETURN_ARRAY_SIZE);
 		boolean flag = true;
 		for (int i = 0; i < RETURN_ARRAY_SIZE && flag; i++) {

@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -242,9 +243,10 @@ public class QuizQuestion implements Serializable {
 	 */
 	public String toPostEntity() {
 		StringBuffer entity = new StringBuffer();
+
 		entity.append("{\n");
 
-		entity.append("\"id\": " + clone(id + "") + ",\n");
+		entity.append("\"id\": " + id + ",\n");
 		entity.append("\"question\": \"" + clone(question) + "\","
 				+ " \"answers\": [");
 		entity.append(" \"" + clone(answers.get(0)) + "\"");
@@ -253,8 +255,8 @@ public class QuizQuestion implements Serializable {
 			entity.append(", \"" + clone(answers.get(i)) + "\"");
 		}
 
-		entity.append(" ]," + " \"solutionIndex\": "
-				+ clone(solutionIndex + "") + "," + " \"tags\": [");
+		entity.append(" ]," + " \"solutionIndex\": " + solutionIndex + ","
+				+ " \"tags\": [");
 
 		Iterator<String> itTags = tags.iterator();
 		while (itTags.hasNext()) {
@@ -268,19 +270,32 @@ public class QuizQuestion implements Serializable {
 		entity.append(" ],");
 		entity.append("\n\"owner\": \"" + clone(owner) + "\"");
 		entity.append("\n}");
+		System.out.println(entity.toString());
 		return entity.toString();
 	}
 
 	private String clone(String string) {
-		String r = string.replaceAll("\"", "\\\\\"");
-		r = string.replaceAll("\\\\", "\\\\\\\\");
-		r = string.replaceAll("/", "\\\\/");
-		r = string.replaceAll("\b", "\\\\\b");
-		r = string.replaceAll("\f", "\\\\\f");
-		r = string.replaceAll("\n", "\\\\\n");
-		r = string.replaceAll("\r", "\\\\\r");
-		r = string.replaceAll("\t", "\\\\\t");
-		return r;
+		String r = string;
+		r = r.replaceAll("\\\\", "\\\\\\\\");
+		r = r.replaceAll("\"", "\\\\\"");
+		r = r.replaceAll("/", "\\\\/");
+		r = r.replaceAll("\b", "\\\\b");
+		r = r.replaceAll("\f", "\\\\f");
+		r = r.replaceAll("\n", "\\\\n");
+		r = r.replaceAll("\r", "\\\\r");
+		r = r.replaceAll("\t", "\\\\t");
+
+		StringBuffer s = new StringBuffer();
+		for (int i = 0; i < string.length(); i++) {
+			String k = Integer.toHexString((int) string.charAt(i));
+
+			s.append("\\u");
+			for (int j = 0; j < 4 - k.length(); j++) {
+				s.append("0");
+			}
+			s.append(k);
+		}
+		return s.toString();
 	}
 
 	@Override
