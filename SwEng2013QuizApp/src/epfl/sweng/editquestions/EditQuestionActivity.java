@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
 import android.app.Activity;
+import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -476,7 +477,12 @@ public class EditQuestionActivity extends Activity {
 		String tagsToString = editTags.getText().toString();
 		if (tagsToString.trim().length() == 0) {
 			checkErrors++;
-
+		}
+		
+		// checks that it contains at least one valid tag and not only delimiters
+		// all non-alphanum are delimiters, only 62 chars are allowed as valide tag.
+		if (tagsToString.trim().split("[^A-Za-z0-9]").length == 0) {
+			checkErrors++;
 		}
 
 		if (idList.size() < 2 || questionText.trim().length() == 0) {
