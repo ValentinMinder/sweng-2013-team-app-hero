@@ -270,7 +270,6 @@ public class QuizQuestion implements Serializable {
 		entity.append(" ],");
 		entity.append("\n\"owner\": \"" + clone(owner) + "\"");
 		entity.append("\n}");
-		System.out.println(entity.toString());
 		return entity.toString();
 	}
 
