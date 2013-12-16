@@ -119,11 +119,8 @@ public class EditQuestionActivity extends Activity {
 		int solutionIndex = -1;
 		String questionBody = editQuestion.getText().toString();
 		String tagString = tagText.getText().toString();
-		System.out.println(tagString);
 		tagString = tagString.replaceFirst("^[^a-zA-Z0-9]+", "");
-		System.out.println(tagString);
 		tagString = tagString.replaceFirst("[^a-zA-Z0-9]+$", "");
-		System.out.println(tagString);
 
 		Set<String> tags = new HashSet<String>(Arrays.asList(tagString
 				.split("[^a-zA-Z0-9]+")));
