@@ -99,12 +99,14 @@ public class MainActivity extends Activity {
 				boolean isNextCheck = check.isChecked();
 				check.setChecked(!isNextCheck);
 				// we lock the use of the checkbox (NOT USED ANYMORE)
+				 if (!checkBoxInUse) {
+					 checkBoxInUse = true;
 				if (!isNextCheck) {
 					ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 					NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
 					// Test network connection
-					if (networkInfo != null && networkInfo.isConnected()) {
+//					if (networkInfo != null && networkInfo.isConnected()) {
 						// trying to goonline
 						try {
 							ProxyHttpClient.getInstance().goOnline();
@@ -113,10 +115,11 @@ public class MainActivity extends Activity {
 									"Creating main activity, in the offline listener", e);
 						}
 						// going online submitted
-					} else {
-						Toast.makeText(getBaseContext(), R.string.no_network,
-								Toast.LENGTH_LONG).show();
-					}
+//					} else {
+//						checkBoxInUse = false;
+//						Toast.makeText(getBaseContext(), R.string.no_network,
+//								Toast.LENGTH_LONG).show();
+//					}
 				} else {
 					try {
 						ProxyHttpClient.getInstance().goOffLine();
@@ -124,23 +127,17 @@ public class MainActivity extends Activity {
 						Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
 								"Creating main activity, in the offline listener", e);
 					}
+					checkBoxInUse = false;
 					check.setChecked(isNextCheck);
 				}
-				// if (!checkBoxInUse) {
-				// checkBoxInUse = true;
-				// if (!isNextCheck) {
-				// ProxyHttpClient.getInstance().goOnline();
-				// } else {
-				// ProxyHttpClient.getInstance().goOffLine();
-				// check.setChecked(isNextCheck);
-				// checkBoxInUse = false;
-				// }
-				// } else {
-				// Toast.makeText(getApplicationContext(), "Please wait, " +
-				// "busy with a previous connection request",
-				// Toast.LENGTH_SHORT).show();
-				// }
-			}
+				
+				 
+				 } else {
+				 Toast.makeText(getApplicationContext(), "Please wait, " +
+				 "busy with a previous sync connection request",
+				 Toast.LENGTH_SHORT).show();
+				 }
+			} 
 		});
 		
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
