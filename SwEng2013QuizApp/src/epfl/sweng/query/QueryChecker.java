@@ -14,34 +14,33 @@ final public class QueryChecker {
 	private QueryChecker() {
 		this.query = null;
 	}
-	
 
 	private boolean checkNested() {
 		Stack<String> stack = new Stack<String>();
 		for (int i = 0; i < query.length(); ++i) {
 			switch (query.charAt(i)) {
-				case '(':
-					stack.push("(");
-					break;
-				case ')':
-					try {
-						stack.pop();
-					} catch (EmptyStackException e) {
-						Logger.getLogger("epfl.sweng.query").log(Level.INFO,
+			case '(':
+				stack.push("(");
+				break;
+			case ')':
+				try {
+					stack.pop();
+				} catch (EmptyStackException e) {
+					Logger.getLogger("epfl.sweng.query").log(Level.INFO,
 							"checkNested Empty Stack", e);
-						return false;
-					}
-					break;
-				default:
-					break;
+					return false;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 		return stack.size() == 0;
 	}
 
 	/**
-	 * should only be called by checkQuery once the pre-condition are
-		// checked
+	 * should only be called by checkQuery once the pre-condition are // checked
+	 * 
 	 * @return
 	 */
 	private boolean checkValid() {

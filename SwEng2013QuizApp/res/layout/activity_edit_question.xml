@@ -36,7 +36,6 @@
             android:onClick="addAnswer"
             android:text="@string/plus" />
 
-
         <EditText
             android:id="@+id/tags"
             android:layout_width="match_parent"

@@ -31,29 +31,26 @@ public class SearchActivity extends Activity {
 		searchButton.setEnabled(false);
 		TestCoordinator.check(TTChecks.SEARCH_ACTIVITY_SHOWN);
 	}
-	
 
 	public void search(View view) {
 
 		String search = editQuery.getText().toString();
 
-
 		Intent showQuestionIntent = new Intent(this,
 				ShowQuestionsActivity.class);
-		showQuestionIntent.putExtra("Type", "Search"); // hardcoded car il faut des strings, pas des int!
+		showQuestionIntent.putExtra("Type", "Search"); // hardcoded car il faut
+														// des strings, pas des
+														// int!
 		showQuestionIntent.putExtra("Request", search);
 		startActivity(showQuestionIntent);
 
 	}
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.search, menu);
 		return true;
 	}
-
-
 
 	private TextWatcher textListener = new TextWatcher() {
 

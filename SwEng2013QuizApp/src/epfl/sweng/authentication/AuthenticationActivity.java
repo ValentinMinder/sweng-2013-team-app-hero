@@ -192,8 +192,8 @@ public class AuthenticationActivity extends Activity {
 						authenticationFailed();
 					}
 				} catch (JSONException e) {
-					Logger.getLogger("epfl.sweng.authentification").log(Level.INFO,
-							"authentification fail", e);	
+					Logger.getLogger("epfl.sweng.authentification").log(
+							Level.INFO, "authentification fail", e);
 					authenticationToken = null;
 					authenticationFailed();
 				}
@@ -203,7 +203,6 @@ public class AuthenticationActivity extends Activity {
 			}
 		}
 	}
-	
 
 	/**
 	 * Class who is use to test if username and password are correct in Tekila
@@ -315,8 +314,8 @@ public class AuthenticationActivity extends Activity {
 					String sessionId = (String) jsonResponse.get("session");
 					authenticationSuccessful(sessionId);
 				} catch (JSONException e) {
-					Logger.getLogger("epfl.sweng.authentication").log(Level.INFO,
-							"Authentification task", e);
+					Logger.getLogger("epfl.sweng.authentication").log(
+							Level.INFO, "Authentification task", e);
 					authenticationFailed();
 				}
 			} else {

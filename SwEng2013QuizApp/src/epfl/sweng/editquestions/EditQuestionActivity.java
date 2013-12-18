@@ -103,15 +103,15 @@ public class EditQuestionActivity extends Activity {
 				sub.setEnabled(true);
 				return;
 			}
-			
-		} 
+
+		}
 		sub.setEnabled(false);
 	}
-		
+
 	/**
 	 * construct a question;
 	 */
-	private void constructQuestion () {
+	private void constructQuestion() {
 		EditText editQuestion = (EditText) findViewById(R.id.type_question);
 		EditText tagText = (EditText) findViewById(R.id.tags);
 		ArrayList<String> answers = new ArrayList<String>();
@@ -281,7 +281,6 @@ public class EditQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.edit_question, menu);
 		return true;
 	}
-	
 
 	public void initUI() {
 		correctIndex = correctCst;
@@ -487,9 +486,11 @@ public class EditQuestionActivity extends Activity {
 		if (tagsToString.trim().length() == 0) {
 			checkErrors++;
 		}
-		
-		// checks that it contains at least one valid tag and not only delimiters
-		// all non-alphanum are delimiters, only 62 chars are allowed as valide tag.
+
+		// checks that it contains at least one valid tag and not only
+		// delimiters
+		// all non-alphanum are delimiters, only 62 chars are allowed as valide
+		// tag.
 		if (tagsToString.trim().split("[^A-Za-z0-9]").length == 0) {
 			checkErrors++;
 		}

@@ -6,15 +6,13 @@ public class Parenthesis {
 	public static String parenthesis(String query) {
 
 		String queryClone = replaceSpace(query);
-		
 
 		queryClone = removeParenthesisAroundOneElement(queryClone);
 		String subAnd = parenthesisOperator('*', queryClone);
 		String subOr = parenthesisOperator('+', subAnd);
 		return removeUselessParenthesisUpgraded(subOr);
 	}
-	
-	
+
 	public static String removeUselessParenthesisUpgraded(String query) {
 		String queryClone = query;
 		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
@@ -29,18 +27,18 @@ public class Parenthesis {
 					if (i - 1 == 0) {
 						queryClone = queryClone.substring(1, closing + 1);
 					} else {
-						queryClone = queryClone.substring(0, i-1)
+						queryClone = queryClone.substring(0, i - 1)
 								+ queryClone.substring(i, closing + 1)
 								+ queryClone.substring(closing + 2);
 					}
-					
+
 					map.remove(i - 1);
 					i -= 1;
 					map.put(i, closing - 1);
 				} else {
 					map.put(i, closing);
 				}
-				
+
 			}
 		}
 		return queryClone;

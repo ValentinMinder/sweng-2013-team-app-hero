@@ -60,7 +60,6 @@ public class MainActivity extends Activity {
 		offline.setVisibility(View.GONE);
 	}
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -31,25 +31,27 @@ public class SearchQuestions {
 		cachedRequestArray = new ArrayList<QuizQuestion>();
 		this.request = requestS;
 	}
-	
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
 		Log.e("cache", "size cacheRequestArray : " + cachedRequestArray.size());
-		if (cachedRequestArray.isEmpty() && (nextID == null || !nextID.equals("null"))) {
+		if (cachedRequestArray.isEmpty()
+				&& (nextID == null || !nextID.equals("null"))) {
 			GetQuestionTask task = new GetQuestionTask();
 			task.execute(sessionID);
 			try {
 				task.get();
 			} catch (InterruptedException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "nextQuestion Fail", e);
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO,
+						"nextQuestion Fail", e);
 			} catch (ExecutionException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "nextQuestion Fail", e);
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO,
+						"nextQuestion Fail", e);
 			}
 		}
 		// if we have a remaining array of question.
 		if (!cachedRequestArray.isEmpty()) {
 			QuizQuestion question = cachedRequestArray.remove(0);
-			
+
 			return question;
 		}
 		// if the array was empty and the server didn't get any more question.
@@ -73,8 +75,8 @@ public class SearchQuestions {
 			post.setHeader("Authorization", "Tequila " + questionElement[0]);
 			String jsonQuery = "{\n\"query\": \"" + request + "\"\n}";
 			if (nextID != null && !nextID.equals("null")) {
-				jsonQuery = "{\n\"query\": \"" + request + "\",\n" +
-						"\"from\": \"" + nextID + "\"\n}";
+				jsonQuery = "{\n\"query\": \"" + request + "\",\n"
+						+ "\"from\": \"" + nextID + "\"\n}";
 			}
 			try {
 				post.setEntity(new StringEntity(jsonQuery));
@@ -92,29 +94,34 @@ public class SearchQuestions {
 					ArrayList<String> arrayString = JSONUtils
 							.convertJSONArrayToArrayListString(array
 									.getJSONArray("questions"));
-					
+
 					String next = array.getString("next");
 					if (next.equals("null")) {
 						nextID = "null";
 					} else {
 						nextID = next;
 					}
-					
+
 					for (String s : arrayString) {
 						cachedRequestArray.add(new QuizQuestion(s));
 					}
 				} catch (JSONException e) {
-					Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail", e);
+					Logger.getLogger("epfl.sweng.searchquestions").log(
+							Level.INFO, "SearchQuestion task Fail", e);
 				}
 
 			} catch (UnsupportedEncodingException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO,
+						"SearchQuestion task Fail", e);
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO,
+						"SearchQuestion task Fail", e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO,
+						"SearchQuestion task Fail", e);
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO, "SearchQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.searchquestions").log(Level.INFO,
+						"SearchQuestion task Fail", e);
 			}
 
 			return null;

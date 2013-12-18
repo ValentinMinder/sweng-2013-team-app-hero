@@ -40,7 +40,8 @@ public class EvaluateQuery {
 	 * it really works the way that is should. Some operation are probably not
 	 * optimized, the idea was to develop an algorithm to evaluate a query, the
 	 * question of performance has not been thought at this point.
-	 * @throws CacheException 
+	 * 
+	 * @throws CacheException
 	 * 
 	 * 
 	 * 
@@ -111,14 +112,12 @@ public class EvaluateQuery {
 		}
 
 		if (count != 0) {
-			return 	results.get(count - 1);
+			return results.get(count - 1);
 		} else {
 			Log.e("test", query);
 			return Cache.getInstance().getSetTag(query);
 		}
 	}
-	
-
 
 	private static Entry<Integer, Integer> max(
 			Set<Entry<Integer, Integer>> entrySet) {

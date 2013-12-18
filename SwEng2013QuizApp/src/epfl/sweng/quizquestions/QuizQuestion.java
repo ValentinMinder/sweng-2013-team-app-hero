@@ -207,7 +207,6 @@ public class QuizQuestion implements Serializable {
 		if (!invariant5) {
 			errors++;
 		}
-		
 
 		// INV N��6: FOR ALL k from 0 up to len(question.tags), 0
 		// <len(question.tags[k]) <= 20 AND there exists i such that

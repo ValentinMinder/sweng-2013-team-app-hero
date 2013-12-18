@@ -8,28 +8,27 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".AuthenticationActivity" >
-    
+
     <EditText
-            android:id="@+id/gaspar_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/gaspar_username" />
-    
-    
+        android:id="@+id/gaspar_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/gaspar_username" />
+
     <EditText
-            android:id="@+id/gaspar_password"
-            android:inputType="textPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/gaspar_password" />
-    
+        android:id="@+id/gaspar_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/gaspar_password"
+        android:inputType="textPassword" />
+
     <Button
-            android:id="@+id/log_in_tekila"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="step1LogInTekila"
-            android:text="@string/log_in_tekila" />
-    
+        android:id="@+id/log_in_tekila"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="step1LogInTekila"
+        android:text="@string/log_in_tekila" />
+
 </LinearLayout>

@@ -70,7 +70,6 @@ public class ShowQuestionsActivity extends Activity {
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 
 	}
-	
 
 	/**
 	 * Method who is going to take a random question on the server.
@@ -83,10 +82,12 @@ public class ShowQuestionsActivity extends Activity {
 					"https://sweng-quiz.appspot.com/quizquestions/random")
 					.get();
 		} catch (InterruptedException e) {
-			Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "fetchQuestion Fail", e);
+			Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO,
+					"fetchQuestion Fail", e);
 
 		} catch (ExecutionException e) {
-			Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "fecthQuestion Fail", e);
+			Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO,
+					"fecthQuestion Fail", e);
 		}
 	}
 
@@ -231,11 +232,14 @@ public class ShowQuestionsActivity extends Activity {
 				return ProxyHttpClient.getInstance().execute(firstRandom,
 						firstHandler);
 			} catch (ClientProtocolException e) {
-				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "ShowQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO,
+						"ShowQuestion task Fail", e);
 			} catch (IOException e) {
-				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "ShowQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO,
+						"ShowQuestion task Fail", e);
 			} catch (CacheException e) {
-				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "Cache ShowQuestion task Fail", e);
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO,
+						"Cache ShowQuestion task Fail", e);
 			}
 
 			return null;
@@ -259,7 +263,8 @@ public class ShowQuestionsActivity extends Activity {
 					}
 				}
 			} catch (JSONException e) {
-				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO, "JSON task Fail", e);
+				Logger.getLogger("epfl.sweng.showquestions").log(Level.INFO,
+						"JSON task Fail", e);
 				errorDisplayQuestion();
 			}
 		}
