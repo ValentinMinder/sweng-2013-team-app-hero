@@ -70,6 +70,7 @@ public class ShowQuestionsActivity extends Activity {
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 
 	}
+	
 
 	/**
 	 * Method who is going to take a random question on the server.

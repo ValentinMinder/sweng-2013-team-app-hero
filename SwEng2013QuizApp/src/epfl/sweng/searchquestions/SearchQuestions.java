@@ -31,6 +31,7 @@ public class SearchQuestions {
 		cachedRequestArray = new ArrayList<QuizQuestion>();
 		this.request = requestS;
 	}
+	
 
 	public QuizQuestion getNextQuizQuestion(String sessionID) {
 		Log.e("cache", "size cacheRequestArray : " + cachedRequestArray.size());

@@ -281,6 +281,7 @@ public class EditQuestionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.edit_question, menu);
 		return true;
 	}
+	
 
 	public void initUI() {
 		correctIndex = correctCst;

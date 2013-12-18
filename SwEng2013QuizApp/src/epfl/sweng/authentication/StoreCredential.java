@@ -22,6 +22,7 @@ public class StoreCredential {
 		editor.commit();
 	}
 	
+	
 	public String getSessionId(Context context) {
 		SharedPreferences preferences = context.getSharedPreferences(NAME_PREFERENCE_SESSION, Context.MODE_PRIVATE);
 		String session = preferences.getString(NAME_VARIABLE_SESSION, "");

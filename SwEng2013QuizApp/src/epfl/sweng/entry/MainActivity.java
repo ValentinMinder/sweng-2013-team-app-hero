@@ -60,6 +60,7 @@ public class MainActivity extends Activity {
 		offline.setVisibility(View.GONE);
 	}
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,7 +77,8 @@ public class MainActivity extends Activity {
 		} else {
 			offline.setVisibility(View.VISIBLE);
 			try {
-				offline.setChecked(ProxyHttpClient.getInstance().getOfflineStatus());
+				offline.setChecked(ProxyHttpClient.getInstance()
+						.getOfflineStatus());
 			} catch (CacheException e) {
 				Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
 						"Creating main activity", e);
@@ -99,47 +101,54 @@ public class MainActivity extends Activity {
 				boolean isNextCheck = check.isChecked();
 				check.setChecked(!isNextCheck);
 				// we lock the use of the checkbox (NOT USED ANYMORE)
-				 if (!checkBoxInUse) {
-					 checkBoxInUse = true;
-				if (!isNextCheck) {
-					ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-					NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+				if (!checkBoxInUse) {
+					checkBoxInUse = true;
+					if (!isNextCheck) {
+						ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+						NetworkInfo networkInfo = connMgr
+								.getActiveNetworkInfo();
 
-					// Test network connection
-//					if (networkInfo != null && networkInfo.isConnected()) {
+						// Test network connection
+						// if (networkInfo != null && networkInfo.isConnected())
+						// {
 						// trying to goonline
 						try {
 							ProxyHttpClient.getInstance().goOnline();
 						} catch (CacheException e) {
-							Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
-									"Creating main activity, in the offline listener", e);
+							Logger.getLogger("epfl.sweng.entry")
+									.log(Level.INFO,
+											"Creating main activity, in the offline listener",
+											e);
 						}
 						// going online submitted
-//					} else {
-//						checkBoxInUse = false;
-//						Toast.makeText(getBaseContext(), R.string.no_network,
-//								Toast.LENGTH_LONG).show();
-//					}
-				} else {
-					try {
-						ProxyHttpClient.getInstance().goOffLine();
-					} catch (CacheException e) {
-						Logger.getLogger("epfl.sweng.entry").log(Level.INFO,
-								"Creating main activity, in the offline listener", e);
+						// } else {
+						// checkBoxInUse = false;
+						// Toast.makeText(getBaseContext(), R.string.no_network,
+						// Toast.LENGTH_LONG).show();
+						// }
+					} else {
+						try {
+							ProxyHttpClient.getInstance().goOffLine();
+						} catch (CacheException e) {
+							Logger.getLogger("epfl.sweng.entry")
+									.log(Level.INFO,
+											"Creating main activity, in the offline listener",
+											e);
+						}
+						checkBoxInUse = false;
+						check.setChecked(isNextCheck);
 					}
-					checkBoxInUse = false;
-					check.setChecked(isNextCheck);
+
+				} else {
+					Toast.makeText(
+							getApplicationContext(),
+							"Please wait, "
+									+ "busy with a previous sync connection request",
+							Toast.LENGTH_SHORT).show();
 				}
-				
-				 
-				 } else {
-				 Toast.makeText(getApplicationContext(), "Please wait, " +
-				 "busy with a previous sync connection request",
-				 Toast.LENGTH_SHORT).show();
-				 }
-			} 
+			}
 		});
-		
+
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
@@ -205,7 +214,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		//TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+		// TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
 	/**

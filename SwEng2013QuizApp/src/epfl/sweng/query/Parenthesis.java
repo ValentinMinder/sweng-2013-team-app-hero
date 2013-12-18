@@ -14,6 +14,7 @@ public class Parenthesis {
 		return removeUselessParenthesisUpgraded(subOr);
 	}
 	
+	
 	public static String removeUselessParenthesisUpgraded(String query) {
 		String queryClone = query;
 		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();

@@ -203,6 +203,7 @@ public class AuthenticationActivity extends Activity {
 			}
 		}
 	}
+	
 
 	/**
 	 * Class who is use to test if username and password are correct in Tekila

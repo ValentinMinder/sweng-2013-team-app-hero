@@ -31,6 +31,7 @@ public class SearchActivity extends Activity {
 		searchButton.setEnabled(false);
 		TestCoordinator.check(TTChecks.SEARCH_ACTIVITY_SHOWN);
 	}
+	
 
 	public void search(View view) {
 

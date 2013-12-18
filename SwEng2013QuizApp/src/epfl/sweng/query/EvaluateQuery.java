@@ -117,6 +117,7 @@ public class EvaluateQuery {
 			return Cache.getInstance().getSetTag(query);
 		}
 	}
+	
 
 
 	private static Entry<Integer, Integer> max(

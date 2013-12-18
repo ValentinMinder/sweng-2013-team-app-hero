@@ -14,6 +14,7 @@ final public class QueryChecker {
 	private QueryChecker() {
 		this.query = null;
 	}
+	
 
 	private boolean checkNested() {
 		Stack<String> stack = new Stack<String>();
